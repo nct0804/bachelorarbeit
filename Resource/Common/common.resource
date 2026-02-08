@@ -3,12 +3,15 @@ Documentation       Common Resource File
 
 Resource            ../MainLib.resource
 
+*** Variables ***
+${HEADLESS}    False
+
 
 *** Keywords ***
 Open Browser
     [Documentation]    Open the browser and the website
     [Tags]    basic
-    New Browser    chromium    headless=False
+    New Browser    chromium    headless=${HEADLESS}
     New Context
     New Page    http://localhost:4242/
 
