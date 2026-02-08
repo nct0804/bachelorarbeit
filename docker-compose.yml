@@ -1,0 +1,48 @@
+services:
+  db:
+    image: postgres:15
+    container_name: germangains-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: germangains
+      POSTGRES_PASSWORD: germangains
+      POSTGRES_DB: germangainsdb
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+    container_name: germangains-backend
+    ports:
+      - '3000:3000'
+      - '5555:5555' # for Prisma Studio
+    depends_on:
+      - db
+    volumes:
+      - ./backend:/app
+      - /app/node_modules 
+    env_file:
+      - ./backend/.env
+    environment:
+      - DATABASE_URL=postgresql://germangains:germangains@db:5432/germangainsdb?schema=public
+      # - DATABASE_URL=postgresql://germangains:germangains@localhost:5432/germangainsdb?schema=public
+      - CLERK_SECRET_KEY=sk_test_aOjvDHzBHbrLoEW55Mpxseu5GnzYfNRtMvxQgfZgm0
+      - CLERK_PUBLISHABLE_KEY=pk_test_aW1tdW5lLWhlcm9uLTMwLmNsZXJrLmFjY291bnRzLmRldiQ
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: germangains-frontend
+    ports:
+      - '4242:80'
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  pgdata:

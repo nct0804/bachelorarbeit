@@ -1,0 +1,7 @@
+{
+  "Log in page": "[data-test=\"page-login\"]",
+  "form": "[data-test=\"login-form\"]",
+  "Email Address": "[data-test=\"login-email\"]",
+  "Password": "[data-test=\"login-password\"]",
+  "Sign In Button": "[data-test=\"login-submit\"]"
+}

@@ -1,0 +1,3354 @@
+{
+	"info": {
+		"_postman_id": "278cb541-05d4-4d5f-ac98-1723d338955f",
+		"name": "GermanGains Complete API",
+		"description": "API collection for GermanGains German learning platform",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "44407978",
+		"_collection_link": "https://chithien-4528100.postman.co/workspace/Chi-Thien's-Workspace~4bea45cb-dacd-44b8-88df-0f9b2d022fad/collection/44407978-278cb541-05d4-4d5f-ac98-1723d338955f?action=share&source=collection_link&creator=44407978"
+	},
+	"item": [
+
+    {
+      "name": "HEARTS SYSTEM",
+      "item": [
+        {
+          "name": "1. Check Initial Heart Count",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"User initially has 5 hearts\", function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    ",
+                  "    const user = jsonData.data;",
+                  "    // Check if user has hearts property",
+                  "    pm.expect(user).to.have.property('hearts');",
+                  "    // Store initial heart count for future tests",
+                  "    pm.environment.set(\"initialHeartCount\", user.hearts);",
+                  "    console.log(`User has ${user.hearts} hearts`);",
+                  "})"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/users/me",
+            "description": "Check user's initial heart count"
+          },
+          "response": []
+        },
+        {
+          "name": "2. Find Uncompleted Exercise",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Found uncompleted exercise\", function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    ",
+                  "    const data = jsonData.data;",
+                  "    const exercises = data.exercises;",
+                  "    ",
+                  "    // Find the first uncompleted exercise",
+                  "    const uncompletedExercise = exercises.find(exercise => !exercise.isCompleted);",
+                  "    ",
+                  "    if (uncompletedExercise) {",
+                  "        // Save exercise ID for next test",
+                  "        pm.environment.set(\"uncompletedExerciseId\", uncompletedExercise.id);",
+                  "        console.log(`Found uncompleted exercise ID: ${uncompletedExercise.id}`);",
+                  "    } else {",
+                  "        console.log('No uncompleted exercises found, test might not work correctly');",
+                  "    }",
+                  "})"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/exercises/status/lesson/{{firstLessonId}}",
+            "description": "Find an uncompleted exercise to test hearts functionality"
+          },
+          "response": []
+        },
+        {
+          "name": "3. Submit Wrong Answer (Should Lose Heart)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Wrong answer decreases heart count\", function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    ",
+                  "    const result = jsonData.data;",
+                  "    ",
+                  "    // Check for incorrect answer",
+                  "    pm.expect(result.isCorrect).to.be.false;",
+                  "    ",
+                  "    // Check heart information",
+                  "    pm.expect(result).to.have.property('hearts');",
+                  "    pm.expect(result).to.have.property('heartChange');",
+                  "    ",
+                  "    // For wrong answer on new exercise, should lose 1 heart",
+                  "    pm.expect(result.heartChange).to.equal(-1);",
+                  "    ",
+                  "    // Store current heart count",
+                  "    pm.environment.set(\"currentHeartCount\", result.hearts);",
+                  "    console.log(`Heart count changed by ${result.heartChange}. Current hearts: ${result.hearts}`);",
+                  "})"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Get the exercise details to find an incorrect answer option",
+                  "const exerciseId = pm.environment.get(\"uncompletedExerciseId\");",
+                  "",
+                  "pm.sendRequest({",
+                  "    url: `${pm.environment.get(\"baseUrl\")}/api/exercises/${exerciseId}`,",
+                  "    method: 'GET',",
+                  "    header: {",
+                  "        'Authorization': `Bearer ${pm.environment.get(\"accessToken\")}`",
+                  "    }",
+                  "}, function (err, res) {",
+                  "    if (err) {",
+                  "        console.error(err);",
+                  "    } else {",
+                  "        const exercise = res.json().data;",
+                  "        ",
+                  "        if (exercise && exercise.options && exercise.options.length > 0) {",
+                  "            // Find an incorrect option",
+                  "            const incorrectOption = exercise.options.find(option => !option.isCorrect);",
+                  "            ",
+                  "            if (incorrectOption) {",
+                  "                pm.environment.set(\"incorrectOptionId\", incorrectOption.id);",
+                  "                console.log(`Using incorrect option ID: ${incorrectOption.id}`);",
+                  "            }",
+                  "        }",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"answer\": \"{{incorrectOptionId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/api/exercises/{{uncompletedExerciseId}}/check",
+            "description": "Submit a wrong answer to an uncompleted exercise, should lose a heart"
+          },
+          "response": []
+        },
+        {
+          "name": "4. Find Completed Exercise",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Found completed exercise\", function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    ",
+                  "    const data = jsonData.data;",
+                  "    const exercises = data.exercises;",
+                  "    ",
+                  "    // Find the first completed exercise",
+                  "    const completedExercise = exercises.find(exercise => exercise.isCompleted);",
+                  "    ",
+                  "    if (completedExercise) {",
+                  "        // Save exercise ID for next test",
+                  "        pm.environment.set(\"completedExerciseId\", completedExercise.id);",
+                  "        console.log(`Found completed exercise ID: ${completedExercise.id}`);",
+                  "    } else {",
+                  "        // If no completed exercise found, let's complete one first",
+                  "        console.log('No completed exercises found, completing one first');",
+                  "        pm.environment.set(\"needsCompletion\", true);",
+                  "    }",
+                  "})"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/exercises/status/lesson/{{firstLessonId}}",
+            "description": "Find a completed exercise to test hearts functionality"
+          },
+          "response": []
+        },
+        {
+          "name": "5. Complete an Exercise (If Needed)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Only run if we need to complete an exercise first",
+                  "const needsCompletion = pm.environment.get(\"needsCompletion\");",
+                  "if (!needsCompletion) {",
+                  "    // Skip this request if we already have a completed exercise",
+                  "    postman.setNextRequest(\"6. Submit Wrong Answer on Completed Exercise\");",
+                  "}",
+                  "",
+                  "// Get the exercise details to find the correct answer option",
+                  "const exerciseId = pm.environment.get(\"uncompletedExerciseId\");",
+                  "",
+                  "pm.sendRequest({",
+                  "    url: `${pm.environment.get(\"baseUrl\")}/api/exercises/${exerciseId}`,",
+                  "    method: 'GET',",
+                  "    header: {",
+                  "        'Authorization': `Bearer ${pm.environment.get(\"accessToken\")}`",
+                  "    }",
+                  "}, function (err, res) {",
+                  "    if (err) {",
+                  "        console.error(err);",
+                  "    } else {",
+                  "        const exercise = res.json().data;",
+                  "        ",
+                  "        if (exercise && exercise.options && exercise.options.length > 0) {",
+                  "            // Find the correct option",
+                  "            const correctOption = exercise.options.find(option => option.isCorrect);",
+                  "            ",
+                  "            if (correctOption) {",
+                  "                pm.environment.set(\"correctOptionId\", correctOption.id);",
+                  "                console.log(`Using correct option ID: ${correctOption.id}`);",
+                  "            }",
+                  "        }",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Only run if we needed to complete an exercise",
+                  "const needsCompletion = pm.environment.get(\"needsCompletion\");",
+                  "if (needsCompletion) {",
+                  "    pm.test(\"Successfully completed an exercise\", function() {",
+                  "        pm.response.to.have.status(200);",
+                  "        const jsonData = pm.response.json();",
+                  "        pm.expect(jsonData.success).to.be.true;",
+                  "        ",
+                  "        const result = jsonData.data;",
+                  "        pm.expect(result.isCorrect).to.be.true;",
+                  "        ",
+                  "        // Save this as our completed exercise",
+                  "        pm.environment.set(\"completedExerciseId\", pm.environment.get(\"uncompletedExerciseId\"));",
+                  "        pm.environment.set(\"needsCompletion\", false);",
+                  "        console.log(\"Created a completed exercise for testing\");",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"answer\": \"{{correctOptionId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/api/exercises/{{uncompletedExerciseId}}/check",
+            "description": "Complete an exercise if needed for testing hearts on completed exercises"
+          },
+          "response": []
+        },
+        {
+          "name": "6. Submit Wrong Answer on Completed Exercise",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Wrong answer on completed exercise doesn't decrease hearts\", function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    ",
+                  "    const result = jsonData.data;",
+                  "    ",
+                  "    // Check for incorrect answer",
+                  "    pm.expect(result.isCorrect).to.be.false;",
+                  "    ",
+                  "    // Check heart information",
+                  "    pm.expect(result).to.have.property('hearts');",
+                  "    pm.expect(result).to.have.property('heartChange');",
+                  "    ",
+                  "    // For wrong answer on completed exercise, should not lose hearts",
+                  "    pm.expect(result.heartChange).to.equal(0);",
+                  "    pm.expect(result.hearts).to.equal(pm.environment.get(\"currentHeartCount\"));",
+                  "    ",
+                  "    console.log(`Heart count unchanged as expected: ${result.hearts}`);",
+                  "})"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Get the completed exercise details to find an incorrect answer option",
+                  "const exerciseId = pm.environment.get(\"completedExerciseId\");",
+                  "",
+                  "pm.sendRequest({",
+                  "    url: `${pm.environment.get(\"baseUrl\")}/api/exercises/${exerciseId}`,",
+                  "    method: 'GET',",
+                  "    header: {",
+                  "        'Authorization': `Bearer ${pm.environment.get(\"accessToken\")}`",
+                  "    }",
+                  "}, function (err, res) {",
+                  "    if (err) {",
+                  "        console.error(err);",
+                  "    } else {",
+                  "        const exercise = res.json().data;",
+                  "        ",
+                  "        if (exercise && exercise.options && exercise.options.length > 0) {",
+                  "            // Find an incorrect option",
+                  "            const incorrectOption = exercise.options.find(option => !option.isCorrect);",
+                  "            ",
+                  "            if (incorrectOption) {",
+                  "                pm.environment.set(\"incorrectCompletedOptionId\", incorrectOption.id);",
+                  "                console.log(`Using incorrect option ID: ${incorrectOption.id} for completed exercise`);",
+                  "            }",
+                  "        }",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"answer\": \"{{incorrectCompletedOptionId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/api/exercises/{{completedExerciseId}}/check",
+            "description": "Submit a wrong answer to a completed exercise, should NOT lose a heart"
+          },
+          "response": []
+        },
+        {
+          "name": "7. Submit Correct Answer on Completed Exercise",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Correct answer on completed exercise increases heart count\", function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    ",
+                  "    const result = jsonData.data;",
+                  "    ",
+                  "    // Check for correct answer",
+                  "    pm.expect(result.isCorrect).to.be.true;",
+                  "    ",
+                  "    // Check heart information",
+                  "    pm.expect(result).to.have.property('hearts');",
+                  "    pm.expect(result).to.have.property('heartChange');",
+                  "    ",
+                  "    // For correct answer on completed exercise, should gain 1 heart",
+                  "    // Only if current heart count is below maximum of 5",
+                  "    const previousHearts = parseInt(pm.environment.get(\"currentHeartCount\"));",
+                  "    if (previousHearts < 5) {",
+                  "        pm.expect(result.heartChange).to.equal(1);",
+                  "        pm.expect(result.hearts).to.equal(previousHearts + 1);",
+                  "        console.log(`Gained a heart as expected. Hearts: ${result.hearts}`);",
+                  "    } else {",
+                  "        pm.expect(result.hearts).to.equal(5); // Max is still 5",
+                  "        pm.expect(result.heartChange).to.equal(0);",
+                  "        console.log(`Already at max hearts (5), no change as expected`);",
+                  "    }",
+                  "    ",
+                  "    // Update current heart count",
+                  "    pm.environment.set(\"currentHeartCount\", result.hearts);",
+                  "})"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Get the completed exercise details to find the correct answer option",
+                  "const exerciseId = pm.environment.get(\"completedExerciseId\");",
+                  "",
+                  "pm.sendRequest({",
+                  "    url: `${pm.environment.get(\"baseUrl\")}/api/exercises/${exerciseId}`,",
+                  "    method: 'GET',",
+                  "    header: {",
+                  "        'Authorization': `Bearer ${pm.environment.get(\"accessToken\")}`",
+                  "    }",
+                  "}, function (err, res) {",
+                  "    if (err) {",
+                  "        console.error(err);",
+                  "    } else {",
+                  "        const exercise = res.json().data;",
+                  "        ",
+                  "        if (exercise && exercise.options && exercise.options.length > 0) {",
+                  "            // Find the correct option",
+                  "            const correctOption = exercise.options.find(option => option.isCorrect);",
+                  "            ",
+                  "            if (correctOption) {",
+                  "                pm.environment.set(\"correctCompletedOptionId\", correctOption.id);",
+                  "                console.log(`Using correct option ID: ${correctOption.id} for completed exercise`);",
+                  "            }",
+                  "        }",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"answer\": \"{{correctCompletedOptionId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/api/exercises/{{completedExerciseId}}/check",
+            "description": "Submit a correct answer to a completed exercise, should gain a heart (up to max 5)"
+          },
+          "response": []
+        },
+        {
+          "name": "8. Reduce Hearts to Zero",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// This test just verifies we successfully set hearts to zero",
+                  "pm.test(\"Hearts set to zero for testing\", function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    ",
+                  "    const user = jsonData.data;",
+                  "    pm.expect(user.hearts).to.equal(0);",
+                  "    console.log(\"Successfully set hearts to zero for next test\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hearts\": 0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/api/users/me",
+            "description": "Set hearts to zero to test zero hearts functionality (admin endpoint or direct DB update in real app)"
+          },
+          "response": []
+        },
+        {
+          "name": "9. Try Exercise with Zero Hearts",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Cannot attempt new exercise with zero hearts\", function() {",
+                  "    // The API should return a 403 Forbidden or similar status",
+                  "    pm.expect(pm.response.code).to.be.oneOf([403, 400]);",
+                  "    ",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.false;",
+                  "    ",
+                  "    // Should have a message about hearts",
+                  "    pm.expect(jsonData.message).to.include(\"hearts\");",
+                  "    ",
+                  "    console.log(\"Correctly prevented from attempting exercise with zero hearts\");",
+                  "})"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"answer\": \"1\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/api/exercises/{{uncompletedExerciseId}}/check",
+            "description": "Try to attempt an uncompleted exercise with zero hearts (should be prevented)"
+          },
+          "response": []
+        },
+        {
+          "name": "10. Try Completed Exercise with Zero Hearts",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Can attempt completed exercise even with zero hearts\", function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    ",
+                  "    // Should be allowed to attempt the completed exercise",
+                  "    console.log(\"Correctly allowed to attempt completed exercise with zero hearts\");",
+                  "})"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Get the completed exercise details to find the correct answer option",
+                  "const exerciseId = pm.environment.get(\"completedExerciseId\");",
+                  "",
+                  "pm.sendRequest({",
+                  "    url: `${pm.environment.get(\"baseUrl\")}/api/exercises/${exerciseId}`,",
+                  "    method: 'GET',",
+                  "    header: {",
+                  "        'Authorization': `Bearer ${pm.environment.get(\"accessToken\")}`",
+                  "    }",
+                  "}, function (err, res) {",
+                  "    if (err) {",
+                  "        console.error(err);",
+                  "    } else {",
+                  "        const exercise = res.json().data;",
+                  "        ",
+                  "        if (exercise && exercise.options && exercise.options.length > 0) {",
+                  "            // Find the correct option",
+                  "            const correctOption = exercise.options.find(option => option.isCorrect);",
+                  "            ",
+                  "            if (correctOption) {",
+                  "                pm.environment.set(\"correctCompletedOptionId\", correctOption.id);",
+                  "            }",
+                  "        }",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"answer\": \"{{correctCompletedOptionId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/api/exercises/{{completedExerciseId}}/check",
+            "description": "Try a completed exercise with zero hearts (should be allowed)"
+          },
+          "response": []
+        },
+        {
+          "name": "11. Regain a Heart",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Correct answer on completed exercise with zero hearts gains a heart\", function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    ",
+                  "    const result = jsonData.data;",
+                  "    ",
+                  "    // Check for correct answer",
+                  "    pm.expect(result.isCorrect).to.be.true;",
+                  "    ",
+                  "    // Check heart information",
+                  "    pm.expect(result).to.have.property('hearts');",
+                  "    pm.expect(result).to.have.property('heartChange');",
+                  "    ",
+                  "    // For correct answer on completed exercise, should gain 1 heart",
+                  "    pm.expect(result.heartChange).to.equal(1);",
+                  "    pm.expect(result.hearts).to.equal(1);",
+                  "    ",
+                  "    console.log(`Successfully regained a heart: ${result.hearts}`);",
+                  "    ",
+                  "    // Reset hearts back to 5 for other tests",
+                  "    pm.environment.set(\"resetHearts\", true);",
+                  "})"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"answer\": \"{{correctCompletedOptionId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/api/exercises/{{completedExerciseId}}/check",
+            "description": "Submit a correct answer to regain a heart when at zero hearts"
+          },
+          "response": []
+        },
+        {
+          "name": "12. Reset Hearts to 5",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Hearts reset to 5 for other tests\", function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.success).to.be.true;",
+                  "    ",
+                  "    const user = jsonData.data;",
+                  "    pm.expect(user.hearts).to.equal(5);",
+                  "    console.log(\"Successfully reset hearts to 5\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Only run if we need to reset hearts",
+                  "const resetHearts = pm.environment.get(\"resetHearts\");",
+                  "if (!resetHearts) {",
+                  "    postman.setNextRequest(null); // Skip this request",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"hearts\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": "{{baseUrl}}/api/users/me",
+            "description": "Reset hearts back to 5 for other tests"
+          },
+          "response": []
+        }
+      ],
+      "description": "Tests for the hearts system - losing/gaining hearts and zero hearts restrictions"
+    },
+  
+
+		{
+			"name": "DEMO USER JOURNEY",
+			"item": [
+				{
+					"name": "1. Register Demo User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Registration successful\", function() {",
+									"    pm.response.to.have.status(201);",
+									"    pm.response.to.be.json;",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"demo1234@germangains.com\", \n  \"password\": \"password123\",\n  \"username\": \"demouser\",\n  \"firstName\": \"Demo\",\n  \"lastName\": \"User\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"register"
+							]
+						},
+						"description": "Register using the demo user from our seed file"
+					},
+					"response": []
+				},
+				{
+					"name": "2. Login Demo User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"pm.environment.set(\"accessToken\", jsonData.data.accessToken);",
+									"pm.environment.set(\"refreshToken\", jsonData.data.refreshToken);",
+									"",
+									"pm.test(\"Login successful\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    pm.expect(jsonData.data.accessToken).to.be.a('string');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"demo@germangains.com\",\n  \"password\": \"password123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"login"
+							]
+						},
+						"description": "Login with the demo user credentials"
+					},
+					"response": []
+				},
+				{
+					"name": "3. View Available Courses",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Courses loaded successfully\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    ",
+									"    // Store the first course ID (A1.1)",
+									"    const courses = jsonData.data;",
+									"    if(courses && courses.length > 0) {",
+									"        pm.environment.set(\"courseA1_1_id\", courses[0].id);",
+									"    }",
+									"    ",
+									"    // Verify we have 4 courses as per our seed file",
+									"    pm.expect(courses.length).to.equal(4);",
+									"    ",
+									"    // A1.1 should be first and unlocked",
+									"    pm.expect(courses[0].title).to.include('A1.1');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/courses",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"courses"
+							]
+						},
+						"description": "Get all available courses - A1.1 should be unlocked"
+					},
+					"response": []
+				},
+				{
+					"name": "4. View A1.1 Course Modules",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Modules loaded successfully\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    ",
+									"    const modules = jsonData.data;",
+									"    ",
+									"    // Should have 2 modules as per our seed file",
+									"    pm.expect(modules.length).to.equal(2);",
+									"    ",
+									"    // First module should be unlocked",
+									"    pm.expect(modules[0].isLocked).to.equal(false);",
+									"    ",
+									"    // Second module should be locked",
+									"    pm.expect(modules[1].isLocked).to.equal(true);",
+									"    ",
+									"    // Store first module ID for next requests",
+									"    pm.environment.set(\"firstModuleId\", modules[0].id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/modules/course/{{courseA1_1_id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"modules",
+								"course",
+								"{{courseA1_1_id}}"
+							]
+						},
+						"description": "Get modules for A1.1 - should show first module unlocked, second locked"
+					},
+					"response": []
+				},
+				{
+					"name": "5. View First Module Lessons",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Lessons loaded successfully\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    ",
+									"    const lessons = jsonData.data;",
+									"    ",
+									"    // Should have 5 lessons as per our seed file",
+									"    pm.expect(lessons.length).to.equal(5);",
+									"    ",
+									"    // Store the first lesson ID for next request",
+									"    pm.environment.set(\"firstLessonId\", lessons[0].id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/lesson/module/{{firstModuleId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"lesson",
+								"module",
+								"{{firstModuleId}}"
+							]
+						},
+						"description": "Get lessons for the first module - shows all 5 lessons"
+					},
+					"response": []
+				},
+				{
+					"name": "6. View First Lesson Exercises",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Exercises loaded successfully\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    ",
+									"    const exercises = jsonData.data;",
+									"    ",
+									"    // Should have 5 exercises as per our seed file",
+									"    pm.expect(exercises.length).to.equal(5);",
+									"    ",
+									"    // Store the first exercise ID for next request",
+									"    pm.environment.set(\"firstExerciseId\", exercises[0].id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/exercises/lesson/{{firstLessonId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"exercises",
+								"lesson",
+								"{{firstLessonId}}"
+							]
+						},
+						"description": "Get all exercises for the first lesson"
+					},
+					"response": []
+				},
+				{
+					"name": "7. Get First Exercise Details",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Exercise details loaded successfully\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    ",
+									"    const exercise = jsonData.data;",
+									"    pm.expect(exercise.options.length).to.be.greaterThan(0);",
+									"    ",
+									"    // Find the correct answer (we need this since we're answering as the user)",
+									"    // In a real app, the frontend wouldn't know which is correct",
+									"    const options = exercise.options;",
+									"    const correctOption = options.find(option => option.text === \"Hello\");",
+									"    if (correctOption) {",
+									"        pm.environment.set(\"correctOptionId\", correctOption.id);",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/exercises/{{firstExerciseId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"exercises",
+								"{{firstExerciseId}}"
+							]
+						},
+						"description": "Get details for the first exercise"
+					},
+					"response": []
+				},
+				{
+					"name": "8. Submit Correct Answer",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Answer submitted successfully\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    pm.expect(jsonData.data.isCorrect).to.be.true;",
+									"    pm.expect(jsonData.data.xpGained).to.be.above(0);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "password12",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "test@example.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"answer\": \"{{ID}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/exercises/{{firstExerciseId}}/check",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"exercises",
+								"{{firstExerciseId}}",
+								"check"
+							]
+						},
+						"description": "Submit a correct answer to the first exercise"
+					},
+					"response": []
+				},
+				{
+					"name": "9. Check User Progress",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Progress data loaded successfully\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    ",
+									"    // Should have XP from the exercise we just completed",
+									"    const user = jsonData.data;",
+									"    pm.expect(user.xp).to.be.above(0);",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "password12",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "test@example.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"me"
+							]
+						},
+						"description": "Check user progress after completing exercise"
+					},
+					"response": []
+				},
+				{
+					"name": "10. View Pronunciation Groups",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Pronunciation groups loaded successfully\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    ",
+									"    const groups = jsonData.data;",
+									"    ",
+									"    // Should have 3 groups as per our seed file",
+									"    pm.expect(groups.length).to.equal(3);",
+									"    ",
+									"    // Store first group ID for next request",
+									"    pm.environment.set(\"firstSoundGroupId\", groups[0].id);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/vocabulary/groups",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"vocabulary",
+								"groups"
+							]
+						},
+						"description": "Get all pronunciation sound groups"
+					},
+					"response": []
+				},
+				{
+					"name": "11. View Vowels Group Sounds",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Sound group details loaded successfully\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    ",
+									"    const group = jsonData.data;",
+									"    ",
+									"    // Should have vowel sounds",
+									"    pm.expect(group.sounds.length).to.be.above(0);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/vocabulary/groups/{{firstSoundGroupId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"vocabulary",
+								"groups",
+								"{{firstSoundGroupId}}"
+							]
+						},
+						"description": "Get details for the vowels sound group"
+					},
+					"response": []
+				}
+			],
+			"description": "Test the complete user learning flow based on seeded data"
+		},
+		{
+			"name": "PROGRESS TRACKING",
+			"item": [
+				{
+					"name": "Get Course Progress",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Course progress loaded successfully\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    ",
+									"    const progress = jsonData.data;",
+									"    pm.expect(progress).to.have.property('progress');",
+									"    pm.expect(progress).to.have.property('completedExercises');",
+									"    pm.expect(progress).to.have.property('totalExercises');",
+									"    pm.expect(progress).to.have.property('completedModules');",
+									"    pm.expect(progress).to.have.property('totalModules');",
+									"    pm.expect(progress).to.have.property('completedLessons');",
+									"    pm.expect(progress).to.have.property('totalLessons');",
+									"    pm.expect(progress).to.have.property('isCompleted');",
+									"    pm.expect(progress).to.have.property('status');",
+									"    pm.expect(progress).to.have.property('actionLabel');",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "password12",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "test@example.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/courses/{{courseA1_1_id}}/progress",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"courses",
+								"{{courseA1_1_id}}",
+								"progress"
+							]
+						},
+						"description": "Get detailed progress information for a specific course"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Courses with Progress",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"All courses with progress loaded successfully\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    ",
+									"    const courses = jsonData.data;",
+									"    pm.expect(courses).to.be.an('array');",
+									"    pm.expect(courses.length).to.be.at.least(1);",
+									"    ",
+									"    // Check first course has progress data",
+									"    const firstCourse = courses[0];",
+									"    pm.expect(firstCourse).to.have.property('progress');",
+									"    pm.expect(firstCourse).to.have.property('completedModules');",
+									"    pm.expect(firstCourse).to.have.property('totalModules');",
+									"    pm.expect(firstCourse).to.have.property('completedLessons');",
+									"    pm.expect(firstCourse).to.have.property('totalLessons');",
+									"    pm.expect(firstCourse).to.have.property('isCompleted');",
+									"    pm.expect(firstCourse).to.have.property('status');",
+									"    pm.expect(firstCourse).to.have.property('actionLabel');",
+									"    ",
+									"    // Verify course unlock logic",
+									"    if (firstCourse.order === 1) {",
+									"        pm.expect(firstCourse.status).to.not.equal('locked');",
+									"    } else {",
+									"        console.log(`Course ${firstCourse.id} status: ${firstCourse.status}`);",
+									"    }",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "password12",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "test@example.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/courses/progress/all",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"courses",
+								"progress",
+								"all"
+							]
+						},
+						"description": "Get all courses with their progress information"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Module Lessons with Progress",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Lessons with progress loaded successfully\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    ",
+									"    const lessons = jsonData.data;",
+									"    pm.expect(lessons).to.be.an('array');",
+									"    pm.expect(lessons.length).to.be.at.least(1);",
+									"    ",
+									"    // Check first lesson has progress data",
+									"    const firstLesson = lessons[0];",
+									"    pm.expect(firstLesson).to.have.property('progress');",
+									"    pm.expect(firstLesson).to.have.property('isCompleted');",
+									"    pm.expect(firstLesson).to.have.property('isLocked');",
+									"    pm.expect(firstLesson).to.have.property('status');",
+									"    pm.expect(firstLesson).to.have.property('actionLabel');",
+									"    pm.expect(firstLesson).to.have.property('isLearned');",
+									"    pm.expect(firstLesson).to.have.property('completedExercises');",
+									"    pm.expect(firstLesson).to.have.property('totalExercises');",
+									"    ",
+									"    // First lesson in a module should always be unlocked",
+									"    if (firstLesson.order === 1) {",
+									"        pm.expect(firstLesson.isLocked).to.be.false;",
+									"    }",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "password12",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "test@example.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/lesson/module/{{firstModuleId}}/progress",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"lesson",
+								"module",
+								"{{firstModuleId}}",
+								"progress"
+							]
+						},
+						"description": "Get lessons with progress information for a specific module"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Module Progress",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Module progress loaded successfully\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    ",
+									"    const modules = jsonData.data;",
+									"    pm.expect(modules).to.be.an('array');",
+									"    pm.expect(modules.length).to.be.at.least(1);",
+									"    ",
+									"    // Check if modules have the new progress properties",
+									"    const firstModule = modules[0];",
+									"    pm.expect(firstModule).to.have.property('progress');",
+									"    pm.expect(firstModule).to.have.property('completedExercises');",
+									"    pm.expect(firstModule).to.have.property('totalExercises');",
+									"    pm.expect(firstModule).to.have.property('completedLessons');",
+									"    pm.expect(firstModule).to.have.property('totalLessons');",
+									"    pm.expect(firstModule).to.have.property('isCompleted');",
+									"    pm.expect(firstModule).to.have.property('isLocked');",
+									"    pm.expect(firstModule).to.have.property('status');",
+									"    pm.expect(firstModule).to.have.property('actionLabel');",
+									"    ",
+									"    // First module should not be locked",
+									"    pm.expect(firstModule.isLocked).to.be.false;",
+									"    ",
+									"    // Store information for sequence testing",
+									"    if (modules.length > 1) {",
+									"        const secondModule = modules[1];",
+									"        pm.environment.set(\"secondModuleId\", secondModule.id);",
+									"        pm.environment.set(\"secondModuleStatus\", secondModule.status);",
+									"        console.log(`Second module status: ${secondModule.status}`);",
+									"    }",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "password12",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "test@example.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/modules/course/{{courseA1_1_id}}/progress",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"modules",
+								"course",
+								"{{courseA1_1_id}}",
+								"progress"
+							]
+						},
+						"description": "Get all modules with progress info for a specific course"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Exercises with Status",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Exercises with status loaded successfully\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    ",
+									"    const data = jsonData.data;",
+									"    pm.expect(data).to.have.property('exercises').that.is.an('array');",
+									"    pm.expect(data).to.have.property('progress');",
+									"    pm.expect(data).to.have.property('completedExercises');",
+									"    pm.expect(data).to.have.property('totalExercises');",
+									"    pm.expect(data).to.have.property('isCompleted');",
+									"    ",
+									"    // Check the exercise has completion status",
+									"    if (data.exercises.length > 0) {",
+									"        pm.expect(data.exercises[0]).to.have.property('isCompleted');",
+									"        pm.expect(data.exercises[0]).to.have.property('completedAt');",
+									"    }",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "password12",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "test@example.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/exercises/status/lesson/{{firstLessonId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"exercises",
+								"status",
+								"lesson",
+								"{{firstLessonId}}"
+							]
+						},
+						"description": "Get exercises with completion status for a specific lesson"
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Lesson Status Changed",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Lesson status changed to PRACTICE\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    ",
+									"    const lessons = jsonData.data;",
+									"    const firstLesson = lessons[0];",
+									"    ",
+									"    // First lesson should now be completed",
+									"    pm.expect(firstLesson.isCompleted).to.be.true;",
+									"    pm.expect(firstLesson.actionLabel).to.equal(\"PRACTICE\");",
+									"    pm.expect(firstLesson.status).to.equal(\"practice\");",
+									"    pm.expect(firstLesson.isLearned).to.be.true;",
+									"    console.log('Lesson successfully marked as PRACTICE');",
+									"    ",
+									"    // Check if next lesson is unlocked",
+									"    if (lessons.length > 1) {",
+									"        const secondLesson = lessons[1];",
+									"        pm.expect(secondLesson.isLocked).to.be.false;",
+									"        console.log('Second lesson unlocked status: ' + !secondLesson.isLocked);",
+									"        ",
+									"        // Store second lesson ID for possible further testing",
+									"        pm.environment.set(\"secondLessonId\", secondLesson.id);",
+									"    }",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "password12",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "test@example.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/lesson/module/{{firstModuleId}}/progress",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"lesson",
+								"module",
+								"{{firstModuleId}}",
+								"progress"
+							]
+						},
+						"description": "Verify that a completed lesson is now marked as PRACTICE and next lesson is unlocked"
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Module Progress Updated",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Module progress updated after lesson completion\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    ",
+									"    const modules = jsonData.data;",
+									"    pm.expect(modules).to.be.an('array');",
+									"    ",
+									"    const firstModule = modules[0];",
+									"    ",
+									"    // Module should show partial completion",
+									"    pm.expect(firstModule.completedLessons).to.be.at.least(1);",
+									"    pm.expect(firstModule.progress).to.be.greaterThan(0);",
+									"    ",
+									"    console.log(`Module progress: ${firstModule.progress * 100}% (${firstModule.completedLessons}/${firstModule.totalLessons} lessons)`);",
+									"    ",
+									"    // Check if module is fully completed",
+									"    if (firstModule.isCompleted) {",
+									"        console.log('Module is fully completed!');",
+									"        ",
+									"        // Check if second module is now unlocked",
+									"        if (modules.length > 1) {",
+									"            const secondModule = modules[1];",
+									"            pm.expect(secondModule.isLocked).to.be.false;",
+									"            console.log('Second module is now unlocked: ' + !secondModule.isLocked);",
+									"        }",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "password12",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "test@example.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/modules/course/{{courseA1_1_id}}/progress",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"modules",
+								"course",
+								"{{courseA1_1_id}}",
+								"progress"
+							]
+						},
+						"description": "Verify that module progress is updated after completing a lesson"
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Course Progress Updated",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Course progress updated after lesson completion\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    ",
+									"    const progress = jsonData.data;",
+									"    ",
+									"    // Course should show partial completion",
+									"    pm.expect(progress.completedLessons).to.be.at.least(1);",
+									"    pm.expect(progress.progress).to.be.greaterThan(0);",
+									"    pm.expect(progress.completedExercises).to.be.at.least(1);",
+									"    ",
+									"    console.log(`Course progress: ${progress.progress * 100}%`);",
+									"    console.log(`Lessons: ${progress.completedLessons}/${progress.totalLessons}`);",
+									"    console.log(`Modules: ${progress.completedModules}/${progress.totalModules}`);",
+									"    console.log(`Exercises: ${progress.completedExercises}/${progress.totalExercises}`);",
+									"    ",
+									"    // If course is completed, check next course unlock status",
+									"    if (progress.isCompleted) {",
+									"        console.log('Course is fully completed!');",
+									"        pm.environment.set(\"courseCompleted\", true);",
+									"    }",
+									"});",
+									"",
+									"// Continue to check course progression",
+									"if (pm.environment.get(\"courseCompleted\")) {",
+									"    postman.setNextRequest(\"Check Next Course Unlocked\");",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "password12",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "test@example.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/courses/{{courseA1_1_id}}/progress",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"courses",
+								"{{courseA1_1_id}}",
+								"progress"
+							]
+						},
+						"description": "Verify that course progress is updated after completing a lesson"
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Course Progress Updated",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Next course unlock status checked\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.be.true;",
+									"    ",
+									"    const courses = jsonData.data;",
+									"    ",
+									"    // Find the current and next courses",
+									"    let currentCourseIndex = -1;",
+									"    const courseId = parseInt(pm.environment.get(\"courseA1_1_id\"));",
+									"    ",
+									"    for (let i = 0; i < courses.length; i++) {",
+									"        if (courses[i].id === courseId) {",
+									"            currentCourseIndex = i;",
+									"            break;",
+									"        }",
+									"    }",
+									"    ",
+									"    // If we found the course and there's a next one",
+									"    if (currentCourseIndex >= 0 && currentCourseIndex < courses.length - 1) {",
+									"        const nextCourse = courses[currentCourseIndex + 1];",
+									"        ",
+									"        // Log the next course's unlock status",
+									"        console.log(`Next course (${nextCourse.title}) status: ${nextCourse.status}`);",
+									"        console.log(`Next course action: ${nextCourse.actionLabel}`);",
+									"        ",
+									"        // If first course is completed, next course should be unlocked",
+									"        if (pm.environment.get(\"courseCompleted\") === true) {",
+									"            pm.expect(nextCourse.status).to.not.equal('locked');",
+									"            console.log('Next course is unlocked as expected!');",
+									"        }",
+									"    } else {",
+									"        console.log('Could not verify next course - either current course not found or no next course exists');",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "password12",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "test@example.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/courses/progress/all",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"courses",
+								"progress",
+								"all"
+							]
+						},
+						"description": "Check if completing a course has unlocked the next course"
+					},
+					"response": []
+				}
+			],
+			"description": "Test the progress tracking and completion status features"
+		},
+		{
+			"name": "USER (Chi Quynh)",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/register",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"register"
+							]
+						},
+						"description": "Register a new user"
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"pm.environment.set(\"accessToken\", jsonData.data.accessToken);",
+									"pm.environment.set(\"refreshToken\", jsonData.data.refreshToken);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"login"
+							]
+						},
+						"description": "Login with existing account"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current User",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "password12",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "test@example.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"me"
+							]
+						},
+						"description": "Get profile of the currently logged in user"
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "password12",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "test@example.com",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/users/logout",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"logout"
+							]
+						},
+						"description": "Logout and invalidate current token"
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/users/refresh-token",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"refresh-token"
+							]
+						},
+						"description": "Get a new access token using refresh token"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Courses",
+			"item": [
+				{
+					"name": "Get All Courses",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/courses",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"courses"
+							]
+						},
+						"description": "Get all available language courses"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Course By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/courses/2",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"courses",
+								"2"
+							]
+						},
+						"description": "Get a specific course by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Course (Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"German A2.1\",\n  \"description\": \"Intermediate German course - first level\",\n  \"level\": \"A2_1\",\n  \"imageSrc\": \"https://example.com/german-a2.jpg\",\n  \"order\": 3\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/courses",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"courses"
+							]
+						},
+						"description": "Create a new course (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Course (Admin)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"German A1.1 - Updated\",\n  \"description\": \"Updated description for beginner German course\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/courses/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"courses",
+								"1"
+							]
+						},
+						"description": "Update an existing course (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Course (Admin)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/courses/3",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"courses",
+								"3"
+							]
+						},
+						"description": "Delete a course (Admin only)"
+					},
+					"response": []
+				}
+			],
+			"description": "Course management endpoints"
+		},
+		{
+			"name": "Modules",
+			"item": [
+				{
+					"name": "Get All Modules",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/modules",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"modules"
+							]
+						},
+						"description": "Get all learning modules"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Modules By Course ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/modules/course/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"modules",
+								"course",
+								"1"
+							]
+						},
+						"description": "Get all modules for a specific course"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Module By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/modules/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"modules",
+								"1"
+							]
+						},
+						"description": "Get a specific module by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Module (Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"courseId\": 1,\n  \"title\": \"Food and Drinks\",\n  \"description\": \"Learn vocabulary for ordering food and drinks in German\",\n  \"order\": 3,\n  \"xpReward\": 30,\n  \"estimatedTime\": 45,\n  \"isLocked\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/modules",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"modules"
+							]
+						},
+						"description": "Create a new module (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Module (Admin)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Updated Module Title\",\n  \"description\": \"Updated module description\",\n  \"isLocked\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/modules/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"modules",
+								"1"
+							]
+						},
+						"description": "Update an existing module (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Module (Admin)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/modules/3",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"modules",
+								"3"
+							]
+						},
+						"description": "Delete a module (Admin only)"
+					},
+					"response": []
+				}
+			],
+			"description": "Module management endpoints"
+		},
+		{
+			"name": "Lessons",
+			"item": [
+				{
+					"name": "Get All Lessons",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/lesson",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"lesson"
+							]
+						},
+						"description": "Get all lessons across all modules"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Lessons By Module ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/lesson/module/2",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"lesson",
+								"module",
+								"2"
+							]
+						},
+						"description": "Get all lessons for a specific module"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Lesson By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/lesson/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"lesson",
+								"1"
+							]
+						},
+						"description": "Get a specific lesson with its exercises"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Lesson (Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"moduleId\": 1,\n  \"title\": \"Saying Hello\",\n  \"description\": \"Learn basic greeting expressions in German\",\n  \"order\": 1,\n  \"xpReward\": 10,\n  \"estimatedTime\": 15\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/lesson",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"lesson"
+							]
+						},
+						"description": "Create a new lesson (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Lesson (Admin)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Updated Lesson Title\",\n  \"description\": \"Updated lesson description\",\n  \"xpReward\": 15\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/lesson/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"lesson",
+								"1"
+							]
+						},
+						"description": "Update an existing lesson (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Lesson (Admin)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/lesson/3",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"lesson",
+								"3"
+							]
+						},
+						"description": "Delete a lesson (Admin only)"
+					},
+					"response": []
+				}
+			],
+			"description": "Lesson management endpoints"
+		},
+		{
+			"name": "Exercises",
+			"item": [
+				{
+					"name": "Get All Exercises",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/exercises",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"exercises"
+							]
+						},
+						"description": "Get all exercises across all lessons"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Exercises By Lesson ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/exercises/lesson/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"exercises",
+								"lesson",
+								"1"
+							]
+						},
+						"description": "Get all exercises for a specific lesson"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Exercise By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/exercises/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"exercises",
+								"1"
+							]
+						},
+						"description": "Get a specific exercise by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Check Exercise Answer",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"answer\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/exercises/1/check",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"exercises",
+								"1",
+								"check"
+							]
+						},
+						"description": "Submit an answer and check if it's correct"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Exercise (Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"lessonId\": 1,\n  \"type\": \"MULTIPLE_CHOICE\",\n  \"question\": \"What is 'hello' in German?\",\n  \"instruction\": \"Choose the correct translation\",\n  \"order\": 1,\n  \"xpReward\": 2,\n  \"timeLimit\": 30,\n  \"options\": [\n    {\n      \"text\": \"Tschüss\",\n      \"isCorrect\": false,\n      \"order\": 1\n    },\n    {\n      \"text\": \"Hallo\",\n      \"isCorrect\": true,\n      \"order\": 2\n    },\n    {\n      \"text\": \"Danke\",\n      \"isCorrect\": false,\n      \"order\": 3\n    },\n    {\n      \"text\": \"Bitte\",\n      \"isCorrect\": false,\n      \"order\": 4\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/exercises",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"exercises"
+							]
+						},
+						"description": "Create a new exercise (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Exercise (Admin)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"question\": \"What is the German word for 'hello'?\",\n  \"xpReward\": 3,\n  \"options\": [\n    {\n      \"text\": \"Tschüss\",\n      \"isCorrect\": false,\n      \"order\": 1\n    },\n    {\n      \"text\": \"Hallo\",\n      \"isCorrect\": true,\n      \"order\": 2\n    },\n    {\n      \"text\": \"Danke\",\n      \"isCorrect\": false,\n      \"order\": 3\n    },\n    {\n      \"text\": \"Bitte\",\n      \"isCorrect\": false,\n      \"order\": 4\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/exercises/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"exercises",
+								"1"
+							]
+						},
+						"description": "Update an existing exercise (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Exercise (Admin)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/exercises/3",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"exercises",
+								"3"
+							]
+						},
+						"description": "Delete an exercise (Admin only)"
+					},
+					"response": []
+				}
+			],
+			"description": "Exercise management endpoints"
+		},
+		{
+			"name": "Exercise Options",
+			"item": [
+				{
+					"name": "Get Options By Exercise ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/exercise-options/exercise/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"exercise-options",
+								"exercise",
+								"1"
+							]
+						},
+						"description": "Get all options for a specific exercise"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Option (Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"exerciseId\": 1,\n  \"text\": \"Guten Tag\",\n  \"isCorrect\": false,\n  \"order\": 5\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/exercise-options",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"exercise-options"
+							]
+						},
+						"description": "Create a new exercise option (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Option (Admin)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"text\": \"Hallo (Hello)\",\n  \"isCorrect\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/exercise-options/2",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"exercise-options",
+								"2"
+							]
+						},
+						"description": "Update an exercise option (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Option (Admin)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/exercise-options/5",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"exercise-options",
+								"5"
+							]
+						},
+						"description": "Delete an option (Admin only)"
+					},
+					"response": []
+				}
+			],
+			"description": "Exercise option management endpoints"
+		},
+		{
+			"name": "Vocabulary",
+			"item": [
+				{
+					"name": "Get All Sound Groups",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/vocabulary/groups",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"vocabulary",
+								"groups"
+							]
+						},
+						"description": "Get all sound groups"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Sound Group By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/vocabulary/groups/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"vocabulary",
+								"groups",
+								"1"
+							]
+						},
+						"description": "Get a specific sound group by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Sounds",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/vocabulary/sounds",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"vocabulary",
+								"sounds"
+							]
+						},
+						"description": "Get all German sounds"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Sound By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/vocabulary/sounds/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"vocabulary",
+								"sounds",
+								"1"
+							]
+						},
+						"description": "Get a specific sound by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Sound Group (Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Umlauts\",\n  \"order\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/vocabulary/groups",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"vocabulary",
+								"groups"
+							]
+						},
+						"description": "Create a new sound group (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Sound (Admin)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"symbol\": \"ö\",\n  \"exampleWord\": \"schön\",\n  \"type\": \"UMLAUT\",\n  \"audioSrc\": \"https://example.com/audio/o-umlaut.mp3\",\n  \"groupIds\": [2]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/vocabulary/sounds",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"vocabulary",
+								"sounds"
+							]
+						},
+						"description": "Create a new German sound (Admin only)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Sound (Admin)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"exampleWord\": \"schön (beautiful)\",\n  \"audioSrc\": \"https://example.com/audio/o-umlaut-updated.mp3\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/vocabulary/sounds/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"vocabulary",
+								"sounds",
+								"1"
+							]
+						},
+						"description": "Update a German sound (Admin only)"
+					},
+					"response": []
+				}
+			],
+			"description": "Vocabulary/pronunciation feature endpoints"
+		},
+		{
+			"name": "General",
+			"item": [
+				{
+					"name": "API Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/health",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"health"
+							]
+						},
+						"description": "Check if the API is operational"
+					},
+					"response": []
+				},
+				{
+					"name": "Test Database Connection",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/test-db",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"test-db"
+							]
+						},
+						"description": "Check database connectivity"
+					},
+					"response": []
+				},
+				{
+					"name": "API Root",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}",
+							"host": [
+								"{{baseUrl}}"
+							]
+						},
+						"description": "Get API information and available routes"
+					},
+					"response": []
+				}
+			],
+			"description": "General API endpoints"
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		}
+	]
+}
+
+
+
+    

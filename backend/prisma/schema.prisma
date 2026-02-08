@@ -1,0 +1,341 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enums
+enum LanguageLevel {
+  A1_1 @map("A1.1")
+  A1_2 @map("A1.2")
+  A2_1 @map("A2.1")
+  A2_2 @map("A2.2")
+}
+
+enum ExerciseType {
+  MULTIPLE_CHOICE
+  VOCABULARY_CHECK
+  FILL_IN_BLANK
+  SENTENCE_ORDER
+  PRONUNCIATION_PRACTICE
+}
+
+enum ReviewItemType {
+  LESSON
+  WORD
+}
+
+enum NotificationType {
+  REMINDER
+  STREAK
+  ACHIEVEMENT
+  SYSTEM
+}
+
+enum AuditAction {
+  LOGIN
+  LOGOUT
+  PROGRESS_UPDATE
+  PROFILE_UPDATE
+  REVIEW_COMPLETE
+}
+
+// Course Structure
+model Course {
+  id          Int           @id @default(autoincrement())
+  title       String //"German A1.1", "German A1.2", etc.
+  description String?
+  imageSrc    String        @map("image_src")
+  level       LanguageLevel
+  order       Int
+  isActive    Boolean       @default(true) @map("is_active")
+  createdAt   DateTime      @default(now()) @map("created_at")
+  modules     Module[]
+
+  @@map("courses")
+}
+
+model Module {
+  id            Int      @id @default(autoincrement())
+  courseId      Int      @map("course_id")
+  title         String
+  description   String?
+  order         Int
+  requiredXP    Int      @default(0) @map("required_xp")
+  xpReward      Int      @default(10) @map("xp_reward")
+  estimatedTime Int?     @map("estimated_time")
+  isLocked      Boolean  @default(false) @map("is_locked")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  course           Course               @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons          Lesson[]
+  prerequisites    ModulePrerequisite[] @relation("ModulePrerequisites")
+  dependentModules ModulePrerequisite[] @relation("DependentModules")
+
+  @@map("modules")
+}
+
+model ModulePrerequisite {
+  id             Int @id @default(autoincrement())
+  moduleId       Int @map("module_id")
+  prerequisiteId Int @map("prerequisite_id")
+
+  module             Module @relation("ModulePrerequisites", fields: [moduleId], references: [id], onDelete: Cascade)
+  prerequisiteModule Module @relation("DependentModules", fields: [prerequisiteId], references: [id], onDelete: Cascade)
+
+  @@unique([moduleId, prerequisiteId])
+  @@map("module_prerequisites")
+}
+
+model Lesson {
+  id            Int      @id @default(autoincrement())
+  moduleId      Int      @map("module_id")
+  title         String
+  description   String?
+  order         Int
+  xpReward      Int      @default(5) @map("xp_reward")
+  estimatedTime Int?     @map("estimated_time")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  module    Module     @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  exercises Exercise[]
+
+  @@map("lessons")
+}
+
+// Exercise System
+model Exercise {
+  id          Int          @id @default(autoincrement())
+  lessonId    Int          @map("lesson_id")
+  type        ExerciseType
+  question    String
+  instruction String?
+  order       Int
+  xpReward    Int          @default(1) @map("xp_reward")
+  timeLimit   Int?         @map("time_limit")
+  createdAt   DateTime     @default(now()) @map("created_at")
+
+  lesson           Lesson             @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  exerciseOptions  ExerciseOption[]
+  exerciseProgress ExerciseProgress[]
+
+  @@map("exercises")
+}
+
+model ExerciseOption {
+  id         Int     @id @default(autoincrement())
+  exerciseId Int     @map("exercise_id")
+  text       String
+  isCorrect  Boolean @map("is_correct")
+  // explanation String?
+  imageSrc   String? @map("image_src")
+  audioSrc   String? @map("audio_src") // later on for Nice to Have feature
+  order      Int?
+
+  exercise Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+
+  @@map("exercise_options")
+}
+
+model ExerciseProgress {
+  id          Int       @id @default(autoincrement())
+  userId      String
+  exerciseId  Int?
+  completed   Boolean   @default(false)
+  completedAt DateTime? @map("completed_at")
+
+  Exercise Exercise? @relation(fields: [exerciseId], references: [id])
+  user     User      @relation(fields: [userId], references: [id])
+}
+
+/**
+ * ==============================================================================
+ */
+enum SoundType {
+  VOWEL
+  CONSONANT
+  DIPHTHONG
+  UMLAUT
+}
+
+model GermanSound {
+  id          Int    @id @default(autoincrement())
+  symbol      String //(ä, ö, ü, ß, ...)
+  exampleWord String //("Mädchen", "König",...)
+
+  audioSrc  String    @map("audio_src")
+  type      SoundType
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  soundGroups SoundGroupSound[]
+
+  @@map("german_sounds")
+}
+
+model SoundGroup {
+  id        Int      @id @default(autoincrement())
+  name      String // e.g., "Umlauts", "Consonants", "Vowels"
+  order     Int
+  createdAt DateTime @default(now()) @map("created_at")
+
+  sounds SoundGroupSound[]
+
+  @@map("sound_groups")
+}
+
+model SoundGroupSound {
+  id      Int @id @default(autoincrement())
+  soundId Int @map("sound_id")
+  groupId Int @map("group_id")
+
+  sound GermanSound @relation(fields: [soundId], references: [id], onDelete: Cascade)
+  group SoundGroup  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([soundId, groupId])
+  @@map("sound_group_sounds")
+}
+
+enum SocialProvider {
+  GOOGLE
+  FACEBOOK
+  APPLE
+}
+
+model User {
+  id        String    @id @default(cuid())
+  clerkId   String?   @unique
+  email     String    @unique
+  username  String    @unique
+  password  String
+  firstName String?
+  lastName  String?
+  level     Int       @default(1)
+  xp        Int       @default(0)
+  streak    Int       @default(0)
+  hearts    Int       @default(5)
+  lastLogin DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // Lernfortschritt
+  progress         UserProgress[]
+  ExerciseProgress ExerciseProgress[]
+  refreshTokens    RefreshToken[]
+  reviewItems      ReviewItem[]
+  notifications    Notification[]
+  achievements     UserAchievement[]
+  auditLogs        AuditLog[]
+
+  @@map("users")
+}
+
+model UserProgress {
+  id          String    @id @default(cuid())
+  userId      String
+  lessonId    String
+  exerciseId  String?
+  completed   Boolean   @default(false)
+  score       Int?
+  attempts    Int       @default(0)
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId, exerciseId])
+  @@map("user_progress")
+}
+
+model ReviewItem {
+  id             String         @id @default(cuid())
+  userId         String
+  itemType       ReviewItemType @default(LESSON) @map("item_type")
+  lessonId       Int?
+  wordId         String?
+  dueAt          DateTime       @map("due_at")
+  intervalDays   Int            @default(1) @map("interval_days")
+  easeFactor     Float          @default(2.5) @map("ease_factor")
+  repetitions    Int            @default(0)
+  lastReviewedAt DateTime?      @map("last_reviewed_at")
+  createdAt      DateTime       @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("review_items")
+}
+
+model Achievement {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  title       String
+  description String
+  xpReward    Int      @default(0) @map("xp_reward")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  userAchievements UserAchievement[]
+
+  @@map("achievements")
+}
+
+model UserAchievement {
+  id            String    @id @default(cuid())
+  userId        String
+  achievementId String
+  unlockedAt    DateTime? @map("unlocked_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, achievementId])
+  @@map("user_achievements")
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  title     String
+  body      String?
+  type      NotificationType @default(REMINDER)
+  isRead    Boolean          @default(false) @map("is_read")
+  createdAt DateTime         @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+model AuditLog {
+  id        String      @id @default(cuid())
+  userId    String
+  action    AuditAction
+  entity    String?
+  metadata  Json?
+  createdAt DateTime    @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("audit_logs")
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_tokens")
+}

@@ -1,93 +1,321 @@
-# Bachelorarbeit
+
+# GermanGains - German learning platform
+
+**GermanGains** is a comprehensive, self-paced German language learning platform that combines structured educational content with engaging gamification elements. Designed for learners from beginner (A1.1) to intermediate (A2.2) levels, the platform offers an interactive approach to having fun learning German through progressive content unlocking and achievement-based motivation.
+
+![Login Page](assets/navigation.png)
+
+## Table of Contents
+
+1. [Features](#features)
+2. [Tech Stack](#tech-stack)
+3. [Installing](#installing)
+4. [API Documentaion](#api-documentation)
+5. [Testing](#testing)
+6. [Contributors](#contributors)
+
+## Features
+
+- **JWT Authentication**: Secure user authentication using JSON Web Tokens, ensuring only verified users can access protected resources.
+
+### **Gamification Elements**
+
+- **Levels Unlocking**: Content unlocks progressively as you learn previous lessons
+- **XP/Hearts System**: Earn experience points for correct answers and level up as you progress. Every user has 5 hearts - lose hearts for wrong answers, regain them by practicing completed exercises
+- **Streak Rewards**: Build learning streaks with multiplier bonuses with correct answers (5+ streak = 2x XP, 11+ streak = 3x XP)
+- **Anti-Farming Protection**: XP and streaks only awarded for new exercise completions, encouraging genuine learning
+
+###  **Diverse Exercise Contents**
+
+- **Multiple Choice Questions**: Test vocabulary, grammar, and comprehension
+- **Fill-in-the-Blank**: Practice German sentence structure and word formation
+- **Interactive Learning**: Immediate feedback with detailed explanations
+
+###  **Pronunciation Site**
+- **German Sound Library**: Comprehensive collection of German vowels, umlauts, consonants, and diphthongs
+- **Audio Examples**: Native pronunciation for each sound with example words
+- **Phonetic Learning**: Organized sound groups for systematic pronunciation practice
 
 
+## Tech Stack
 
-## Getting started
+- **Backend:** Express (Node.js)
+- **Frontend:** React
+- **Database:** Postgresql with Prisma ORM
+- **DevOps:** Docker, GitLab CI/CD
+- **Testing Framework**: (Updating...)
+- **UI Library**: ShadCn, Tailwind CSS
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+## Installing
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+### Prerequisites
 
-## Add your files
+To run this project, you need to have the following software installed on your system:
 
-* [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-* [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+- Node.js
+- npm (Node Package Manager)
+
+or
+
+- Docker
+
+You can download and install Node.js and npm from the [Node.js official site](https://nodejs.org/) and Docker by following the instructions on the Docker official site [Docker official site](https://www.docker.com/products/docker-desktop/) .
+
+### Run app with Docker
+
+1. Clone the git repository:
+
+   ```
+   git clone https://code.fbi.h-da.de/sttgleeee/fwe-lernplattform.git
+   ```
+
+2. Navigate to the project directory and build the Docker containers:
+   `   docker compose up --build -d`
+   The backend will be available at [http://localhost:3000](http://localhost:3000).  
+   The frontend will be available at [http://localhost:4242](http://localhost:4242).
+
+Ensure that the relevant ports are free on your system.
+
+### Run app for local development
+
+1. Clone the git repository:
+   ```
+   git clone https://code.fbi.h-da.de/sttgleeee/fwe-lernplattform.git
+   ```
+2. Make sure to create a .env file for both backend and frontend:
+
+- **Backend**
+
+  ```
+  DATABASE_URL="postgresql://germangains:germangains@db:5432/germangainsdb?schema=public"
+
+  # JWT
+  JWT_SECRET="supersecretjwtkey"
+  JWT_REFRESH_SECRET="anotherrefreshsecret"
+  JWT_EXPIRES_IN="1h"
+  JWT_REFRESH_EXPIRES_IN="7d"
+
+  # Server
+  PORT=3000
+  NODE_ENV=development
+
+  # JWT
+  JWT_SECRET="supersecretjwtkey"
+  JWT_REFRESH_SECRET="anotherrefreshsecret"
+  JWT_EXPIRES_IN="1h"
+  JWT_REFRESH_EXPIRES_IN="7d"
+
+  # Server
+  PORT=3000
+  NODE_ENV=development
+
+  #Clerk Configuration
+  CLERK_SECRET_KEY=sk_test_aOjvDHzBHbrLoEW55Mpxseu5GnzYfNRtMvxQgfZgm0
+  CLERK_PUBLISHABLE_KEY=pk_test_aW1tdW5lLWhlcm9uLTMwLmNsZXJrLmFjY291bnRzLmRldiQ
+
+  # OAuth Configuration
+  GOOGLE_CLIENT_ID=1094186197186-lnngf921sj9q3jqf5r955tjkuhml98k7.apps.googleusercontent.com
+  FACEBOOK_APP_ID=24751034047816954
+  ```
+
+- **Frontend**
+
+  ```
+  VITE_API_PROXY_TARGET=http://backend:3000
+
+  # Clerk Configuration
+  VITE_CLERK_PUBLISHABLE_KEY=pk_test_aW1tdW5lLWhlcm9uLTMwLmNsZXJrLmFjY291bnRzLmRldiQ
+  ```
+
+3. Run either backend or frontend or the whole project:
+
+-  Frontend
+
+   ```
+   "npm run start:frontend": "cd frontend && npm install && npm run dev"
+
+   ```
+
+-  Backend locally running command:
+```
+   CMD sh -c "echo \"Using database: $(echo $DATABASE_URL | sed 's/.*@.*\///' | sed 's/?.*$//')\" && \
+            npx prisma generate && \
+            npx prisma migrate deploy && \
+            npx prisma db seed && \
+            npm run dev"
+```
+### Docker trouble shooting
+
+If it occurs either the following errors, make sure to clean your docker images by using `docker-compose prune -a`
 
 ```
-cd existing_repo
-git remote add origin https://code.fbi.h-da.de/chithien.nguyen/bachelorarbeit.git
-git branch -M main
-git push -uf origin main
+    The database can't reach to db:5432
+
+    Error: P1010: User was denied access on the database ⁠ (not available) ⁠
 ```
 
-## Integrate with your tools
+### Stop running the app
 
-* [Set up project integrations](https://code.fbi.h-da.de/chithien.nguyen/bachelorarbeit/-/settings/integrations)
+To stop the app when running with Docker:
 
-## Collaborate with your team
+```
+docker compose down
+```
 
-* [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-* [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-* [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-* [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-* [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+To stop the app when running it locally (both backend and frontend):
+Press `Ctrl + C` inside running terminal to stop the backend and frontend server.
 
-## Test and Deploy
+## API Documentation
 
-Use the built-in continuous integration in GitLab.
+### Endpoints
 
-* [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-* [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-* [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-* [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-* [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+#### Authentification
 
-***
+#### User
 
-# Editing this README
+#### Courses
+-   **GET /api/courses**: Get all courses
+-   **GET /api/courses/:id**: Get course details by ID
+-   **GET /api/courses/:id/progress**: Get user's progress in a specific course (Only for Postman testing - admin)
+-   **GET /api/courses/progress/all**: Get user's progress across all courses
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+#### Modules
+-   **GET /api/modules**: Get all modules
+-   **GET /api/modules/:id**: Get module details by ID
+-   **GET /api/modules/course/:courseId**: Get modules for a specific course (Only for Postman testing - admin)
+-   **GET /api/modules/course/:courseId/progress**: Get user's progress in modules
 
-## Suggestions for a good README
+#### Lessons
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+-   **GET /api/lesson**: Get all lessons (optional moduleId filter)
+-   **GET /api/lesson/:id**: Get lesson details by ID
+-   **GET /api/lesson/module/:moduleId**: Get lessons for a specific module (Only for Postman testing - admin)
+-   **GET /api/lesson/module/:moduleId/progress**: Get user's progress in lessons
 
-## Name
-Choose a self-explaining name for your project.
+#### Exercises
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+-   **GET /api/exercises**: Get all exercises (optional lessonId filter)
+-   **GET /api/exercises/:id**: Get exercise details
+-   **GET /api/exercises/lesson/:lessonId**: Get exercises for specific lesson (Only for Postman testing - admin)
+-   **GET /api/exercises/status/lesson/:lessonId**: Get exercise status with user progress
+-   **POST /api/exercises/:id/check**: Submit answer and check correctness, check logical hearts and streaks functions
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+#### Exercise Options
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+-   **GET /api/exercise-options/exercise/:exerciseId**: Get options for an exercise
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+#### Pronunciation & Vocabulary
+-   **GET /api/vocabulary/groups**: Get all sound groups
+-   **GET /api/vocabulary/groups/:id**: Get sound group by ID
+-   **GET /api/vocabulary/sounds/:id**: Get sound by ID
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+### Data Models
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+#### User
+-   `id`: string,            
+-   `email`: string,         
+-   `username`: string,      
+-   `password`: string,      
+-   `firstName`: string?,    
+-   `lastName`: string?,     
+-   `level`: number,         **Current level (default: 1)**
+-   `xp`: number,             **Xp points (default: 0)**
+-   `streak`: number,         **Consecutive correct answers (default: 0)**
+-   `hearts`: number,         **Available attempts (default: 5)**
+-   `lastLogin`: DateTime?,  
+-   `createdAt`: DateTime,   
+-   `updatedAt`: DateTime    
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+#### Course
+-   `id`: number,          
+-   `title`: string,         **Course title (e.g., "German A1.1")**
+-   `description`: string?,  
+-   `imageSrc`: string,    
+-   `level`: LanguageLevel,   **A1_1, A1_2, A2_1, A2_2**
+-   `order`: number,         **Display order**
+-   `isActive`: boolean,     **Course availability**
+-   `createdAt`: DateTime    
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+#### Module
+-   ``id``: number,            
+-   ``courseId``: number,      
+-   ``title``: string,         
+-   ``description``: string?,  **Optional**
+-   ``order``: number,         **Display order**
+-   ``requiredXP``: number,    **XP required to unlock (default: 0)**
+-   ``xpReward``: number,      **XP gained on completion**
+-   ``estimatedTime``: number?, 
+-   ``isLocked``: boolean,      **Lock status (default: false)**
+-   ``createdAt``: DateTime   
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+#### Lesson
+-   `id`: number,            
+-   `moduleId`: number,      
+-   `title`: string,          **Lesson title**
+-   `description`: string?,   **Optional** 
+-   `order`: number,         
+-   `xpReward`: number,      ** XP gained on completion**
+-   `estimatedTime`: number?, 
+-   `createdAt`: DateTime
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+#### Exercise
+-   `id`: number,            
+-   `lessonId`: number,      
+-   `type`: ExerciseType,     **MULTIPLE_CHOICE, FILL_IN_BLANK, etc.**
+-   `question`: string,       **Exercise question**
+-   `instruction`: string?,  **Optional**
+-   `order`: number,         
+-   `xpReward`: number,       **XP gained **
+-   `timeLimit`: number?,    
+-   `createdAt`: DateTime    
 
-## License
-For open source projects, say how it is licensed.
+#### ExerciseOption
+-   `id`: number,            
+-   `exerciseId`: number,    
+-   `text`: string,          
+-   `isCorrect`: boolean,     **Whether this is a correct answer (True/Flase)**
+-   `imageSrc`: string?,      **Optional image**
+-   `audioSrc`: string?,      **Optional audio**
+-   `order`: number?  
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+#### Pronouciation
+-   `id`: number,            
+-   `symbol`: string,         **Sound symbol (e.g., "ö", "ß")**
+-   `exampleWord`: string,   **Example word using this sound**
+-   `audioSrc`: string,       **Audio pronunciation URL**
+-   `type`: SoundType,        **VOWEL, CONSONANT, DIPHTHONG, UMLAUT**
+-   `createdAt`: DateTime
+
+#### ExerciseProgress
+-   `id`: number,            
+-   `userId`: string,        
+-   `exerciseId`: number?,   
+-   `completed`: boolean,     **Completion status**
+-   `completedAt`: DateTime? 
+
+#### UserProgress
+-   `id`: string,            
+-   `userId`: string,        
+-   `lessonId`: string,      
+-   `exerciseId`: string?,   
+-   `completed`: boolean,     **Completion status**
+-   `score`: number?,        **(replaced by XP)**
+-   `attempts`: number,       **Number of attempts**
+-   `completedAt`: DateTime?, **Completion timestamp**
+-   `createdAt`: DateTime,   
+-   `updatedAt`: DateTime    
+
+
+## Testing
+The project includes automated tests for the backend using Jest. To run the tests, use the following command at project directory:
+
+```bash
+cd backend
+npm run test
+```
+## Contributors
+- Chi Thien Nguyen
+- Thanh Trung Le
+- Truc Quynh Nguyen
+- Minh Vu Nguyen Quang

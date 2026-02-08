@@ -1,0 +1,31 @@
+@import "tailwindcss/preflight";
+@import "tailwindcss/utilities";
+
+body::-webkit-scrollbar { display: none; }
+body { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Dark mode styles */
+.dark {
+  background-color: #111827;
+  color: white;
+}
+
+.dark body {
+  background-color: #111827;
+  color: white;
+}
+
+.dark #root {
+  background-color: #111827;
+}
+
+/* Custom animations */
+@keyframes progressShimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+@keyframes flowingWave {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
