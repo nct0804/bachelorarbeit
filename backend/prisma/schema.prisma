@@ -29,6 +29,26 @@ enum ExerciseType {
   PRONUNCIATION_PRACTICE
 }
 
+enum ReviewItemType {
+  LESSON
+  WORD
+}
+
+enum NotificationType {
+  REMINDER
+  STREAK
+  ACHIEVEMENT
+  SYSTEM
+}
+
+enum AuditAction {
+  LOGIN
+  LOGOUT
+  PROGRESS_UPDATE
+  PROFILE_UPDATE
+  REVIEW_COMPLETE
+}
+
 // Course Structure
 model Course {
   id          Int           @id @default(autoincrement())
@@ -210,6 +230,10 @@ model User {
   progress         UserProgress[]
   ExerciseProgress ExerciseProgress[]
   refreshTokens    RefreshToken[]
+  reviewItems      ReviewItem[]
+  notifications    Notification[]
+  achievements     UserAchievement[]
+  auditLogs        AuditLog[]
 
   @@map("users")
 }
@@ -232,6 +256,78 @@ model UserProgress {
   @@map("user_progress")
 }
 
+model ReviewItem {
+  id             String         @id @default(cuid())
+  userId         String
+  itemType       ReviewItemType @default(LESSON) @map("item_type")
+  lessonId       Int?
+  wordId         String?
+  dueAt          DateTime       @map("due_at")
+  intervalDays   Int            @default(1) @map("interval_days")
+  easeFactor     Float          @default(2.5) @map("ease_factor")
+  repetitions    Int            @default(0)
+  lastReviewedAt DateTime?      @map("last_reviewed_at")
+  createdAt      DateTime       @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("review_items")
+}
+
+model Achievement {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  title       String
+  description String
+  xpReward    Int      @default(0) @map("xp_reward")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  userAchievements UserAchievement[]
+
+  @@map("achievements")
+}
+
+model UserAchievement {
+  id            String    @id @default(cuid())
+  userId        String
+  achievementId String
+  unlockedAt    DateTime? @map("unlocked_at")
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, achievementId])
+  @@map("user_achievements")
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  title     String
+  body      String?
+  type      NotificationType @default(REMINDER)
+  isRead    Boolean          @default(false) @map("is_read")
+  createdAt DateTime         @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+model AuditLog {
+  id        String      @id @default(cuid())
+  userId    String
+  action    AuditAction
+  entity    String?
+  metadata  Json?
+  createdAt DateTime    @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("audit_logs")
+}
+
 model RefreshToken {
   id        String   @id @default(cuid())
   token     String   @unique
@@ -243,4 +339,3 @@ model RefreshToken {
 
   @@map("refresh_tokens")
 }
-

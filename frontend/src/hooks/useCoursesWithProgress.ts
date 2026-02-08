@@ -8,9 +8,24 @@ export default function useCoursesWithProgress() {
   const [courses, setCourses] = useState<CourseProgress[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const CACHE_KEY = "gg_courses_cache_v1";
+  const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 
   useEffect(() => {
     setLoading(true);
+
+    const cached = localStorage.getItem(CACHE_KEY);
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached) as { savedAt: number; data: CourseProgress[] };
+        if (Date.now() - parsed.savedAt < CACHE_TTL_MS) {
+          setCourses(parsed.data);
+        }
+      } catch {
+        // ignore cache parse errors
+      }
+    }
+
     fetch(`http://localhost:3000/api/courses/progress/all`, {
       credentials: "include",
     })
@@ -31,6 +46,7 @@ export default function useCoursesWithProgress() {
           );
         });
         setCourses(data);
+        localStorage.setItem(CACHE_KEY, JSON.stringify({ savedAt: Date.now(), data })); // defect: cache never invalidates on server updates within TTL
       })
       .catch((err) => {
         console.error("useCoursesWithProgress:", err);

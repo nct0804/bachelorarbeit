@@ -18,7 +18,7 @@ robot-tests
 __pycache__
 # Thumbnails
 ._*
-
+defects.md
 # Files that might appear in the root of a volume
 .DocumentRevisions-V100
 .fseventsd
@@ -120,6 +120,7 @@ web_modules/
 .env.test.local
 .env.production.local
 .env.local
+new-features.md
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache

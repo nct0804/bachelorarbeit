@@ -1,7 +1,9 @@
-import { PrismaClient, ExerciseType } from "@prisma/client";
+import { ExerciseType, NotificationType, ReviewItemType, AuditAction } from "@prisma/client";
 import { NotFoundError } from "../../utils/errors";
+import prisma from "../../lib/prisma";
+import * as achievementsService from "../achievements/achievements.service";
+import * as auditService from "../audit/audit.service";
 
-const prisma = new PrismaClient();
 
 interface FindExercisesParams {
   lessonId?: number;
@@ -530,8 +532,58 @@ export const checkAnswer = async (
       });
 
       // If all exercises are completed, add completion message
-      if (completedExercises >= totalExercises) {
+      if (completedExercises >= totalExercises && isNewCompletion) {
         completionMessage = `Congratulations! You've completed all exercises in "${exerciseWithLesson.lesson.title}" lesson. You can now move to the next lesson or practice this one again.`;
+
+        // Trigger achievement evaluation on lesson completion
+        const lessonsCompleted = await prisma.userProgress.findMany({
+          where: { userId, completed: true },
+          select: { lessonId: true },
+          distinct: ["lessonId"],
+        });
+
+        await achievementsService.evaluateAchievements(userId, {
+          lessonsCompleted: lessonsCompleted.length,
+          streakDays: newStreak,
+          xp: newTotalXP,
+          minutes: 0,
+        });
+
+        // Create a review item if none exists for this lesson
+        const existingReview = await prisma.reviewItem.findFirst({
+          where: {
+            userId,
+            itemType: ReviewItemType.LESSON,
+            lessonId: exerciseWithLesson.lessonId,
+          },
+        });
+
+        if (!existingReview) {
+          const dueAt = new Date();
+          await prisma.reviewItem.create({
+            data: {
+              userId,
+              itemType: ReviewItemType.LESSON,
+              lessonId: exerciseWithLesson.lessonId,
+              dueAt,
+              intervalDays: 1,
+            },
+          });
+        }
+
+        await prisma.notification.create({
+          data: {
+            userId,
+            title: "Lesson completed!",
+            body: `You finished ${exerciseWithLesson.lesson.title}. A review is scheduled for tomorrow.`,
+            type: NotificationType.ACHIEVEMENT,
+          },
+        });
+
+        await auditService.logAudit(userId, AuditAction.PROGRESS_UPDATE, "lesson", {
+          lessonId: exerciseWithLesson.lessonId,
+          title: exerciseWithLesson.lesson.title,
+        });
       }
     }
   }

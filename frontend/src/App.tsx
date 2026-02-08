@@ -16,6 +16,9 @@ import MainContent from './components/layout/MainContent';
 import AboutUs from './pages/AboutUs';
 import Speak from './pages/Speak';
 import AuthCallback from './components/AuthCallback';
+import Review from './pages/Review';
+import Inbox from './pages/Inbox';
+import Achievements from './pages/Achievements';
 
 export default function App() {
   const location = useLocation()
@@ -44,6 +47,9 @@ export default function App() {
             <Route path="/ranking" element={<Ranking />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/speak" element={<Speak />} />
+            <Route path="/review" element={<Review />} />
+            <Route path="/inbox" element={<Inbox />} />
+            <Route path="/achievements" element={<Achievements />} />
             <Route path="/pronunciation" element={<Pronunciation />} />
             <Route path="/aboutus" element={<AboutUs />} />
           </Route>

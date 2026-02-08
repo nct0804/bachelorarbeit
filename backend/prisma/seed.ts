@@ -1,4 +1,4 @@
-import { PrismaClient, ExerciseType, LanguageLevel, SoundType } from '@prisma/client';
+import { PrismaClient, ExerciseType, LanguageLevel, SoundType, NotificationType, ReviewItemType, AuditAction } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
@@ -15,6 +15,7 @@ async function main() {
 
   // Create a demo user account
   const demoUser = await createUser();
+  await clearUserActivity(demoUser.id);
   await createFakeUsers();
   // Create course progression (A1.1 - A2.2)
   const courses = await createCourses();
@@ -38,6 +39,9 @@ async function main() {
   // Create pronunciation data
 
   await createPronunciationData();
+  await createSeedNotifications(demoUser.id);
+  await createSeedReviewItems(demoUser.id, lessons);
+  await createSeedAuditLogs(demoUser.id);
 
   console.log('Database seeding completed successfully!');
 }
@@ -48,6 +52,11 @@ async function cleanDatabase() {
   
   // Delete in correct order (respecting foreign key constraints)
   await prisma.exerciseProgress.deleteMany();
+  await prisma.reviewItem.deleteMany();
+  await prisma.notification.deleteMany();
+  await prisma.userAchievement.deleteMany();
+  await prisma.achievement.deleteMany();
+  await prisma.auditLog.deleteMany();
   await prisma.soundGroupSound.deleteMany();
   await prisma.germanSound.deleteMany();
   await prisma.soundGroup.deleteMany();
@@ -197,6 +206,62 @@ async function createFakeUsers() {
   }
 
   console.log(`Created ${fakeUsers.length} fake users.`);
+}
+
+async function clearUserActivity(userId: string) {
+  await prisma.reviewItem.deleteMany({ where: { userId } });
+  await prisma.notification.deleteMany({ where: { userId } });
+  await prisma.userAchievement.deleteMany({ where: { userId } });
+  await prisma.auditLog.deleteMany({ where: { userId } });
+}
+
+async function createSeedNotifications(userId: string) {
+  await prisma.notification.createMany({
+    data: [
+      {
+        userId,
+        title: "Welcome back!",
+        body: "Your daily goal is ready. Earn 50 XP today.",
+        type: NotificationType.REMINDER,
+      },
+      {
+        userId,
+        title: "Review scheduled",
+        body: "A lesson review is due today. Visit the Review page.",
+        type: NotificationType.SYSTEM,
+      },
+      {
+        userId,
+        title: "Streak bonus",
+        body: "Complete one lesson to extend your streak.",
+        type: NotificationType.STREAK,
+      },
+    ],
+  });
+}
+
+async function createSeedReviewItems(userId: string, lessons: { id: number }[]) {
+  const base = new Date();
+  base.setDate(base.getDate() - 1);
+  const data = lessons.slice(0, 2).map((lesson, idx) => ({
+    userId,
+    itemType: ReviewItemType.LESSON,
+    lessonId: lesson.id,
+    dueAt: new Date(base.getTime() + idx * 3600 * 1000),
+    intervalDays: 1,
+  }));
+
+  await prisma.reviewItem.createMany({ data });
+}
+
+async function createSeedAuditLogs(userId: string) {
+  await prisma.auditLog.createMany({
+    data: [
+      { userId, action: AuditAction.LOGIN, entity: "auth", metadata: { ip: "127.0.0.1" } },
+      { userId, action: AuditAction.PROGRESS_UPDATE, entity: "lesson", metadata: { lessonId: 1 } },
+      { userId, action: AuditAction.PROFILE_UPDATE, entity: "profile", metadata: { field: "username" } },
+    ],
+  });
 }
 
 /**

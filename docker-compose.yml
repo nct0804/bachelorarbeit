@@ -28,6 +28,7 @@ services:
       - ./backend/.env
     environment:
       - DATABASE_URL=postgresql://germangains:germangains@db:5432/germangainsdb?schema=public
+      # - DATABASE_URL=postgresql://germangains:germangains@localhost:5432/germangainsdb?schema=public
       - CLERK_SECRET_KEY=sk_test_aOjvDHzBHbrLoEW55Mpxseu5GnzYfNRtMvxQgfZgm0
       - CLERK_PUBLISHABLE_KEY=pk_test_aW1tdW5lLWhlcm9uLTMwLmNsZXJrLmFjY291bnRzLmRldiQ
     restart: unless-stopped

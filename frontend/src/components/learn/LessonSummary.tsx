@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import confetti from "canvas-confetti";
 import { CheckCircle, XCircle, Star, Flame } from "lucide-react";
+import { recordPractice } from "@/lib/localProgress";
 
 interface Exercise {
   id: number;
@@ -19,6 +20,8 @@ interface LessonSummaryProps {
 }
 
 const LessonSummary: React.FC<LessonSummaryProps> = ({ exercises, onBack, totalXp = 0, streak = 0 }) => {
+  const recordedRef = useRef(false);
+
   useEffect(() => {
     confetti({
       particleCount: 120,
@@ -31,6 +34,12 @@ const LessonSummary: React.FC<LessonSummaryProps> = ({ exercises, onBack, totalX
   // Calculate correct answers
   const correctCount = exercises.filter(ex => ex.isCorrect).length;
   const total = exercises.length;
+
+  useEffect(() => {
+    if (recordedRef.current) return;
+    recordedRef.current = true;
+    recordPractice({ xp: totalXp, lessons: 1, correct: correctCount, total, sessions: 1 });
+  }, [correctCount, total, totalXp]);
 
   return (
     <section className="w-full max-w-3xl min-h-screen mx-auto bg-white flex flex-col items-center justify-center" data-test="lesson-summary">

@@ -1,17 +1,12 @@
 import express from "express";
 import cors from "cors";
-import lessonsRoutes from "./modules/lessons/lessons.routes";
-import coursesRoutes from "./modules/courses/courses.routes";
-import modulesRoutes from "./modules/modules/modules.routes";
-import vocabularyRoutes from "./modules/vocabulary/vocabulary.routes";
 import path from "path";
-import exercisesRoutes from "./modules/exercises/exercises.routes";
-import exerciseOptionsRoutes from "./modules/exercisesOptions/exercisesOptions.routes";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 
-import userRoutes from "./modules/user/user.routes";
+import configureRoutes from "./modules/routes";
 
+dotenv.config({ path: path.resolve(process.cwd(), ".env.local") });
 dotenv.config();
 
 const app = express();
@@ -29,7 +24,6 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 app.use("/assets", express.static(path.join(__dirname, "../assets")));
-app.use("/api/users", userRoutes);
 
 app.get("/", (_, res) => {
   res.json({
@@ -63,12 +57,7 @@ app.get("/test-db", async (_, res) => {
   }
 });
 //Routes
-app.use("/api/lesson", lessonsRoutes);
-app.use("/api/courses", coursesRoutes);
-app.use("/api/modules", modulesRoutes);
-app.use("/api/vocabulary", vocabularyRoutes);
-app.use("/api/exercises", exercisesRoutes);
-app.use("/api/exercise-options", exerciseOptionsRoutes);
+configureRoutes(app);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

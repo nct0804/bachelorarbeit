@@ -1,6 +1,8 @@
-import React from 'react';
-import { Mail, Trophy, Zap, Flame, Star, Award, Crown, Loader2, AlertCircle } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Mail, Trophy, Zap, Flame, Star, Award, Crown, Loader2, AlertCircle, Heart } from 'lucide-react';
 import useUserProfile from '../hooks/useUserProfile';
+import { getFavoriteWords, getPracticeTotals, getStreakDays, getWeeklyActivity } from '@/lib/localProgress';
+import { getFavoriteEntries } from '@/lib/wordBank';
 
 // interface UserProfile {
 //   id: string;
@@ -15,6 +17,13 @@ import useUserProfile from '../hooks/useUserProfile';
 
 const ProfilePage: React.FC = () => {
   const { userProfile, isLoading, error, refetch } = useUserProfile();
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  useEffect(() => {
+    const onFocus = () => setRefreshKey((v) => v + 1);
+    window.addEventListener('focus', onFocus);
+    return () => window.removeEventListener('focus', onFocus);
+  }, []);
 
   const getXpForNextLevel = (currentLevel: number) => {
     return currentLevel * 1000;
@@ -35,6 +44,34 @@ const ProfilePage: React.FC = () => {
     const lastInitial = last.charAt(0) || '';
     return `${firstInitial}${lastInitial}`.toUpperCase() || 'U';
   };
+
+  const practiceTotals = useMemo(() => getPracticeTotals(), [refreshKey]);
+  const weekly = useMemo(() => getWeeklyActivity(undefined, 7), [refreshKey]);
+  const localStreak = useMemo(() => getStreakDays(), [refreshKey]);
+  const favoriteEntries = useMemo(() => getFavoriteEntries(getFavoriteWords()), [refreshKey]);
+
+  const achievements = useMemo(() => {
+    if (!userProfile) return [];
+    const level = userProfile.level || 1;
+    const xp = userProfile.xp || 0;
+    const lessons = practiceTotals.lessons;
+    const minutes = practiceTotals.minutes;
+    const favorites = favoriteEntries.length;
+    const streak = Math.max(userProfile.streak || 0, localStreak);
+
+    return [
+      { id: 'first-lesson', title: 'First Lesson', desc: 'Complete your first lesson.', value: lessons, goal: 1, icon: Trophy },
+      { id: 'steady-streak', title: 'Steady Streak', desc: 'Keep a 7-day streak.', value: streak, goal: 7, icon: Flame },
+      { id: 'xp-collector', title: 'XP Collector', desc: 'Earn 500 XP.', value: xp, goal: 500, icon: Zap },
+      { id: 'level-up', title: 'Rising Star', desc: 'Reach level 5.', value: level, goal: 5, icon: Star },
+      { id: 'focus-master', title: 'Focus Master', desc: 'Log 60 study minutes.', value: minutes, goal: 60, icon: Award },
+      { id: 'word-keeper', title: 'Word Keeper', desc: 'Save 5 favorite words.', value: favorites, goal: 5, icon: Crown },
+    ].map((item) => ({
+      ...item,
+      progress: Math.min(100, (item.value / item.goal) * 100),
+      isUnlocked: item.value >= item.goal,
+    }));
+  }, [favoriteEntries.length, localStreak, practiceTotals.lessons, practiceTotals.minutes, userProfile]);
 
   if (isLoading) {
     return (
@@ -184,40 +221,102 @@ const ProfilePage: React.FC = () => {
           </div>
         </div>
 
-        {/* Achievement Section */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 border border-gray-100 dark:border-gray-700 transition-colors duration-300" data-test="profile-achievements">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 mb-4" data-test="profile-activity">
+          <div className="lg:col-span-2 bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 border border-gray-100 dark:border-gray-700 transition-colors duration-300" data-test="profile-achievements">
+            <div className="flex items-center mb-3">
+              <Award className="w-5 h-5 text-orange-500 mr-2" />
+              <h2 className="text-lg font-bold text-gray-800 dark:text-white transition-colors duration-300">Achievements</h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {achievements.map((achievement) => {
+                const Icon = achievement.icon;
+                return (
+                  <div
+                    key={achievement.id}
+                    className={`rounded-lg border p-3 transition-all duration-300 ${
+                      achievement.isUnlocked
+                        ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-700'
+                        : 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600 opacity-80'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                          achievement.isUnlocked ? 'bg-green-500/20 text-green-600' : 'bg-gray-200 dark:bg-gray-600 text-gray-500'
+                        }`}>
+                          <Icon className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-gray-800 dark:text-white">{achievement.title}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">{achievement.desc}</p>
+                        </div>
+                      </div>
+                      <span className="text-xs font-semibold text-gray-500 dark:text-gray-400">
+                        {Math.min(achievement.value, achievement.goal)}/{achievement.goal}
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                      <div
+                        className={`h-2 rounded-full ${achievement.isUnlocked ? 'bg-green-500' : 'bg-orange-400'}`}
+                        style={{ width: `${achievement.progress}%` }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 border border-gray-100 dark:border-gray-700 transition-colors duration-300">
+            <div className="flex items-center mb-3">
+              <Flame className="w-5 h-5 text-red-500 mr-2" />
+              <h2 className="text-lg font-bold text-gray-800 dark:text-white transition-colors duration-300">Weekly Activity</h2>
+            </div>
+            <div className="grid grid-cols-7 gap-2 mb-3">
+              {weekly.map((day) => {
+                const active = day.xp > 0 || day.minutes > 0 || day.words > 0;
+                return (
+                  <div
+                    key={day.date}
+                    title={`${day.date}: ${day.xp} XP, ${day.minutes} min`}
+                    className={`h-7 rounded-md text-[10px] font-semibold flex items-center justify-center ${
+                      active ? 'bg-gradient-to-br from-orange-400 to-red-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-400'
+                    }`}
+                  >
+                    {day.date.slice(8)}
+                  </div>
+                );
+              })}
+            </div>
+            <div className="text-xs text-gray-500 dark:text-gray-400 space-y-1">
+              <p>Total XP logged: {practiceTotals.xp}</p>
+              <p>Total focus minutes: {practiceTotals.minutes}</p>
+              <p>Lessons completed: {practiceTotals.lessons}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 border border-gray-100 dark:border-gray-700 transition-colors duration-300" data-test="profile-favorites">
           <div className="flex items-center mb-3">
-            <Award className="w-5 h-5 text-orange-500 mr-2" />
-            <h2 className="text-lg font-bold text-gray-800 dark:text-white transition-colors duration-300">Achievements</h2>
+            <Heart className="w-5 h-5 text-pink-500 mr-2" />
+            <h2 className="text-lg font-bold text-gray-800 dark:text-white transition-colors duration-300">Saved Words</h2>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            {/* Sample achievements */}
-            <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-2 text-center opacity-50 transition-colors duration-300">
-              <div className="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full mx-auto mb-1 flex items-center justify-center transition-colors duration-300">
-                <Trophy className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-              </div>
-              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 transition-colors duration-300">First Steps</p>
+          {favoriteEntries.length === 0 ? (
+            <p className="text-sm text-gray-500 dark:text-gray-400">Save words from the home dashboard to build your personal vocab list.</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {favoriteEntries.map((entry) => (
+                <div
+                  key={entry.id}
+                  className="rounded-lg border border-gray-200 dark:border-gray-700 p-3 bg-gray-50 dark:bg-gray-700"
+                >
+                  <p className="font-semibold text-gray-800 dark:text-white">{entry.word}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{entry.translation}</p>
+                  <p className="text-[11px] text-gray-400 dark:text-gray-500">{entry.example}</p>
+                </div>
+              ))}
             </div>
-            <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-2 text-center opacity-50 transition-colors duration-300">
-              <div className="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full mx-auto mb-1 flex items-center justify-center transition-colors duration-300">
-                <Flame className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-              </div>
-              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 transition-colors duration-300">Hot Streak</p>
-            </div>
-            <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-2 text-center opacity-50 transition-colors duration-300">
-              <div className="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full mx-auto mb-1 flex items-center justify-center transition-colors duration-300">
-                <Zap className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-              </div>
-              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 transition-colors duration-300">Power User</p>
-            </div>
-            <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-2 text-center opacity-50 transition-colors duration-300">
-              <div className="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full mx-auto mb-1 flex items-center justify-center transition-colors duration-300">
-                <Star className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-              </div>
-              <p className="text-xs font-medium text-gray-500 dark:text-gray-400 transition-colors duration-300">Rising Star</p>
-            </div>
-          </div>
-          <p className="text-xs text-gray-500 dark:text-gray-400 transition-colors duration-300">Keep learning to unlock more achievements!</p>
+          )}
         </div>
       </div>
     </div>

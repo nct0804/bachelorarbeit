@@ -20,6 +20,7 @@ import A12 from "../../assets/course_5.png"
 import A21 from "../../assets/course_17.png"
 import A22 from "../../assets/course_21.png"
 import Course1Icon from '../../assets/course_1.png';
+import DashboardWidgets from '../home/DashboardWidgets';
 
 const moduleIcons = [
   A11,  // German A1.1
@@ -139,9 +140,12 @@ export default function MainContent() {
           </div>
         </div>
       )}
-      <div className="w-full rounded-3xl shadow-lg dark:bg-gray-800 transition-colors duration-300 h-full" data-test="home-content">
+        <div className="w-full rounded-3xl shadow-lg dark:bg-gray-800 transition-colors duration-300 h-full" data-test="home-content">
         {!current ? (
           <>
+            <div className="px-4 sm:px-6" data-test="home-dashboard-wrap">
+              <DashboardWidgets />
+            </div>
             
             <div className="space-y-3" data-test="home-course-list">
               {courses.map((course, idx) => (

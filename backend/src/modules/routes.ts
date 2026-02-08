@@ -6,6 +6,10 @@ import vocabularyRoutes from './vocabulary/vocabulary.routes';
 import exercisesRoutes from './exercises/exercises.routes';
 import exerciseOptionsRoutes from './exercisesOptions/exercisesOptions.routes';
 import userRoutes from './user/user.routes';
+import reviewsRoutes from './reviews/reviews.routes';
+import notificationsRoutes from './notifications/notifications.routes';
+import achievementsRoutes from './achievements/achievements.routes';
+import auditRoutes from './audit/audit.routes';
 
 /**
  * Configure all API routes for the application
@@ -22,4 +26,8 @@ export default function configureRoutes(app: Express): void {
   app.use("/api/vocabulary", vocabularyRoutes);
   app.use("/api/exercises", exercisesRoutes);
   app.use("/api/exercise-options", exerciseOptionsRoutes);
+  app.use("/api/reviews", reviewsRoutes);
+  app.use("/api/notifications", notificationsRoutes);
+  app.use("/api/achievements", achievementsRoutes);
+  app.use("/api/audit", auditRoutes);
 }
