@@ -2,7 +2,6 @@
 
 configure = [
     "wrong-case-in-keyword-name.pattern= ^the .*",
-    "line-too-long.line-length=170"
 ]
 
  ignore= [

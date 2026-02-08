@@ -1,0 +1,17 @@
+{
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+    "robotcode.languageServer.python": "${workspaceFolder}/.venv/bin/python",
+    "robotcode.robot.pythonPath": [
+        "."
+    ],
+    "robotcode.codeLens.enable": true,
+    "python.terminal.activateEnvironment": true,
+    "code-runner.executorMap": {
+        "robotframework": "robot --outputdir Results"
+    },
+    "code-runner.runInTerminal": true,
+    "[robotframework]": {
+        "editor.defaultFormatter": "d-biehl.robotcode",
+        "editor.codeLens": true
+    }
+}
