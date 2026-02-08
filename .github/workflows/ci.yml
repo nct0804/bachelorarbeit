@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: ["main", "master"]
+
+jobs:
+  backend:
+    name: Backend Lint & Test
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: germangains
+          POSTGRES_PASSWORD: germangains
+          POSTGRES_DB: germangainsdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U germangains"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    env:
+      DATABASE_URL: postgresql://germangains:germangains@localhost:5432/germangainsdb?schema=public
+      NODE_ENV: test
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install
+        working-directory: backend
+        run: npm ci
+
+      - name: Prisma Generate
+        working-directory: backend
+        run: npx prisma generate
+
+      - name: Prisma Migrate
+        working-directory: backend
+        run: npx prisma migrate dev --name ci --skip-seed
+
+      - name: Lint
+        working-directory: backend
+        run: npm run lint
+
+      - name: Test
+        working-directory: backend
+        run: npm test -- --runInBand
+
+  frontend:
+    name: Frontend Lint & Test & Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install
+        working-directory: frontend
+        run: npm ci
+
+      - name: Lint
+        working-directory: frontend
+        run: npm run lint
+
+      - name: Test
+        working-directory: frontend
+        run: npm test -- --runInBand
+
+      - name: Build
+        working-directory: frontend
+        run: npm run build

@@ -184,5 +184,5 @@ node_modules/
 coverage/
 .build/
 Draft/
-.github/
+.github/instructions
 # End of https://www.toptal.com/developers/gitignore/api/macos,node
