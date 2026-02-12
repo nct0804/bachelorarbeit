@@ -1,6 +1,9 @@
 *** Settings ***
 Documentation       Main Entrance Library Resource
 
+Library             Collections
+Library             OperatingSystem
+Library             String
 Library             Browser
 Library             SeleniumLibrary
 Resource            Modules/Homepage/Homepage.resource
