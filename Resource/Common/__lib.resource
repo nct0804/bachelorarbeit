@@ -2,5 +2,5 @@
 
 Documentation       General keywords
 
-Resource            common.resource
+Resource            Common.resource
 Resource            locators.resource
