@@ -1,0 +1,33 @@
+{
+  "meta": {
+    "page": "register",
+    "version": 1
+  },
+  "page": ["Signup", "Sign up", "Sign Up", "SignUp", "Register", "register"],
+  "root": "[data-test=\"page-register\"]",
+  "button": {
+    "primary": "",
+    "secondary": ""
+  },
+  "link": {
+    "primary": ""
+  },
+  "textbox": {
+    "primary": ""
+  },
+  "checkbox": {
+    "primary": ""
+  },
+  "tab": {
+    "primary": ""
+  },
+  "card": {
+    "primary": ""
+  },
+  "list": {
+    "primary": ""
+  },
+  "modal": {
+    "primary": ""
+  }
+}

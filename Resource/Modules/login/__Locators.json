@@ -1,0 +1,33 @@
+{
+  "meta": {
+    "page": "login",
+    "version": 1
+  },
+  "page": ["Login", "Log in", "Log In", "LogIn", "Sign In", "signin", "sign in"],
+  "root": "[data-test=\"page-login\"]",
+  "button": {
+    "Sign Up": "[data-test=\"login-signup-link\"]",
+    "secondary": ""
+  },
+  "link": {
+    "primary": ""
+  },
+  "textbox": {
+    "primary": ""
+  },
+  "checkbox": {
+    "primary": ""
+  },
+  "text": {
+    "Sign Up": "[data-test=\"login-signup-link\"]"
+  },
+  "card": {
+    "primary": ""
+  },
+  "list": {
+    "primary": ""
+  },
+  "modal": {
+    "primary": ""
+  }
+}

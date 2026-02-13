@@ -1,9 +1,10 @@
 [tool.robocop.lint]
 
 configure = [
-    "wrong-case-in-keyword-name.pattern= ^the .*",
+
+    "wrong-case-in-keyword-name.pattern=^the .*",
 ]
 
  ignore= [
-    ""
+    "NAME18", "DOC02"
  ]

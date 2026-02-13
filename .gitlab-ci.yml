@@ -8,6 +8,7 @@ variables:
   ROBOT_HEADLESS: "True"
   ROBOT_TESTCASE: ""
   ROBOT_VARIABLES: ""
+  VITE_CLERK_PUBLISHABLE_KEY: "pk_test_aW1tdW5lLWhlcm9uLTMwLmNsZXJrLmFjY291bnRzLmRldiQ"
 
 cache:
   paths:
@@ -29,7 +30,16 @@ robot_tests:
     - npm ci
     - npm run dev -- --host 0.0.0.0 --port 4242 &
     - cd ..
-    - sleep 5
+    - |
+      for i in $(seq 1 60); do
+        if curl -sf http://localhost:4242/ > /dev/null; then
+          echo "Frontend is ready."
+          break
+        fi
+        echo "Waiting for frontend to be ready... (${i}/60)"
+        sleep 1
+      done
+      curl -sf http://localhost:4242/ > /dev/null
     - mkdir -p "$ROBOT_OUTPUT_DIR"
     - |
       if [ -n "$ROBOT_TESTCASE" ]; then
