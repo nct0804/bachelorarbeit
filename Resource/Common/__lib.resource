@@ -1,6 +1,5 @@
 *** Settings ***
-
 Documentation       General keywords
 
-Resource            Common.resource
+Resource            common.resource
 Resource            locators.resource
