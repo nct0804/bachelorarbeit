@@ -1,10 +1,10 @@
 {
   "meta": {
-    "page": ["Login", "Log in", "Log In", "LogIn", "Sign In", "signin", "sign in"],
+    "page": "login",
     "version": 1
   },
-  "url": "http://localhost:4242/signin",
-  "page": "[data-test=\"page-login\"]",
+  "page": ["Login", "Log in", "Log In", "LogIn", "Sign In", "signin", "sign in"],
+  "root": "[data-test=\"page-login\"]",
   "button": {
     "primary": "",
     "secondary": ""
