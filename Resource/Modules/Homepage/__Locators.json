@@ -3,23 +3,24 @@
     "page": ["homepage", "landing", "home", "home page"],
     "version": 1
   },
+  "url": "http://localhost:4242/",
   "page": "[data-test=\"page-landing\"]",
   "button": {
-    "enter": "[data-test=\"hero-start-learning\"]",
-    "sign_in": "[data-test=\"landing-cta-signin\"]",
-    "create_account": "[data-test=\"login-signup-link\"]",
-    "login_submit": "[data-test=\"login-submit\"]"
+    "Enter": "[data-test=\"hero-start-learning\"]",
+    "Sign In": "[data-test=\"landing-cta-signin\"]",
+    "Create Account": "[data-test=\"login-signup-link\"]",
+    "Login Submit": "[data-test=\"login-submit\"]"
   },
   "link": {
-    "sign_in": "[data-test=\"landing-cta-signin\"]",
-    "sign_up": "[data-test=\"login-signup-link\"]",
-    "forgot_password": "[data-test=\"login-forgot-password\"]"
+    "Sign In": "[data-test=\"landing-cta-signin\"]",
+    "Sign Up": "[data-test=\"login-signup-link\"]",
+    "Forgot Password": "[data-test=\"login-forgot-password\"]"
   },
   "textbox": {
-    "email": "[data-test=\"login-email\"]",
-    "password": "[data-test=\"login-password\"]"
+    "Email": "[data-test=\"login-email\"]",
+    "Password": "[data-test=\"login-password\"]"
   },
   "checkbox": {
-    "remember_me": "[data-test=\"login-remember\"]"
+    "Remember Me": "[data-test=\"login-remember\"]"
   }
 }
