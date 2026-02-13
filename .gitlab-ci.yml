@@ -8,6 +8,7 @@ variables:
   ROBOT_HEADLESS: "True"
   ROBOT_TESTCASE: ""
   ROBOT_VARIABLES: ""
+  VITE_CLERK_PUBLISHABLE_KEY: "pk_test_aW1tdW5lLWhlcm9uLTMwLmNsZXJrLmFjY291bnRzLmRldiQ"
 
 cache:
   paths:
