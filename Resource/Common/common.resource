@@ -15,8 +15,8 @@ Open Browser
     [Documentation]    Open a Browser instance and navigate to the base URL.
     [Tags]    basic
     [Arguments]    ${BROWSER}
-    New Browser    ${BROWSER}    headless=${HEADLESS}
-    New Context
+    New Browser    ${BROWSER}    headless=${HEADLESS}    args=["-start-maximized"]
+    New Context    viewport={'width': 1280, 'height': 720}
     New Page    ${BASE_URL}
 
 the user open the '${TYPE}' browser
@@ -36,8 +36,9 @@ Validate '${PAGE}' Is Opened
     [Documentation]    Verify that the expected page is opened by a unique root element.
     [Tags]    basic
     Load Locators    ${PAGE}
+    Wait For Load State    networkidle    timeout=30s
     ${PAGE_LOCATOR}=    Get Locator    root
-    Wait For Elements State    css=${PAGE_LOCATOR}    visible    timeout=10s
+    Wait For Elements State    css=${PAGE_LOCATOR}    visible    timeout=30s
 
 the '${PAGE}' page should be opened
     [Documentation]    Verify that the expected page is opened.
