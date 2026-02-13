@@ -7,6 +7,7 @@ Resource            ../MainLib.resource
 *** Variables ***
 ${SERVER}       localhost:4242
 ${BASE_URL}     http://${SERVER}/
+${HEADLESS}     False
 
 
 *** Keywords ***
@@ -14,7 +15,7 @@ Open Browser
     [Documentation]    Open a Browser instance and navigate to the base URL.
     [Tags]    basic
     [Arguments]    ${BROWSER}
-    New Browser    ${BROWSER}    headless=False
+    New Browser    ${BROWSER}    headless=${HEADLESS}
     New Context
     New Page    ${BASE_URL}
 
