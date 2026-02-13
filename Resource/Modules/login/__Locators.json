@@ -6,7 +6,7 @@
   "page": ["Login", "Log in", "Log In", "LogIn", "Sign In", "signin", "sign in"],
   "root": "[data-test=\"page-login\"]",
   "button": {
-    "primary": "",
+    "Sign Up": "[data-test=\"login-signup-link\"]",
     "secondary": ""
   },
   "link": {
@@ -18,8 +18,8 @@
   "checkbox": {
     "primary": ""
   },
-  "tab": {
-    "primary": ""
+  "text": {
+    "Sign Up": "[data-test=\"login-signup-link\"]"
   },
   "card": {
     "primary": ""

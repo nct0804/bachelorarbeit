@@ -59,7 +59,23 @@ Click Button
     ${SELECTOR}=    Get Locator    button.${NAME}
     Click    css=${SELECTOR}
 
-the user triggers the '${Button}' button
+the user clicks the '${Button}' button
     [Documentation]    Click a button using its locator from the current locator map.
     [Tags]    gherkin
     Click Button    ${Button}
+
+Click Text
+    [Documentation]    Click a button using its locator from the current locator map.
+    [Tags]    basic
+    [Arguments]    ${NAME}
+    ${CURRENT}=    Get Variable Value    ${LOC}    ${NONE}
+    IF    $CURRENT == $NONE
+        Fail    No locator map loaded. Call "the user is on the '<Page>' page" first.
+    END
+    ${SELECTOR}=    Get Locator    text.${NAME}
+    Click    css=${SELECTOR}
+
+the user clicks the '${Text}' text
+    [Documentation]    Click a text element using its locator from the current locator map.
+    [Tags]    gherkin
+    Click Text    ${Text}

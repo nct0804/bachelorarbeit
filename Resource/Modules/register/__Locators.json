@@ -4,7 +4,7 @@
     "version": 1
   },
   "page": ["Signup", "Sign up", "Sign Up", "SignUp", "Register", "register"],
-  "root": "[data-test=\"page-signup\"]",
+  "root": "[data-test=\"page-register\"]",
   "button": {
     "primary": "",
     "secondary": ""
