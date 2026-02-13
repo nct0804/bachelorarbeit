@@ -56,7 +56,7 @@ Get Locator File For Page
             ${MATCH}=    Set Variable    ${FALSE}
             FOR    ${ALIAS}    IN    @{ALIAS_LIST}
                 ${ALIAS_LOWER}=    Convert To Lowercase    ${ALIAS}
-                IF    '${ALIAS_LOWER}' == '${PAGE_LOWER}'
+                IF    ${ALIAS_LOWER} == ${PAGE_LOWER}
                     ${MATCH}=    Set Variable    ${TRUE}
                     BREAK
                 END
