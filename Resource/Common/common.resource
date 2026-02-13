@@ -6,64 +6,60 @@ Resource            ../MainLib.resource
 
 *** Variables ***
 ${SERVER}       localhost:4242
-${BASE URL}     http://${SERVER}/
+${BASE_URL}     http://${SERVER}/
 
 
 *** Keywords ***
 Open Browser
-    [Documentation]    Open the browser and the website
+    [Documentation]    Open a Browser instance and navigate to the base URL.
     [Tags]    basic
-    [Arguments]    ${Browser}
-    New Browser    ${Browser}    headless=False
+    [Arguments]    ${BROWSER}
+    New Browser    ${BROWSER}    headless=False
     New Context
-    New Page    ${BASE URL}
+    New Page    ${BASE_URL}
 
-The User Open The '${type}' Browser
-    [Documentation]    Open the browser and the website
+the user open the '${TYPE}' browser
+    [Documentation]    Open a browser session based on the provided type.
     [Tags]    gherkin
-    IF    '${type}' == 'chrome'
+    IF    '${TYPE}' == 'chrome'
         Open Browser    chromium
-    ELSE IF    '${type}' == 'firefox'
+    ELSE IF    '${TYPE}' == 'firefox'
         Open Browser    firefox
-    ELSE IF    '${type}' == 'edge'
+    ELSE IF    '${TYPE}' == 'edge'
         Open Browser    chromium
     ELSE
-        Fail    Unsupported browser type: ${type}
+        Fail    Unsupported browser type: ${TYPE}
     END
 
 Validate '${PAGE}' Is Opened
-    [Documentation]    Verify that the expected page is opened by a page-unique locator
+    [Documentation]    Verify that the expected page is opened by a unique root element.
     [Tags]    basic
     Load Locators    ${PAGE}
-    ${page_locator}=    Get Locator    page
-    Wait For Elements State    css=${page_locator}    visible    timeout=10s
+    ${PAGE_LOCATOR}=    Get Locator    root
+    Wait For Elements State    css=${PAGE_LOCATOR}    visible    timeout=10s
 
 the '${PAGE}' page should be opened
-    [Documentation]    Verify that the expected page is opened
+    [Documentation]    Verify that the expected page is opened.
     [Tags]    gherkin
     Validate '${PAGE}' Is Opened
 
-the user is on the '${Page}' page
-    [Documentation]    Load page locator map and verify a page-unique element
+the user is on the '${PAGE}' page
+    [Documentation]    Load locator map for a page name and validate its root element.
     [Tags]    gherkin
-    [Arguments]    ${Page}
-    Load Locators    ${Page}
-    Set Suite Variable    ${CURRENT_PAGE}    ${Page}
-    ${page_locator}=    Get Locator    page
-    Wait For Elements State    css=${page_locator}    visible    timeout=10s
+    Validate '${PAGE}' Is Opened
 
 Click Button
-    [Documentation]    Click a button using its locator from the current locator map
+    [Documentation]    Click a button using its locator from the current locator map.
     [Tags]    basic
-    [Arguments]    ${name}
-    ${current}=    Get Variable Value    ${LOC}    ${NONE}
-    IF    ${current} == ${NONE}
-        Fail    No locator map loaded. Call "The User Is On The '<Page>' Page" first.
+    [Arguments]    ${NAME}
+    ${CURRENT}=    Get Variable Value    ${LOC}    ${NONE}
+    IF    $CURRENT == $NONE
+        Fail    No locator map loaded. Call "the user is on the '<Page>' page" first.
     END
-    ${selector}=    Get Locator    button.${name}
-    Click    css=${selector}
+    ${SELECTOR}=    Get Locator    button.${NAME}
+    Click    css=${SELECTOR}
 
 the user triggers the '${Button}' button
-    [Documentation]    Click a button using its locator from the locator map
+    [Documentation]    Click a button using its locator from the current locator map.
     [Tags]    gherkin
     Click Button    ${Button}
