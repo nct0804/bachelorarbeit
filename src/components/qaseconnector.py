@@ -11,6 +11,7 @@ import argparse
 import importlib.util
 import json
 import os
+from pathlib import Path
 import re
 import shutil
 import subprocess
@@ -112,6 +113,10 @@ def _split_gherkin_sentences(text: str) -> list[tuple[str | None, str]]:
     return segments
 
 
+def _normalize_quotes(text: str) -> str:
+    return text.replace('"', "'")
+
+
 def _suite_path(suite_id: int | None, suite_map: dict) -> list[str]:
     path = []
     current = suite_map.get(suite_id)
@@ -161,7 +166,7 @@ def main() -> int:
     parser.add_argument("--base-url", default=os.getenv("QASE_BASE_URL", DEFAULT_BASE_URL))
     parser.add_argument("--project", default=os.getenv("QASE_PROJECT"))
     parser.add_argument("--token", default=os.getenv("QASE_TOKEN"))
-    parser.add_argument("--g2rf-out", default="tests/", help="Output folder for gherkin2robotframework.")
+    parser.add_argument("--g2rf-out", default="robot-tests", help="Output folder for gherkin2robotframework.")
     parser.add_argument("--insecure", action="store_true", help="Disable SSL verification (use only for local MITM/corporate proxies).")
     args = parser.parse_args()
 
@@ -204,16 +209,17 @@ def main() -> int:
 
         for case in suite_cases:
             case_title = case.get("title") or case.get("name") or f"Case {case.get('id')}"
-            feature_lines.append(f"Scenario: {case_title}\n")
+            feature_lines.append(f"Scenario: {_normalize_quotes(case_title)}\n")
             if case.get("description"):
                 for line in str(case.get("description")).splitlines():
-                    feature_lines.append(f"  # {line}\n")
+                    feature_lines.append(f"  # {_normalize_quotes(line)}\n")
 
             steps = _normalize_steps(case)
             feature_steps = []
 
             for idx, step in enumerate(steps, start=1):
                 action = step.get("action") or step.get("content") or step.get("name") or f"Step {idx}"
+                action = _normalize_quotes(action)
                 sentences = _split_gherkin_sentences(action)
                 if not sentences:
                     sentences = [(None, action)]
@@ -249,6 +255,19 @@ def main() -> int:
     if result.returncode != 0:
         print("gherkin2robotframework failed.", file=sys.stderr)
         return result.returncode
+
+    settings_block = "*** Settings ***\nResource            ../../Resource/MainLib.resource\n\n"
+    for resource_path in Path(out_root).rglob("*.resource"):
+        content = resource_path.read_text(encoding="utf-8")
+        if "Resource            ../../Resource/MainLib.resource" in content:
+            continue
+        if "*** Settings ***" in content:
+            parts = content.split("*** Settings ***", 1)
+            after = parts[1].lstrip("\n") if len(parts) > 1 else ""
+            content = parts[0] + settings_block + after
+        else:
+            content = settings_block + content
+        resource_path.write_text(content, encoding="utf-8")
 
     print(f"Generated {len(cases)} cases across {len(cases_by_suite)} suite folders.")
     return 0

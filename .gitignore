@@ -5,6 +5,7 @@
 
 # Qase
 qase.config.json
+robot-tests
 
 # General
 .DS_Store
