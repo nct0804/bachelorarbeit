@@ -1,16 +1,8 @@
 #!/usr/bin/env python3
-"""Pull Qase TestOps suites/cases and generate Robot Framework skeletons.
+"""Pull Qase TestOps suites/cases and run gherkin2robotframework.
 
 Outputs:
-- tests/qase/<suite_path>/<suite_slug>.robot (Gherkin keywords + test cases)
-- resources/qase/<suite_path>/<suite_slug>.resource (Basic keywords)
-- Modules/qase/<suite_path>/__Locators.json (empty locator placeholder)
-- features/qase/<suite_path>/<suite_slug>.feature (optional via --emit-feature)
-
-RUN COMMAND!!!!!!!!
-python3 /Users/ChiThien/Saveloads/HDA/PPundBA/Website-to-learn-german/src/components/qaseconnector.py --run-g2rf --insecure
-
-
+- gherkin2robotframework output folder (Robot Framework files)
 """
 
 from __future__ import annotations
@@ -24,7 +16,7 @@ import shutil
 import subprocess
 import sys
 import ssl
-import urllib.parse
+import tempfile
 import urllib.request
 
 DEFAULT_BASE_URL = "https://api.qase.io"
@@ -101,20 +93,6 @@ def _slugify(text: str) -> str:
     return text or "unnamed"
 
 
-def _title_case(text: str) -> str:
-    cleaned = re.sub(r"[^A-Za-z0-9 ]+", " ", text).strip()
-    if not cleaned:
-        return "Unnamed"
-    return " ".join([word.capitalize() for word in cleaned.split()])
-
-
-def _gherkin_name(text: str) -> str:
-    cleaned = re.sub(r"\s+", " ", text).strip()
-    if not cleaned:
-        return "step"
-    return cleaned.lower()
-
-
 def _split_gherkin_sentences(text: str) -> list[tuple[str | None, str]]:
     text = re.sub(r"\s+", " ", text).strip()
     if not text:
@@ -177,53 +155,13 @@ def _build_suite_outputs(cases: list[dict]) -> dict:
     return suites
 
 
-def _render_resource(basic_keywords: list[dict], suite_title: str) -> str:
-    lines = []
-    lines.append("*** Keywords ***\n")
-    for kw in basic_keywords:
-        lines.append(f"{kw['name']}\n")
-        lines.append(f"    [Documentation]    {kw['doc']}\n")
-        lines.append("    [Tags]    Basic\n")
-        lines.append("    No Operation\n\n")
-    return "".join(lines)
-
-
-def _render_test_file(gherkin_keywords: list[dict], test_cases: list[dict], resource_relpath: str, suite_title: str) -> str:
-    lines = []
-    lines.append("*** Settings ***\n")
-    lines.append(f"Resource    {resource_relpath}\n\n")
-
-    lines.append("*** Test Cases ***\n")
-    for tc in test_cases:
-        lines.append(f"{tc['name']}\n")
-        lines.append(f"    [Documentation]    {tc['doc']}\n")
-        for step in tc["steps"]:
-            lines.append(f"    {step['gherkin']}\n")
-        lines.append("\n")
-
-    lines.append("*** Keywords ***\n")
-    for kw in gherkin_keywords:
-        lines.append(f"{kw['name']}\n")
-        lines.append(f"    [Documentation]    {kw['doc']}\n")
-        lines.append("    [Tags]    Gherkin\n")
-        lines.append(f"    {kw['basic']}\n\n")
-
-    return "".join(lines)
-
-
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Pull Qase cases and generate Robot Framework skeletons.")
+    parser = argparse.ArgumentParser(description="Pull Qase cases and run gherkin2robotframework.")
     parser.add_argument("--config", default="qase.config.json", help="Path to qase.config.json")
     parser.add_argument("--base-url", default=os.getenv("QASE_BASE_URL", DEFAULT_BASE_URL))
     parser.add_argument("--project", default=os.getenv("QASE_PROJECT"))
     parser.add_argument("--token", default=os.getenv("QASE_TOKEN"))
-    parser.add_argument("--tests-out", default="tests/qase")
-    parser.add_argument("--resources-out", default="resources/qase")
-    parser.add_argument("--modules-out", default="Modules/qase")
-    parser.add_argument("--features-out", default="features/qase")
-    parser.add_argument("--emit-feature", action="store_true", help="Emit .feature files for gherkin2robotframework.")
-    parser.add_argument("--run-g2rf", action="store_true", help="Run gherkin2robotframework after generating .feature files.")
-    parser.add_argument("--g2rf-out", default="robot-tests/qase_from_gherkin", help="Output folder for gherkin2robotframework.")
+    parser.add_argument("--g2rf-out", default="tests/qase_from_gherkin", help="Output folder for gherkin2robotframework.")
     parser.add_argument("--insecure", action="store_true", help="Disable SSL verification (use only for local MITM/corporate proxies).")
     args = parser.parse_args()
 
@@ -248,6 +186,8 @@ def main() -> int:
     suite_map = {s.get("id"): s for s in suites if isinstance(s, dict)}
     cases_by_suite = _build_suite_outputs(cases)
 
+    feature_root = tempfile.mkdtemp(prefix="qase_features_")
+
     for suite_id, suite_cases in cases_by_suite.items():
         suite_path_parts = _suite_path(suite_id, suite_map)
         suite_info = suite_map.get(suite_id, {}) if suite_id is not None else {}
@@ -255,37 +195,25 @@ def main() -> int:
         if not suite_path_parts:
             suite_path_parts = ["unsorted"]
 
-        suite_dir = os.path.join(args.tests_out, *suite_path_parts)
-        res_dir = os.path.join(args.resources_out, *suite_path_parts)
-        mod_dir = os.path.join(args.modules_out, *suite_path_parts)
-
         suite_slug = _safe_filename(suite_title, "suite")
-        test_file = os.path.join(suite_dir, f"{suite_slug}.robot")
-        resource_file = os.path.join(res_dir, f"{suite_slug}.resource")
-        locator_file = os.path.join(mod_dir, "__Locators.json")
+        feature_dir = os.path.join(feature_root, *suite_path_parts)
+        feature_file = os.path.join(feature_dir, f"{suite_slug}.feature")
 
-        basic_keywords = []
-        gherkin_keywords = []
-        test_cases = []
-        feature_scenarios = []
+        feature_lines = []
+        feature_lines.append(f"Feature: {suite_title}\n\n")
 
         for case in suite_cases:
             case_title = case.get("title") or case.get("name") or f"Case {case.get('id')}"
-            case_doc_parts = []
-            if case.get("id"):
-                case_doc_parts.append(f"Qase ID: {case.get('id')}")
+            feature_lines.append(f"Scenario: {case_title}\n")
             if case.get("description"):
-                case_doc_parts.append(str(case.get("description")).strip())
-            case_doc = " | ".join([p for p in case_doc_parts if p]) or "Imported from Qase"
+                for line in str(case.get("description")).splitlines():
+                    feature_lines.append(f"  # {line}\n")
 
             steps = _normalize_steps(case)
-            rendered_steps = []
             feature_steps = []
 
             for idx, step in enumerate(steps, start=1):
                 action = step.get("action") or step.get("content") or step.get("name") or f"Step {idx}"
-                expected = step.get("expected_result") or step.get("expected") or ""
-
                 sentences = _split_gherkin_sentences(action)
                 if not sentences:
                     sentences = [(None, action)]
@@ -293,101 +221,34 @@ def main() -> int:
                 for keyword, sentence in sentences:
                     if keyword:
                         feature_step = f"{keyword.capitalize()} {sentence}"
-                        gherkin_text = f"{keyword} {sentence}".strip()
                     else:
                         fallback = "given" if not feature_steps else "and"
                         feature_step = f"{fallback.capitalize()} {sentence}"
-                        gherkin_text = f"{fallback} {sentence}".strip()
-
-                    rendered_steps.append({"gherkin": _gherkin_name(gherkin_text)})
                     feature_steps.append(feature_step)
 
-                    basic_name = _title_case(sentence)
-                    gherkin_keywords.append({
-                        "name": _gherkin_name(gherkin_text),
-                        "doc": f"Triggers: {feature_step}",
-                        "basic": basic_name,
-                    })
+            for step_line in feature_steps:
+                feature_lines.append(f"  {step_line}\n")
+            feature_lines.append("\n")
 
-                    doc = f"Executes: {sentence}"
-                    if expected:
-                        doc += f" | Expected: {expected}"
-                    basic_keywords.append({
-                        "name": basic_name,
-                        "doc": doc,
-                    })
+        _write_text(feature_file, "".join(feature_lines))
 
-            test_cases.append({
-                "name": case_title,
-                "doc": case_doc,
-                "steps": rendered_steps,
-            })
+    out_root = os.path.abspath(args.g2rf_out)
+    os.makedirs(out_root, exist_ok=True)
 
-            feature_scenarios.append({
-                "title": case_title,
-                "steps": feature_steps,
-                "description": case.get("description") or "",
-            })
+    module_spec = importlib.util.find_spec("gherkin2robotframework")
+    if module_spec is not None:
+        cmd = [sys.executable, "-m", "gherkin2robotframework", feature_root, out_root]
+    else:
+        exe = shutil.which("gherkin2robotframework")
+        if not exe:
+            print("gherkin2robotframework is not available. Install it in the active venv.", file=sys.stderr)
+            return 3
+        cmd = [exe, feature_root, out_root]
 
-        # Deduplicate keywords while preserving order
-        seen = set()
-        basic_keywords_unique = []
-        for kw in basic_keywords:
-            if kw["name"] in seen:
-                continue
-            seen.add(kw["name"])
-            basic_keywords_unique.append(kw)
-
-        seen = set()
-        gherkin_keywords_unique = []
-        for kw in gherkin_keywords:
-            if kw["name"] in seen:
-                continue
-            seen.add(kw["name"])
-            gherkin_keywords_unique.append(kw)
-
-        resource_relpath = os.path.relpath(resource_file, os.path.dirname(test_file))
-
-        _write_text(resource_file, _render_resource(basic_keywords_unique, suite_title))
-        _write_text(test_file, _render_test_file(gherkin_keywords_unique, test_cases, resource_relpath, suite_title))
-
-        if not os.path.exists(locator_file):
-            _write_text(locator_file, "{}\n")
-
-        if args.emit_feature or args.run_g2rf:
-            feature_dir = os.path.join(args.features_out, *suite_path_parts)
-            feature_file = os.path.join(feature_dir, f"{suite_slug}.feature")
-            feature_lines = []
-            feature_lines.append(f"Feature: {suite_title}\n\n")
-            for scenario in feature_scenarios:
-                feature_lines.append(f"Scenario: {scenario['title']}\n")
-                if scenario["description"]:
-                    for line in str(scenario["description"]).splitlines():
-                        feature_lines.append(f"  # {line}\n")
-                for step_line in scenario["steps"]:
-                    feature_lines.append(f"  {step_line}\n")
-                feature_lines.append("\n")
-            _write_text(feature_file, "".join(feature_lines))
-
-    if args.run_g2rf:
-        feature_root = os.path.abspath(args.features_out)
-        out_root = os.path.abspath(args.g2rf_out)
-        os.makedirs(out_root, exist_ok=True)
-
-        module_spec = importlib.util.find_spec("gherkin2robotframework")
-        if module_spec is not None:
-            cmd = [sys.executable, "-m", "gherkin2robotframework", feature_root, out_root]
-        else:
-            exe = shutil.which("gherkin2robotframework")
-            if not exe:
-                print("gherkin2robotframework is not available. Install it in the active venv.", file=sys.stderr)
-                return 3
-            cmd = [exe, feature_root, out_root]
-
-        result = subprocess.run(cmd, check=False)
-        if result.returncode != 0:
-            print("gherkin2robotframework failed.", file=sys.stderr)
-            return result.returncode
+    result = subprocess.run(cmd, check=False)
+    if result.returncode != 0:
+        print("gherkin2robotframework failed.", file=sys.stderr)
+        return result.returncode
 
     print(f"Generated {len(cases)} cases across {len(cases_by_suite)} suite folders.")
     return 0
