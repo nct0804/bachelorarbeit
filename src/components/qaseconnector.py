@@ -161,7 +161,7 @@ def main() -> int:
     parser.add_argument("--base-url", default=os.getenv("QASE_BASE_URL", DEFAULT_BASE_URL))
     parser.add_argument("--project", default=os.getenv("QASE_PROJECT"))
     parser.add_argument("--token", default=os.getenv("QASE_TOKEN"))
-    parser.add_argument("--g2rf-out", default="tests/qase_from_gherkin", help="Output folder for gherkin2robotframework.")
+    parser.add_argument("--g2rf-out", default="tests/", help="Output folder for gherkin2robotframework.")
     parser.add_argument("--insecure", action="store_true", help="Disable SSL verification (use only for local MITM/corporate proxies).")
     args = parser.parse_args()
 
