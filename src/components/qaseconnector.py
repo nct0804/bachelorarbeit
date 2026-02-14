@@ -8,7 +8,7 @@ Outputs:
 - features/qase/<suite_path>/<suite_slug>.feature (optional via --emit-feature)
 
 RUN COMMAND!!!!!!!!
-python3 /Users/ChiThien/Saveloads/HDA/PPundBA/robotframework-demo/src/components/qaseconnector.py --run-g2rf --insecure
+python3 /Users/ChiThien/Saveloads/HDA/PPundBA/Website-to-learn-german/src/components/qaseconnector.py --run-g2rf --insecure
 
 
 """
