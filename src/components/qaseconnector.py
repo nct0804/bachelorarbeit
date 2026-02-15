@@ -3,6 +3,10 @@
 
 Outputs:
 - gherkin2robotframework output folder (Robot Framework files)
+
+
+RUN: python3 /Users/ChiThien/Saveloads/HDA/PPundBA/Website-to-learn-german/src/components/qaseconnector.py --insecure
+
 """
 
 from __future__ import annotations
