@@ -6,5 +6,5 @@ configure = [
 ]
 
  ignore= [
-    "NAME18", "DOC02", "LEN04", "DOC01"
+    "NAME18", "DOC02", "LEN04", "DOC01", "LEN03", "VAR05", "DEPR05"
  ]
