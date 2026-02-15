@@ -77,7 +77,10 @@ export default function Notification({
   if (!isVisible) return null;
 
   return (
-    <div className="fixed top-4 right-4 z-50 max-w-sm w-full">
+    <div
+      className="fixed top-4 right-4 z-50 max-w-sm w-full"
+      data-test="register-notification"
+    >
       <div 
         className={`
           ${getColorClasses()}
@@ -91,8 +94,12 @@ export default function Notification({
             {getIcon()}
           </div>
           <div className="flex-1 min-w-0">
-            <h4 className="text-sm font-semibold">{title}</h4>
-            <p className="text-sm mt-1 opacity-90">{message}</p>
+            <h4 className="text-sm font-semibold" data-test="register-notification-title">
+              {title}
+            </h4>
+            <p className="text-sm mt-1 opacity-90" data-test="register-notification-message">
+              {message}
+            </p>
           </div>
           <button
             onClick={handleClose}
