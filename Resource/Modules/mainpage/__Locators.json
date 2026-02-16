@@ -1,0 +1,24 @@
+{
+    "meta": {
+        "page": "",
+        "version": 1
+    },
+    "page": [
+        "Main Page",
+        "Main Learning Page",
+        "Main Layout",
+        "Main",
+        "Mainpage"
+    ],
+    "root": "[data-test=\"page-main-layout\"]",
+    "button": {
+    },
+    "link": {
+
+    },
+    "textbox": {
+
+    },
+    "checkbox": {
+    }
+}
