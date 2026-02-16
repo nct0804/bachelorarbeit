@@ -27,12 +27,3 @@ the user fills the '${Textbox}' textbox with '${Value}'
     [Tags]    gherkin
     Fill Textbox    ${Textbox}    ${Value}
 
-the user signs up with the information
-    [Documentation]    Fill multiple textboxes based on a data table of field names and values.
-    [Tags]    gherkin
-    the user fills the 'First Name' textbox with 'Chi Thien'
-    the user fills the 'Last Name' textbox with 'Nguyen'
-    the user fills the 'Username' textbox with 'nct0804'
-    the user fills the 'Email Address' textbox with 'chi.thien.nguyen@example.com'
-    the user fills the 'Password' textbox with 'password123'
-    the user clicks the 'Create Account' button
