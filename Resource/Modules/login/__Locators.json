@@ -7,13 +7,15 @@
   "root": "[data-test=\"page-login\"]",
   "button": {
     "Sign Up": "[data-test=\"login-signup-link\"]",
+    "Sign In": "[data-test=\"login-submit\"]",
     "secondary": ""
   },
   "link": {
     "primary": ""
   },
   "textbox": {
-    "primary": ""
+    "Email Address": "[data-test=\"login-email\"]",
+    "Password": "[data-test=\"login-password\"]"
   },
   "checkbox": {
     "primary": ""
@@ -21,8 +23,8 @@
   "text": {
     "Sign Up": "[data-test=\"login-signup-link\"]"
   },
-  "card": {
-    "primary": ""
+  "notification": {
+    "Error": "[data-test=\"login-form\"]"
   },
   "list": {
     "primary": ""
