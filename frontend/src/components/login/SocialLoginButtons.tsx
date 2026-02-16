@@ -56,7 +56,7 @@ export default function SocialLoginButtons() {
           type="button"
           onClick={handleGoogleLogin}
           disabled={loading === 'oauth_google' || !signInLoaded}
-          className="flex items-center justify-center w-10 h-10 bg-white border border-gray-300 rounded-full hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex items-center justify-center w-10 h-10 bg-white border border-gray-300 rounded-full hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" data-test="register-google-button"
         >
           {loading === 'oauth_google' ? (
             <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin"></div>
@@ -74,7 +74,7 @@ export default function SocialLoginButtons() {
           type="button"
           onClick={handleFacebookLogin}
           disabled={loading === 'oauth_facebook' || !signInLoaded}
-          className="flex items-center justify-center w-10 h-10 bg-[#1877F2] rounded-full hover:bg-[#166FE5] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex items-center justify-center w-10 h-10 bg-[#1877F2] rounded-full hover:bg-[#166FE5] transition-colors disabled:opacity-50 disabled:cursor-not-allowed" data-test="register-facebook-button"
         >
           {loading === 'oauth_facebook' ? (
             <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>

@@ -38,7 +38,10 @@ export default function MainLayout() {
 
   return (
     <MenuProvider>
-      <div className="flex flex-col h-screen px-8 py-4 bg-[#FBFBFC] dark:bg-gray-900 min-w-[1400px] transition-colors duration-300">
+      <div
+        className="flex flex-col h-screen px-8 py-4 bg-[#FBFBFC] dark:bg-gray-900 min-w-[1400px] transition-colors duration-300"
+        data-test="page-main-layout"
+      >
         <TopBar />
         <div className="flex flex-1 overflow-hidden h-full">
           <LeftBar />

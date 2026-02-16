@@ -6,14 +6,19 @@
   "page": ["Signup", "Sign up", "Sign Up", "SignUp", "Register", "register"],
   "root": "[data-test=\"page-register\"]",
   "button": {
-    "primary": "",
-    "secondary": ""
+    "Create Account": "[data-test=\"register-submit\"]",
+    "Google": "[data-test=\"register-google-button\"]",
+    "Facebook": "[data-test=\"register-facebook-button\"]"
   },
   "link": {
     "primary": ""
   },
   "textbox": {
-    "primary": ""
+    "First Name": "[data-test=\"register-first-name\"]",
+    "Last Name": "[data-test=\"register-last-name\"]",
+    "Username": "[data-test=\"register-username\"]",
+    "Email Address": "[data-test=\"register-email\"]",
+    "Password": "[data-test=\"register-password\"]"
   },
   "checkbox": {
     "primary": ""
@@ -21,8 +26,13 @@
   "tab": {
     "primary": ""
   },
-  "card": {
-    "primary": ""
+  "messagebox": {
+    "Registration Error": "[data-test=\"register-error\"]"
+  },
+  "notification": {
+    "Container": "[data-test=\"register-notification\"]",
+    "Title": "[data-test=\"register-notification-title\"]",
+    "Message": "[data-test=\"register-notification-message\"]"
   },
   "list": {
     "primary": ""

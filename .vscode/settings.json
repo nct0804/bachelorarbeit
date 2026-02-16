@@ -4,10 +4,12 @@
     "robotcode.robot.pythonPath": [
         "."
     ],
+    "debugpy.debugJustMyCode": false,
+    "robotcode.debug.attachPython": true,
     "robotcode.codeLens.enable": true,
     "python.terminal.activateEnvironment": true,
     "code-runner.executorMap": {
-        "robotframework": "robot --outputdir Results"
+        "robotframework": "source .venv/bin/activate && robot --outputdir Results"
     },
     "code-runner.runInTerminal": true,
     "[robotframework]": {

@@ -1,0 +1,11 @@
+robotframework~=7.2
+qase-robotframework
+robotframework-seleniumlibrary
+robotframework-pabot
+robotframework-randomlibrary
+robotframework-tidy
+selenium~=4.28.0
+webdriver-manager
+gherkin2robotframework
+robotframework-browser
+robotframework-robocop

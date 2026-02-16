@@ -36,7 +36,7 @@ Validate '${PAGE}' Is Opened
     [Documentation]    Verify that the expected page is opened by a unique root element.
     [Tags]    basic
     Load Locators    ${PAGE}
-    Wait For Load State    networkidle    timeout=30s
+    Wait For Load State    networkidle    timeout=10s
     ${PAGE_LOCATOR}=    Get Locator    root
     Wait For Elements State    css=${PAGE_LOCATOR}    visible    timeout=30s
 

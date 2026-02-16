@@ -55,26 +55,83 @@ export function useRegister(): UseRegisterResult {
       console.log('Response status:', response.status);
       console.log('Response headers:', response.headers.get('content-type')); 
 
+      const textResponse = await response.text();
       const contentType = response.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/json')) {
-        const textResponse = await response.text();
+      const canParseJson = contentType && contentType.includes('application/json');
+      let payload: any = null;
+      
+      if (canParseJson) {
+        payload = textResponse ? JSON.parse(textResponse) : null;
+      } else {
+        try {
+          payload = textResponse ? JSON.parse(textResponse) : null;
+        } catch {
+          payload = null;
+        }
+      }
+      
+      if (!canParseJson) {
         console.error('Non-JSON response:', textResponse);
+      }
+      console.log('Response payload:', payload); 
+
+      if (!response.ok) {
+        let errorMessage = 'Registration failed';
         
-        let errorMessage = 'Server error occurred';
+        if (payload?.message) {
+          errorMessage = payload.message;
+        } else if (payload?.error) {
+          errorMessage = payload.error;
+        } else if (Array.isArray(payload?.errors) && payload.errors[0]?.message) {
+          errorMessage = payload.errors[0].message;
+        } else if (typeof payload === 'string') {
+          errorMessage = payload;
+        } else if (textResponse) {
+          errorMessage = textResponse;
+        }
         
-        if (textResponse.includes('Password min 8 chars')) {
+        if (errorMessage.includes('<!DOCTYPE html') || errorMessage.includes('<html')) {
+          const bodyMatch = errorMessage.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+          const bodyContent = bodyMatch ? bodyMatch[1] : errorMessage;
+          const preMatch = bodyContent.match(/<pre[^>]*>([\s\S]*?)<\/pre>/i);
+          const rawText = preMatch ? preMatch[1] : bodyContent;
+          const cleaned = rawText
+            .replace(/<br\s*\/?\s*>/gi, '\n')
+            .replace(/<[^>]+>/g, '')
+            .replace(/&nbsp;/g, ' ')
+            .replace(/&gt;/g, '>')
+            .replace(/&lt;/g, '<')
+            .replace(/&amp;/g, '&')
+            .replace(/&#39;/g, "'")
+            .replace(/&quot;/g, '"')
+            .trim();
+          
+          if (cleaned) {
+            errorMessage = cleaned;
+          } else {
+            errorMessage = 'Server error occurred';
+          }
+        }
+        
+        if (errorMessage.includes("Can't reach database server") || errorMessage.includes('PrismaClientInitializationError')) {
+          errorMessage = 'Cannot connect to database. Please start the database and try again.';
+        }
+        
+        if (errorMessage.includes('Password min 8 chars')) {
           errorMessage = 'Password must be at least 8 characters long';
-        } else if (textResponse.includes('Validation failed')) {
-          const match = textResponse.match(/Validation failed: \[{[^}]*"message":"([^"]*)"[^}]*}\]/);
+        } else if (errorMessage.includes('E-mail already in use') || errorMessage.includes('Email already in use')) {
+          errorMessage = 'Email already exists. Please use a different email address.';
+        } else if (errorMessage.includes('Validation failed')) {
+          const match = errorMessage.match(/Validation failed: \[{[^}]*"message":"([^"]*)"[^}]*}\]/);
           if (match && match[1]) {
             errorMessage = match[1];
           } else {
             errorMessage = 'Validation failed. Please check your input.';
           }
-        } else if (textResponse.includes('Unique constraint failed')) {
-          if (textResponse.includes('username')) {
+        } else if (errorMessage.includes('Unique constraint failed')) {
+          if (errorMessage.includes('username')) {
             errorMessage = 'Username already exists. Please choose a different username.';
-          } else if (textResponse.includes('email')) {
+          } else if (errorMessage.includes('email')) {
             errorMessage = 'Email already exists. Please use a different email address.';
           } else {
             errorMessage = 'This information already exists. Please try different values.';
@@ -84,30 +141,11 @@ export function useRegister(): UseRegisterResult {
         throw new Error(errorMessage);
       }
 
-      const payload = await response.json();
-      console.log('Response payload:', payload); 
-
-      if (!response.ok) {
-        let errorMessage = 'Registration failed';
-        
-        if (payload.message) {
-          errorMessage = payload.message;
-        } else if (payload.error) {
-          errorMessage = payload.error;
-        } else if (typeof payload === 'string') {
-          errorMessage = payload;
-        }
-        
-        if (errorMessage.includes('Unique constraint failed') && errorMessage.includes('username')) {
-          errorMessage = 'Username already exists. Please choose a different username.';
-        } else if (errorMessage.includes('Unique constraint failed') && errorMessage.includes('email')) {
-          errorMessage = 'Email already exists. Please use a different email address.';
-        }
-        
-        throw new Error(errorMessage);
+      if (payload === null && textResponse) {
+        throw new Error('Unexpected server response. Please try again.');
       }
 
-      return payload;
+      return payload ?? ({} as RegisterResponse);
       
     } catch (err: any) {
       let errorMessage = 'Registration failed';

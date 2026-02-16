@@ -2,6 +2,11 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,node
 
 ### macOS ###
+
+# Qase
+qase.config.json
+robot-tests
+
 # General
 .DS_Store
 .AppleDouble
