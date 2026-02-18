@@ -40,7 +40,8 @@ export default function DarkModeToggle() {
           }`}
         />
         {isDark && (
-          <div className="absolute inset-0 bg-yellow-300/20 rounded-full animate-pulse" />
+          <div className="absolute inset-0 bg-yellow-300/20 rounded-full animate-pulse"
+          data-test="dark-mode-toggle-pulse" />
         )}
       </div>
     </button>

@@ -76,11 +76,15 @@ export default function LeftBar() {
 
   return (
     <>
-      <aside className="h-full flex flex-col justify-between w-25 bg-gradient-to-b from-orange-400 via-orange-500 to-orange-600 rounded-3xl shadow-lg
-      dark:bg-gradient-to-b dark:from-[#05315B] dark:via-[#256996] dark:to-[#3B6978] dark:text-white">
-        <div className="flex flex-col items-center gap-3 py-4">
+      <aside
+        className="h-full flex flex-col justify-between w-25 bg-gradient-to-b from-orange-400 via-orange-500 to-orange-600 rounded-3xl shadow-lg
+      dark:bg-gradient-to-b dark:from-[#05315B] dark:via-[#256996] dark:to-[#3B6978] dark:text-white"
+        data-test="main-leftbar"
+      >
+        <div className="flex flex-col items-center gap-3 py-4" data-test="main-nav">
           {menuItems.map((item) => {
             const isActive = location.pathname === item.to;
+            const dataTest = `main-nav-${item.label.toLowerCase().replace(/\s+/g, '-')}`;
             return (
               <Link
                 key={item.to}
@@ -92,6 +96,7 @@ export default function LeftBar() {
                 )}
                 onMouseEnter={(e) => handleMouseEnter(item.label, e)}
                 onMouseLeave={handleMouseLeave}
+                data-test={dataTest}
               >
                 <div className="w-8 h-8 flex items-center justify-center">
                   {typeof item.icon === 'string' ? (
@@ -116,6 +121,7 @@ export default function LeftBar() {
           <div
             onMouseEnter={(e) => handleMouseEnter('Toggle Dark Mode', e)}
             onMouseLeave={handleMouseLeave}
+            data-test="main-darkmode"
           >
             <DarkModeToggle />
           </div>
@@ -123,7 +129,7 @@ export default function LeftBar() {
           {/* Menu Items - Show when menu is open with animation */}
           <div className={`flex flex-col items-center gap-2 overflow-hidden transition-all duration-300 ease-in-out ${
             isMenuOpen ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'
-          }`}>
+          }`} data-test="main-more-panel">
             <div className={`transition-all duration-300 transform ${
               isMenuOpen ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'
             }`} style={{ transitionDelay: isMenuOpen ? '0ms' : '200ms' }}>
@@ -133,6 +139,7 @@ export default function LeftBar() {
                 onClick={() => setIsMenuOpen(false)}
                 onMouseEnter={(e) => handleMouseEnter('Profile', e)}
                 onMouseLeave={handleMouseLeave}
+                data-test="main-menu-profile"
               >
                 <div className="w-8 h-8 flex items-center justify-center">
                   <img
@@ -153,6 +160,7 @@ export default function LeftBar() {
                 onClick={() => setIsMenuOpen(false)}
                 onMouseEnter={(e) => handleMouseEnter('About Us', e)}
                 onMouseLeave={handleMouseLeave}
+                data-test="main-menu-about"
               >
                 <div className="w-8 h-8 flex items-center justify-center">
                   <img
@@ -176,6 +184,7 @@ export default function LeftBar() {
                 className="flex items-center justify-center rounded-lg p-3 transition-all duration-300 hover:scale-105 active:scale-95 hover:bg-white/10 disabled:opacity-50 relative"
                 onMouseEnter={(e) => handleMouseEnter('Logout', e)}
                 onMouseLeave={handleMouseLeave}
+                data-test="main-menu-logout"
               >
                 <div className="w-8 h-8 flex items-center justify-center">
                   <LogOut className="w-full h-full text-white" />
@@ -199,6 +208,7 @@ export default function LeftBar() {
               aria-expanded={isMenuOpen}
               onMouseEnter={(e) => handleMouseEnter(isMenuOpen ? 'Close Menu' : 'More Options', e)}
               onMouseLeave={handleMouseLeave}
+              data-test="main-menu-toggle"
             >
               <div className="w-8 h-8 flex items-center justify-center">
                 <img 
@@ -228,6 +238,7 @@ export default function LeftBar() {
             top: tooltipPosition.y,
             transform: 'translateY(-50%)'
           }}
+          data-test="main-tooltip"
         >
           {tooltipText}
           <div 

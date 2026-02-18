@@ -61,13 +61,13 @@ export default function QuickPracticeCard({ onComplete }: { onComplete?: () => v
 
       {!finished && current && (
         <div>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Question {index + 1} of {quiz.length}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-2" data-test="quick-practice-progress">Question {index + 1} of {quiz.length}</p>
           <div className="rounded-xl border border-dashed border-blue-200 dark:border-blue-700 p-4 bg-blue-50/60 dark:bg-blue-900/20 mb-4">
-            <p className="text-xl font-bold text-gray-800 dark:text-white">{current.word}</p>
+            <p className="text-xl font-bold text-gray-800 dark:text-white" data-test="quick-practice-word">{current.word}</p>
             <p className="text-xs text-gray-500 dark:text-gray-400">Pick the correct translation.</p>
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            {current.options.map((option) => {
+          <div className="grid grid-cols-2 gap-3" data-test="quick-practice-options">
+            {current.options.map((option, optionIndex) => {
               const isSelected = option === selected;
               return (
                 <button
@@ -78,6 +78,7 @@ export default function QuickPracticeCard({ onComplete }: { onComplete?: () => v
                       ? 'border-blue-500 bg-blue-500 text-white shadow-md'
                       : 'border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 hover:border-blue-300'
                   }`}
+                  data-test={`quick-practice-option-${optionIndex + 1}`}
                 >
                   {option}
                 </button>
@@ -85,13 +86,14 @@ export default function QuickPracticeCard({ onComplete }: { onComplete?: () => v
             })}
           </div>
           <div className="mt-4 flex items-center justify-between">
-            <p className="text-xs text-gray-500 dark:text-gray-400">
+            <p className="text-xs text-gray-500 dark:text-gray-400" data-test="quick-practice-tip">
               Tip: {wordBank.find((w) => w.word === current.word)?.tip || 'Say it out loud to lock it in.'}
             </p>
             <button
               onClick={handleSubmit}
               disabled={!selected}
               className="px-4 py-2 rounded-lg bg-blue-500 text-white text-sm font-semibold hover:bg-blue-600 disabled:opacity-50"
+              data-test="quick-practice-next"
             >
               {index + 1 === quiz.length ? 'Finish' : 'Next'}
             </button>
@@ -100,17 +102,18 @@ export default function QuickPracticeCard({ onComplete }: { onComplete?: () => v
       )}
 
       {finished && (
-        <div className="text-center">
+        <div className="text-center" data-test="quick-practice-complete">
           <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/40 mx-auto flex items-center justify-center mb-3">
             <CheckCircle2 className="w-6 h-6 text-green-500" />
           </div>
           <h4 className="text-lg font-bold text-gray-800 dark:text-white">Sprint complete!</h4>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4" data-test="quick-practice-score">
             You scored {lastScore} / {quiz.length} and earned {lastScore * XP_PER_CORRECT} XP.
           </p>
           <button
             onClick={handleReset}
             className="px-4 py-2 rounded-lg bg-blue-500 text-white text-sm font-semibold hover:bg-blue-600"
+            data-test="quick-practice-reset"
           >
             Practice Again
           </button>

@@ -43,6 +43,7 @@ export default function WordOfDayCard({ refreshKey = 0 }: { refreshKey?: number 
           onClick={() => setShuffle((v) => v + 1)}
           className="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-gray-500 hover:text-gray-700"
           title="Shuffle"
+          data-test="word-of-day-shuffle-button"
         >
           <RefreshCcw className="w-4 h-4" />
         </button>
@@ -55,6 +56,7 @@ export default function WordOfDayCard({ refreshKey = 0 }: { refreshKey?: number 
         <button
           onClick={handleSpeak}
           className="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-500 text-white text-sm font-semibold hover:bg-blue-600"
+          data-test="word-of-day-speak-button"
         >
           <Volume2 className="w-4 h-4" /> Hear it
         </button>
@@ -65,6 +67,7 @@ export default function WordOfDayCard({ refreshKey = 0 }: { refreshKey?: number 
               ? 'bg-red-500 text-white border-red-500'
               : 'border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200'
           }`}
+          data-test="word-of-day-favorite-button"
         >
           <Heart className={`w-4 h-4 ${isFavorite ? 'fill-white' : ''}`} />
           {isFavorite ? 'Saved' : 'Save'}

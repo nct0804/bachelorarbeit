@@ -20,6 +20,7 @@ export default function LessonReminder({
           rounded-3xl shadow-lg flex flex-col items-center px-3 py-3
           h-[300px] animate-pulse
         `}
+        data-test="rightbar-lesson-loading"
       >
         {/* Skeleton icon */}
         <div className="absolute top-5 left-1/2 -translate-x-1/2">
@@ -48,6 +49,7 @@ export default function LessonReminder({
         rounded-3xl shadow-lg flex flex-col items-center px-3 py-3
         h-[300px]
       `}
+      data-test="rightbar-lesson-reminder"
     >
       {/* Absolute-positioned icon */}
       <div className="absolute top-5 left-1/2 -translate-x-1/2">
@@ -61,11 +63,11 @@ export default function LessonReminder({
         <span className="text-xs uppercase font-bold text-orange-500 tracking-wider mb-1">
           Next Lesson
         </span>
-        <div className="font-semibold text-lg text-[#256996] dark:text-white mb-1">
+        <div className="font-semibold text-lg text-[#256996] dark:text-white mb-1" data-test="rightbar-lesson-title">
           {lesson.title}
         </div>
         {lesson.description && (
-          <div className="text-gray-600 dark:text-gray-200 text-sm mb-2 px-2">
+          <div className="text-gray-600 dark:text-gray-200 text-sm mb-2 px-2" data-test="rightbar-lesson-description">
             {lesson.description}
           </div>
         )}
@@ -81,6 +83,7 @@ export default function LessonReminder({
           hover:from-orange-600 hover:to-orange-500 text-white font-semibold
           rounded-xl shadow-lg transition active:scale-95 w-max mx-auto
         `}
+        data-test="rightbar-lesson-start"
       >
         Learn
       </button>

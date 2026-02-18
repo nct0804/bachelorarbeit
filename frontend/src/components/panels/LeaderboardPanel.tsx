@@ -16,6 +16,7 @@ export default function LeaderboardPanel() {
       <div
         key={user.id}
         className="flex items-center gap-3 bg-gray-50 dark:bg-gray-700 rounded-xl px-4 py-3 shadow-sm transition-colors duration-300"
+        data-test={`leaderboard-item-${idx + 1}`}
       >
         <div className="flex items-center justify-center w-10 h-10 rounded-full bg-white dark:bg-gray-600 mr-2 transition-colors duration-300">
           <img src={rankIcons[idx]} alt={`${idx + 1} place`} className="w-14 h-14 object-contain" />
@@ -35,9 +36,9 @@ export default function LeaderboardPanel() {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 border-none shadow-lg transition-colors duration-300">
+    <div className="bg-white dark:bg-gray-800 rounded-2xl p-5 border-none shadow-lg transition-colors duration-300" data-test="rightbar-leaderboard">
       <div className="font-semibold text-xl mb-4 text-gray-800 dark:text-white transition-colors duration-300">Leaderboard</div>
-      <div className="flex flex-col gap-3">{content()}</div>
+      <div className="flex flex-col gap-3" data-test="leaderboard-list">{content()}</div>
     </div>
   );
 }

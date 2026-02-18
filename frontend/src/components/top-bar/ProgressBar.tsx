@@ -21,9 +21,9 @@ export default function ProgressBar() {
     const percent = Math.min((xpInLevel / xpNeeded) * 100, 100);
 
     return (
-        <div className="flex flex-col flex-1 w-full max-w-[260px] mx-auto z-10">
+        <div className="flex flex-col flex-1 w-full max-w-[260px] mx-auto z-10" data-test="topbar-progress">
             {/* Bar */}
-            <div className="h-6 w-full bg-gray-200 rounded-full mb-1 overflow-hidden relative">
+            <div className="h-6 w-full bg-gray-200 rounded-full mb-1 overflow-hidden relative" data-test="topbar-progress-bar">
                 <div 
                     className="h-6 rounded-full transition-all duration-300 relative"
                     style={{ 
@@ -67,7 +67,7 @@ export default function ProgressBar() {
                     }}
                 />
                 {/* Centered XP Text */}
-                <span className="absolute inset-0 flex items-center justify-center text-xs text-black drop-shadow-sm pointer-events-none">
+                <span className="absolute inset-0 flex items-center justify-center text-xs text-black drop-shadow-sm pointer-events-none" data-test="topbar-progress-text">
                     {xpInLevel}/{xpNeeded} XP
                 </span>
             </div>
