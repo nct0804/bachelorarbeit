@@ -1,0 +1,37 @@
+{
+    "meta": {
+        "page": "",
+        "version": 1
+    },
+    "page": [
+        "Challenge",
+        "Challenge Page"
+    ],
+    "root": "[data-test=\"page-challenge\"]",
+    "button": {
+        "All": "[data-test=\"challenge-category-all\"]",
+        "Grammar": "[data-test=\"challenge-category-grammar\"]",
+        "Vocabulary": "[data-test=\"challenge-category-vocabulary\"]",
+        "Listening": "[data-test=\"challenge-category-listening\"]",
+        "Numbers": "[data-test=\"challenge-category-numbers\"]",
+        "Speaking": "[data-test=\"challenge-category-speaking\"]",
+        "Card Action": "[data-test^=\"challenge-card-action-\"]",
+        "Refresh Quote": "[data-test=\"topbar-quote-refresh\"]",
+        "Learn": "[data-test=\"rightbar-lesson-start\"]",
+        "Start Challenge": "[data-test=\"rightbar-challenge-start\"]"
+    },
+    "link": {
+    },
+    "textbox": {
+    },
+    "checkbox": {
+    },
+    "tab": {
+    },
+    "messagebox": {
+    },
+    "list": {
+    },
+    "modal": {
+    }
+}

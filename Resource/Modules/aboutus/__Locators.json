@@ -1,0 +1,31 @@
+{
+    "meta": {
+        "page": "",
+        "version": 1
+    },
+    "page": [
+        "About Us",
+        "About",
+        "About Page"
+    ],
+    "root": "[data-test=\"page-about\"]",
+    "button": {
+        "Refresh Quote": "[data-test=\"topbar-quote-refresh\"]",
+        "Learn": "[data-test=\"rightbar-lesson-start\"]",
+        "Start Challenge": "[data-test=\"rightbar-challenge-start\"]"
+    },
+    "link": {
+    },
+    "textbox": {
+    },
+    "checkbox": {
+    },
+    "tab": {
+    },
+    "messagebox": {
+    },
+    "list": {
+    },
+    "modal": {
+    }
+}

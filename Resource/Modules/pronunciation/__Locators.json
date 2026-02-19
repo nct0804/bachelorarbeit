@@ -1,0 +1,34 @@
+{
+    "meta": {
+        "page": "",
+        "version": 1
+    },
+    "page": [
+        "Pronunciation",
+        "Sounds"
+    ],
+    "root": "[data-test=\"page-pronunciation\"]",
+    "button": {
+        "Learn": "[data-test=\"rightbar-lesson-start\"]",
+        "Start Challenge": "[data-test=\"rightbar-challenge-start\"]",
+        "Refresh Quote": "[data-test=\"topbar-quote-refresh\"]"
+    },
+    "link": {
+    },
+    "textbox": {
+    },
+    "checkbox": {
+    },
+    "tab": {
+    },
+    "messagebox": {
+        "Loading": "[data-test=\"pronunciation-loading\"]",
+        "Error": "[data-test=\"pronunciation-error\"]"
+    },
+    "list": {
+        "Group": "[data-test^=\"pronunciation-group-\"]",
+        "Sound": "[data-test^=\"pronunciation-sound-\"]"
+    },
+    "modal": {
+    }
+}

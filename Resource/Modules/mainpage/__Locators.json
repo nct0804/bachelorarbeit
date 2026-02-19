@@ -12,13 +12,85 @@
     ],
     "root": "[data-test=\"page-main-layout\"]",
     "button": {
+        "Home": "[data-test=\"main-nav-home\"]",
+        "Challenge": "[data-test=\"main-nav-challenge\"]",
+        "Ranking": "[data-test=\"main-nav-ranking\"]",
+        "Pronunciation": "[data-test=\"main-nav-pronunciation\"]",
+        "Speak": "[data-test=\"main-nav-speak\"]",
+        "Review": "[data-test=\"main-nav-review\"]",
+        "Inbox": "[data-test=\"main-nav-inbox\"]",
+        "Achievements": "[data-test=\"main-nav-achievements\"]",
+        "Menu Toggle": "[data-test=\"main-menu-toggle\"]",
+        "Profile": "[data-test=\"main-menu-profile\"]",
+        "About": "[data-test=\"main-menu-about\"]",
+        "Logout": "[data-test=\"main-menu-logout\"]",
+        "Refresh Quote": "[data-test=\"topbar-quote-refresh\"]",
+        "Learn": "[data-test=\"rightbar-lesson-start\"]",
+        "Start Challenge": "[data-test=\"rightbar-challenge-start\"]",
+        "Quick Practice Next": "[data-test=\"quick-practice-next\"]",
+        "Quick Practice Reset": "[data-test=\"quick-practice-reset\"]",
+        "Quick Practice Option": "[data-test^=\"quick-practice-option-\"]",
+        "Edit": "[data-test=\"daily-goal-edit-button\"]",
+        "Save Goal": "[data-test=\"daily-goal-save-button\"]",
+        "Shuffle": "[data-test=\"word-of-day-shuffle-button\"]",
+        "Hear it": "[data-test=\"word-of-day-speak-button\"]",
+        "Save": "[data-test=\"word-of-day-favorite-button\"]",
+        "Play Pause": "[data-test=\"focus-timer-play-pause-button\"]",
+        "Timer Reset": "[data-test=\"focus-timer-reset-button\"]",
+        "5 min": "[data-test=\"focus-timer-duration-5-button\"]",
+        "10 min": "[data-test=\"focus-timer-duration-10-button\"]",
+        "25 min": "[data-test=\"focus-timer-duration-25-button\"]",
+        "Start": "[data-test=\"course-card-action-1\"]",
+        "Dark Mode Toggle": "[data-test=\"dark-mode-toggle-pulse\"]",
+        "Profile Icon": "[data-test=\"topbar-profile-link\"]",
+        "Lesson 1": "[data-test=\"lesson-step-2-button\"]",
+        "Lesson 1 Start": "[data-test=\"lesson-step-2-bubble-action\"]",
+        "Lesson 2": "[data-test=\"lesson-step-1-button\"]",
+        "Lesson 2 Start": "[data-test=\"lesson-step-1-bubble-action\"]"
     },
     "link": {
-
+        "Profile Link": "[data-test=\"topbar-profile-link\"]"
     },
     "textbox": {
+        "Daily Goal Target": "[data-test=\"daily-goal-target-input\"]",
+        "Daily Goal Option": "[data-test=\"daily-goal-type-select\"]"
 
     },
     "checkbox": {
+    },
+    "tab": {
+    },
+    "messagebox": {
+        "Main Tooltip": "[data-test=\"main-tooltip\"]",
+        "Topbar Tooltip": "[data-test=\"topbar-tooltip\"]"
+    },
+    "list": {
+        "Nav": "[data-test=\"main-nav\"]",
+        "More Panel": "[data-test=\"main-more-panel\"]",
+        "Topbar": "[data-test=\"main-topbar\"]",
+        "Quote": "[data-test=\"topbar-quote\"]",
+        "Quote Text": "[data-test=\"topbar-quote-text\"]",
+        "Profile Stats": "[data-test=\"topbar-profile-stats\"]",
+        "Progress": "[data-test=\"topbar-progress\"]",
+        "Progress Bar": "[data-test=\"topbar-progress-bar\"]",
+        "Progress Text": "[data-test=\"topbar-progress-text\"]",
+        "Rightbar": "[data-test=\"main-rightbar\"]",
+        "Rightbar Reminders": "[data-test=\"rightbar-reminders\"]",
+        "Rightbar Leaderboard": "[data-test=\"rightbar-leaderboard\"]",
+        "Leaderboard List": "[data-test=\"leaderboard-list\"]",
+        "Leaderboard Item": "[data-test^=\"leaderboard-item-\"]",
+        "Lesson Reminder": "[data-test=\"rightbar-lesson-reminder\"]",
+        "Lesson Loading": "[data-test=\"rightbar-lesson-loading\"]",
+        "Challenge Reminder": "[data-test=\"rightbar-challenge-reminder\"]",
+        "Challenge Loading": "[data-test=\"rightbar-challenge-loading\"]",
+        "Quick Practice": "[data-test=\"home-quick-practice\"]",
+        "Quick Practice Progress": "[data-test=\"quick-practice-progress\"]",
+        "Quick Practice Word": "[data-test=\"quick-practice-word\"]",
+        "Quick Practice Options": "[data-test=\"quick-practice-options\"]",
+        "Quick Practice Tip": "[data-test=\"quick-practice-tip\"]",
+        "Quick Practice Complete": "[data-test=\"quick-practice-complete\"]",
+        "Quick Practice Score": "[data-test=\"quick-practice-score\"]"
+    },
+    "modal": {
     }
 }

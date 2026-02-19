@@ -47,6 +47,7 @@ export default function DailyGoalCard({ refreshKey = 0 }: { refreshKey?: number 
         <button
           onClick={() => setEditing((v) => !v)}
           className="text-xs font-semibold text-orange-500 hover:text-orange-600"
+          data-test="daily-goal-edit-button"
         >
           {editing ? 'Close' : 'Edit'}
         </button>
@@ -92,6 +93,7 @@ export default function DailyGoalCard({ refreshKey = 0 }: { refreshKey?: number 
               value={goalType}
               onChange={(e) => setGoalType(e.target.value as 'xp' | 'minutes')}
               className="rounded-lg border border-orange-200 dark:border-orange-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm"
+              data-test="daily-goal-type-select"
             >
               <option value="xp">XP Goal</option>
               <option value="minutes">Minutes Goal</option>
@@ -102,10 +104,12 @@ export default function DailyGoalCard({ refreshKey = 0 }: { refreshKey?: number 
               value={goalTarget}
               onChange={(e) => setGoalTarget(Number(e.target.value))}
               className="w-24 rounded-lg border border-orange-200 dark:border-orange-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm"
+              data-test="daily-goal-target-input"
             />
             <button
               onClick={handleSave}
               className="px-3 py-2 rounded-lg bg-orange-500 text-white text-sm font-semibold hover:bg-orange-600"
+              data-test="daily-goal-save-button"
             >
               Save Goal
             </button>

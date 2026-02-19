@@ -15,6 +15,7 @@ export default function ChallengeReminder({ loading = false }: { loading?: boole
           px-3 py-3
           h-[300px] animate-pulse
         "
+        data-test="rightbar-challenge-loading"
       >
         {/* Skeleton icon */}
         <div className="absolute top-5 left-1/2 -translate-x-1/2">
@@ -43,6 +44,7 @@ export default function ChallengeReminder({ loading = false }: { loading?: boole
         px-3 py-3
         h-[300px]  /* fix size to match LessonReminder */
       "
+      data-test="rightbar-challenge-reminder"
     >
       {/* 1. Absolute‐positioned icon */}
       <div className="absolute top-5 left-1/2 -translate-x-1/2">
@@ -76,6 +78,7 @@ export default function ChallengeReminder({ loading = false }: { loading?: boole
           rounded-xl shadow-lg transition active:scale-95
           w-max
         "
+        data-test="rightbar-challenge-start"
       >
         Start Challenge
       </button>

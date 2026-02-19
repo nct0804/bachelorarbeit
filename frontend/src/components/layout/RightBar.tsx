@@ -12,9 +12,9 @@ export default function RightBar({
   loading?: boolean;
 }) {
   return (
-    <aside className="w-[30%] w-[400px] rounded-3xl transition-colors duration-300">
+    <aside className="w-[30%] w-[400px] rounded-3xl transition-colors duration-300" data-test="main-rightbar">
       <LeaderboardPanel />
-      <div className="grid grid-cols-2 gap-4 mt-5">
+      <div className="grid grid-cols-2 gap-4 mt-5" data-test="rightbar-reminders">
         <LessonReminder lesson={nextLesson || null} loading={loading} />
         <ChallengeReminder loading={loading} />  
       </div>

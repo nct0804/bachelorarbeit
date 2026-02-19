@@ -31,16 +31,17 @@ function TopBarQuote() {
   return (
     <div className="flex flex-col items-center justify-center mx-auto max-w-xl 
     px-4 select-none hover:scale-105 cursor-pointer
-    ">
+    " data-test="topbar-quote">
       <div className="flex items-center gap-2 mb-1 rounded-3xl shadow-lg p-3">
         <button
           onClick={getRandomQuote}
           className="rounded-full bg-orange-400 hover:bg-orange-500 hover:scale-105 cursor-pointer text-white w-8 h-8 flex items-center justify-center shadow transition"
           title="New Quote"
+          data-test="topbar-quote-refresh"
         >
           <RotateCcw className="w-5 h-5" />
         </button>
-        <span className="text-base md:text-lg font-semibold text-gray-700 dark:text-white italic">"{quote.q}"</span>
+        <span className="text-base md:text-lg font-semibold text-gray-700 dark:text-white italic" data-test="topbar-quote-text">"{quote.q}"</span>
       </div>
     </div>
   );
@@ -51,7 +52,7 @@ export default function TopBar() {
   const level = user?.level ?? 1;
   const streak = user?.streak ?? 0;
   return (
-    <header className="w-full flex items-center justify-between z-20 dark:text-white transition-colors duration-300">
+    <header className="w-full flex items-center justify-between z-20 dark:text-white transition-colors duration-300" data-test="main-topbar">
       <Logo />
       <TopBarQuote />
       <ProfileAndStats level={level} streak={streak} />

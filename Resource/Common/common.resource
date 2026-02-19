@@ -32,40 +32,6 @@ the user open the '${TYPE}' browser
         Fail    Unsupported browser type: ${TYPE}
     END
 
-Validate '${PAGE}' Is Opened
-    [Documentation]    Verify that the expected page is opened by a unique root element.
-    [Tags]    basic
-    Load Locators    ${PAGE}
-    Wait For Load State    networkidle    timeout=10s
-    ${PAGE_LOCATOR}=    Get Locator    root
-    Wait For Elements State    css=${PAGE_LOCATOR}    visible    timeout=30s
-
-the '${PAGE}' page should be opened
-    [Documentation]    Verify that the expected page is opened.
-    [Tags]    gherkin
-    Validate '${PAGE}' Is Opened
-
-the user is on the '${PAGE}' page
-    [Documentation]    Load locator map for a page name and validate its root element.
-    [Tags]    gherkin
-    Validate '${PAGE}' Is Opened
-
-Click Button
-    [Documentation]    Click a button using its locator from the current locator map.
-    [Tags]    basic
-    [Arguments]    ${NAME}
-    ${CURRENT}=    Get Variable Value    ${LOC}    ${NONE}
-    IF    $CURRENT == $NONE
-        Fail    No locator map loaded. Call "the user is on the '<Page>' page" first.
-    END
-    ${SELECTOR}=    Get Locator    button.${NAME}
-    Click    css=${SELECTOR}
-
-the user clicks the '${Button}' button
-    [Documentation]    Click a button using its locator from the current locator map.
-    [Tags]    gherkin
-    Click Button    ${Button}
-
 Click Text
     [Documentation]    Click a button using its locator from the current locator map.
     [Tags]    basic

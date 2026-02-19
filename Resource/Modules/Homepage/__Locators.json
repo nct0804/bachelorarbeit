@@ -6,15 +6,17 @@
     "page": [
         "homepage",
         "landing",
-        "home",
-        "home page"
+        "landing page"
     ],
     "root": "[data-test=\"page-landing\"]",
     "button": {
         "Enter": "[data-test=\"hero-start-learning\"]",
         "Sign In": "[data-test=\"landing-cta-signin\"]",
         "Create Account": "[data-test=\"login-signup-link\"]",
-        "Login Submit": "[data-test=\"login-submit\"]"
+        "Login Submit": "[data-test=\"login-submit\"]",
+        "Refresh Quote": "[data-test=\"topbar-quote-refresh\"]",
+        "Learn": "[data-test=\"rightbar-lesson-start\"]",
+        "Start Challenge": "[data-test=\"rightbar-challenge-start\"]"
     },
     "link": {
         "Sign In": "[data-test=\"landing-cta-signin\"]",

@@ -65,6 +65,7 @@ export default function Review() {
                   onClick={() => handleComplete(item.id, 2)}
                   disabled={active === item.id}
                   className="flex-1 px-3 py-2 rounded-lg bg-red-500 text-white text-sm font-semibold hover:bg-red-600 disabled:opacity-50"
+                  data-test={`hard-button`}
                 >
                   <XCircle className="w-4 h-4 inline mr-1" /> Hard
                 </button>
@@ -72,6 +73,7 @@ export default function Review() {
                   onClick={() => handleComplete(item.id, 4)}
                   disabled={active === item.id}
                   className="flex-1 px-3 py-2 rounded-lg bg-green-500 text-white text-sm font-semibold hover:bg-green-600 disabled:opacity-50"
+                  data-test={`good-button`}
                 >
                   <CheckCircle2 className="w-4 h-4 inline mr-1" /> Good
                 </button>

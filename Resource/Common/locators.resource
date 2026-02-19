@@ -86,3 +86,21 @@ Get Locator File
     [Documentation]    Get the current locator file path.
     [Tags]    basic
     RETURN    ${LOCATOR_FILE}
+
+Validate '${PAGE}' Is Opened
+    [Documentation]    Verify that the expected page is opened by a unique root element.
+    [Tags]    basic
+    Load Locators    ${PAGE}
+    Wait For Load State    networkidle    timeout=10s
+    ${PAGE_LOCATOR}=    Get Locator    root
+    Wait For Elements State    css=${PAGE_LOCATOR}    visible    timeout=30s
+
+the '${PAGE}' page should be opened
+    [Documentation]    Verify that the expected page is opened.
+    [Tags]    gherkin
+    Validate '${PAGE}' Is Opened
+
+the user is on the '${PAGE}' page
+    [Documentation]    Load locator map for a page name and validate its root element.
+    [Tags]    gherkin
+    Validate '${PAGE}' Is Opened

@@ -81,12 +81,14 @@ export default function FocusTimerCard({ onComplete }: { onComplete?: () => void
           <button
             onClick={() => setIsRunning((v) => !v)}
             className="w-10 h-10 rounded-full bg-purple-500 text-white flex items-center justify-center hover:bg-purple-600"
+            data-test="focus-timer-play-pause-button"
           >
             {isRunning ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
           </button>
           <button
             onClick={handleReset}
             className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-200 flex items-center justify-center"
+            data-test="focus-timer-reset-button"
           >
             <RotateCcw className="w-4 h-4" />
           </button>
@@ -103,6 +105,7 @@ export default function FocusTimerCard({ onComplete }: { onComplete?: () => void
                 ? 'bg-purple-500 text-white'
                 : 'bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-300'
             }`}
+            data-test={`focus-timer-duration-${d}-button`}
           >
             {d} min
           </button>

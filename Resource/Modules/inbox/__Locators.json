@@ -1,0 +1,31 @@
+{
+    "meta": {
+        "page": "",
+        "version": 1
+    },
+    "page": [
+        "Inbox",
+        "Notifications"
+    ],
+    "root": "[data-test=\"page-inbox\"]",
+    "button": {
+        "Learn": "[data-test=\"rightbar-lesson-start\"]",
+        "Start Challenge": "[data-test=\"rightbar-challenge-start\"]",
+        "Refresh Quote": "[data-test=\"topbar-quote-refresh\"]"
+
+    },
+    "link": {
+    },
+    "textbox": {
+    },
+    "checkbox": {
+    },
+    "tab": {
+    },
+    "messagebox": {
+    },
+    "list": {
+    },
+    "modal": {
+    }
+}

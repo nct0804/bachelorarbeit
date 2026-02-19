@@ -1,0 +1,30 @@
+{
+    "meta": {
+        "page": "",
+        "version": 1
+    },
+    "page": [
+        "Speak",
+        "Speaking"
+    ],
+    "root": "[data-test=\"page-speak\"]",
+    "button": {
+        "Learn": "[data-test=\"rightbar-lesson-start\"]",
+        "Start Challenge": "[data-test=\"rightbar-challenge-start\"]",
+        "Refresh Quote": "[data-test=\"topbar-quote-refresh\"]"
+    },
+    "link": {
+    },
+    "textbox": {
+    },
+    "checkbox": {
+    },
+    "tab": {
+    },
+    "messagebox": {
+    },
+    "list": {
+    },
+    "modal": {
+    }
+}

@@ -1,0 +1,38 @@
+{
+    "meta": {
+        "page": "",
+        "version": 1
+    },
+    "page": [
+        "Ranking",
+        "Leaderboard"
+    ],
+    "root": "[data-test=\"page-ranking\"]",
+    "button": {
+        "Tab Week": "[data-test=\"ranking-tab-week\"]",
+        "Tab Month": "[data-test=\"ranking-tab-month\"]",
+        "Tab All": "[data-test=\"ranking-tab-all\"]",
+        "Learn": "[data-test=\"rightbar-lesson-start\"]",
+        "Start Challenge": "[data-test=\"rightbar-challenge-start\"]",
+        "Refresh Quote": "[data-test=\"topbar-quote-refresh\"]"
+    },
+    "link": {
+    },
+    "textbox": {
+    },
+    "checkbox": {
+    },
+    "tab": {
+        "Tabs": "[data-test=\"ranking-tabs\"]"
+    },
+    "messagebox": {
+    },
+    "list": {
+        "Card": "[data-test=\"ranking-card\"]",
+        "List": "[data-test=\"ranking-list\"]",
+        "Item": "[data-test^=\"ranking-item-\"]",
+        "Loading": "[data-test=\"ranking-loading\"]"
+    },
+    "modal": {
+    }
+}

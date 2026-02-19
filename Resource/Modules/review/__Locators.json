@@ -1,0 +1,32 @@
+{
+    "meta": {
+        "page": "",
+        "version": 1
+    },
+    "page": [
+        "Review",
+        "Review Page"
+    ],
+    "root": "[data-test=\"page-review\"]",
+    "button": {
+        "Learn": "[data-test=\"rightbar-lesson-start\"]",
+        "Start Challenge": "[data-test=\"rightbar-challenge-start\"]",
+        "Refresh Quote": "[data-test=\"topbar-quote-refresh\"]",
+        "Hard": "[data-test=\"hard-button\"]",
+        "Good": "[data-test=\"good-button\"]"
+    },
+    "link": {
+    },
+    "textbox": {
+    },
+    "checkbox": {
+    },
+    "tab": {
+    },
+    "messagebox": {
+    },
+    "list": {
+    },
+    "modal": {
+    }
+}

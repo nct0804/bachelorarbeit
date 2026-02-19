@@ -31,7 +31,7 @@ export default function ProfileAndStats({ level, streak }: { level: number, stre
   return (
     <>
       <div className="max-w-2xl rounded-2xl flex flex-col
-      md:flex-row justify-center items-center gap-4 md:gap-8 mb-5">
+      md:flex-row justify-center items-center gap-4 md:gap-8 mb-5" data-test="topbar-profile-stats">
         {/* Stat Chips */}
         <div className="flex flex-col flex-1 gap-2">
           <div className="flex items-center gap-6 mb-1">
@@ -40,6 +40,7 @@ export default function ProfileAndStats({ level, streak }: { level: number, stre
                hover:scale-105 cursor-pointer"
               onMouseEnter={(e) => handleMouseEnter('Current streak', e)}
               onMouseLeave={handleMouseLeave}
+              data-test="topbar-streak"
             >
               <img src={StreakIcon} alt="streak" className="w-7 h-7" />
               <span className="text-orange-500 font-bold text-sm">{streak}</span>
@@ -49,6 +50,7 @@ export default function ProfileAndStats({ level, streak }: { level: number, stre
                hover:scale-105 cursor-pointer"
               onMouseEnter={(e) => handleMouseEnter('Hearts left', e)}
               onMouseLeave={handleMouseLeave}
+              data-test="topbar-hearts"
             >
               <img src={HeartIcon} alt="heart" className="w-7 h-7" />
               <span className="text-red-500 font-bold text-sm">{user?.hearts || 0}</span>
@@ -58,6 +60,7 @@ export default function ProfileAndStats({ level, streak }: { level: number, stre
                hover:scale-105 cursor-pointer"
               onMouseEnter={(e) => handleMouseEnter('Brezel points', e)}
               onMouseLeave={handleMouseLeave}
+              data-test="topbar-brezel"
             >
               <img src={BrezelIcon} alt="brezel" className="w-7 h-7" />
               <span className="text-yellow-700 font-bold text-sm">5</span>
@@ -74,10 +77,11 @@ export default function ProfileAndStats({ level, streak }: { level: number, stre
             to="/profile" 
             className="group"
             onMouseLeave={handleMouseLeave}
+            data-test="topbar-profile-link"
           >
             <img src={avatar} alt="profile" className="h-20 w-20 rounded-full cursor-pointer group-hover:scale-102" />
             <div className="absolute -top-1 left-1/2 translate-x-2 bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-xs font-bold px-1 py-1 rounded-full shadow-lg border-2 border-white
-            dark:bg-gradient-to-b dark:from-[#05315B] dark:via-[#256996] dark:to-[#3B6978] dark:text-white">
+            dark:bg-gradient-to-b dark:from-[#05315B] dark:via-[#256996] dark:to-[#3B6978] dark:text-white" data-test="topbar-level">
               Lv. {level}
             </div>
           </Link>
@@ -93,6 +97,7 @@ export default function ProfileAndStats({ level, streak }: { level: number, stre
             top: tooltipPosition.y,
             transform: 'translateY(-50%)'
           }}
+          data-test="topbar-tooltip"
         >
           {tooltipText}
           <div 
