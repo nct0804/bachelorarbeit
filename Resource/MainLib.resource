@@ -1,24 +1,22 @@
 *** Settings ***
-Documentation       Main Entrance Library Resource
+Documentation       Main Robot Framework resource entrypoint.
 
 Library             Collections
 Library             OperatingSystem
 Library             String
 Library             Browser
-Library             SeleniumLibrary
-Resource            Modules/Homepage/Homepage.resource
-Resource            Modules/login/Signin.resource
-Resource            Modules/register/Signup.resource
-Resource            Modules/challenge/Challenge.resource
-Resource            Modules/learn/Learn.resource
-Resource            Modules/inbox/Inbox.resource
-Resource            Modules/aboutus/AboutUs.resource
-Resource            Modules/achievements/Achievements.resource
-Resource            Modules/pronunciation/Pronunciation.resource
-Resource            Modules/ranking/Ranking.resource
-Resource            Modules/speak/Speak.resource
-Resource            Modules/review/Review.resource
-Resource            Modules/profile/Profile.resource
-Resource            Common/button.resource
-Resource            Common/textbox.resource
 Resource            Common/__lib.resource
+Resource            Modules/Homepage/__lib.resource
+Resource            Modules/login/__lib.resource
+Resource            Modules/register/__lib.resource
+Resource            Modules/mainpage/__lib.resource
+Resource            Modules/challenge/__lib.resource
+Resource            Modules/learn/__lib.resource
+Resource            Modules/inbox/__lib.resource
+Resource            Modules/aboutus/__lib.resource
+Resource            Modules/achievements/__lib.resource
+Resource            Modules/pronunciation/__lib.resource
+Resource            Modules/ranking/__lib.resource
+Resource            Modules/speak/__lib.resource
+Resource            Modules/review/__lib.resource
+Resource            Modules/profile/__lib.resource
