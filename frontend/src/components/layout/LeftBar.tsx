@@ -38,6 +38,7 @@ export default function LeftBar() {
   const [tooltipText, setTooltipText] = useState('');
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
   const [showTooltip, setShowTooltip] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -72,6 +73,21 @@ export default function LeftBar() {
 
   const handleMouseLeave = () => {
     setShowTooltip(false);
+  };
+
+  const handleLogoutClick = () => {
+    setShowTooltip(false);
+    setShowLogoutConfirm(true);
+  };
+
+  const handleContinueSession = () => {
+    setShowLogoutConfirm(false);
+  };
+
+  const handleConfirmLogout = async () => {
+    await logout();
+    setShowLogoutConfirm(false);
+    setIsMenuOpen(false);
   };
 
   return (
@@ -176,10 +192,7 @@ export default function LeftBar() {
               isMenuOpen ? 'translate-y-0 opacity-100' : '-translate-y-2 opacity-0'
             }`} style={{ transitionDelay: isMenuOpen ? '100ms' : '100ms' }}>
               <button
-                onClick={async () => {
-                  await logout();
-                  setIsMenuOpen(false);
-                }}
+                onClick={handleLogoutClick}
                 disabled={logoutLoading}
                 className="flex items-center justify-center rounded-lg p-3 transition-all duration-300 hover:scale-105 active:scale-95 hover:bg-white/10 disabled:opacity-50 relative"
                 onMouseEnter={(e) => handleMouseEnter('Logout', e)}
@@ -248,6 +261,41 @@ export default function LeftBar() {
               transform: 'translateY(-50%)'
             }}
           ></div>
+        </div>
+      )}
+
+      {showLogoutConfirm && (
+        <div
+          className="fixed inset-0 z-[9998] flex items-center justify-center bg-black/50 px-4"
+          data-test="main-logout-modal"
+        >
+          <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl dark:bg-gray-800">
+            <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white" data-test="main-logout-modal-title">
+              Confirm Logout
+            </h3>
+            <p className="mb-5 text-sm text-gray-600 dark:text-gray-300" data-test="main-logout-modal-message">
+              Do you want to log out now?
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={handleContinueSession}
+                className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+                data-test="main-logout-continue"
+              >
+                Continue
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmLogout}
+                disabled={logoutLoading}
+                className="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+                data-test="main-logout-confirm"
+              >
+                {logoutLoading ? 'Logging out...' : 'Log out'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </>

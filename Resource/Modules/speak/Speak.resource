@@ -1,5 +1,4 @@
 *** Settings ***
-Documentation       Library resource for Speak Page
+Documentation       Speak module keywords.
 
-Library             Browser
-Resource            ../../MainLib.resource
+Resource            ../../Common/__lib.resource

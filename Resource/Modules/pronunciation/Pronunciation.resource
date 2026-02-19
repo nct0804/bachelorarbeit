@@ -1,5 +1,4 @@
 *** Settings ***
-Documentation       Library resource for Pronunciation Page
+Documentation       Pronunciation module keywords.
 
-Library             Browser
-Resource            ../../MainLib.resource
+Resource            ../../Common/__lib.resource

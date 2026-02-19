@@ -11,7 +11,10 @@
     "Facebook": "[data-test=\"register-facebook-button\"]"
   },
   "link": {
-    "primary": ""
+    "Sign In": "[data-test=\"register-login-link\"]"
+  },
+  "text": {
+    "Sign In": "[data-test=\"register-login-link\"]"
   },
   "textbox": {
     "First Name": "[data-test=\"register-first-name\"]",

@@ -37,10 +37,25 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [clerkReadyTimeout, setClerkReadyTimeout] = useState(false);
 
   // Clerk Integration
   const { user: clerkUser, isLoaded, isSignedIn } = useUser();
   const { signOut, getToken } = useClerkAuth();
+
+  useEffect(() => {
+    if (isLoaded) {
+      setClerkReadyTimeout(false);
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      setClerkReadyTimeout(true);
+      setLoading(false);
+    }, 4000);
+
+    return () => window.clearTimeout(timer);
+  }, [isLoaded]);
 
   // Sync Clerk user with backend
   async function syncClerkUser() {
@@ -146,7 +161,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return (
     <AuthContext.Provider value={{
       user,
-      loading: loading || !isLoaded,
+      loading: loading || (!isLoaded && !clerkReadyTimeout),
       login,
       logout,
       refreshUser

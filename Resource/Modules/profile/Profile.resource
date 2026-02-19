@@ -1,5 +1,4 @@
 *** Settings ***
-Documentation       Library resource for Profile Page
+Documentation       Profile module keywords.
 
-Library             Browser
-Resource            ../../MainLib.resource
+Resource            ../../Common/__lib.resource

@@ -1,5 +1,4 @@
 *** Settings ***
-Documentation       Library resource for Review Page
+Documentation       Review module keywords.
 
-Library             Browser
-Resource            ../../MainLib.resource
+Resource            ../../Common/__lib.resource

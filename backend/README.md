@@ -9,6 +9,24 @@ npm run dev : lệnh sẽ giúp tự động reset khi mà code có sự thay đ
 Docker :
 docker-compose up --build
 
+## Default Login Account (Local + Docker)
+
+The backend now ensures a default login account exists at startup, so you can sign in without registering.
+
+- Email: `chithien.nguyen@germangains.com`
+- Password: `password123`
+
+Configuration is controlled via backend environment variables:
+
+- `DEFAULT_LOGIN_ENABLED` (default: `true` in development)
+- `DEFAULT_LOGIN_EMAIL`
+- `DEFAULT_LOGIN_PASSWORD`
+- `DEFAULT_LOGIN_USERNAME`
+- `DEFAULT_LOGIN_FIRST_NAME`
+- `DEFAULT_LOGIN_LAST_NAME`
+
+In production, the default account bootstrap is disabled unless `DEFAULT_LOGIN_ENABLED=true` is explicitly set.
+
 ## CRUD Operations (Admin/User)
 
 In each modules API related files contains the routes only for admin (Update, Delete, Create). Why? its a common sense that only the admins have the right to manage/maniplate the contents of the modules:

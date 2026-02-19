@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 
 import configureRoutes from "./modules/routes";
+import { ensureDefaultLoginUser } from "./bootstrap/defaultLoginUser";
 
 dotenv.config({ path: path.resolve(process.cwd(), ".env.local") });
 dotenv.config();
@@ -60,6 +61,17 @@ app.get("/test-db", async (_, res) => {
 configureRoutes(app);
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running successfully on http://localhost:${PORT}`);
-});
+
+const startServer = async () => {
+  try {
+    await ensureDefaultLoginUser();
+  } catch (error) {
+    console.error("Failed to bootstrap default login user:", error);
+  }
+
+  app.listen(PORT, () => {
+    console.log(`Server running successfully on http://localhost:${PORT}`);
+  });
+};
+
+void startServer();

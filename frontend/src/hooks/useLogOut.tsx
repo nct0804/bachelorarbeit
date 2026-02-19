@@ -20,20 +20,7 @@ export const useLogout = (): UseLogoutResult => {
     setLoading(true);
     setError(null);
     try {
-
-
-      const response = await fetch('/api/users/logout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-      });
-
-      if (!response.ok) {
-        const errData = await response.json().catch(() => null);
-        throw new Error(errData?.message || 'Logout failed');
-      }
-
-      clearAuth();
+      await clearAuth();
 
       navigate('/login', { replace: true });
     } catch (err: any) {
