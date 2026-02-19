@@ -1,0 +1,42 @@
+{
+    "meta": {
+        "page": "",
+        "version": 1
+    },
+    "page": [
+        "Learn",
+        "Learning"
+    ],
+    "root": "[data-test=\"page-learn\"]",
+    "button": {
+        "Check": "[data-test=\"learn-check-button\"]",
+        "Try Again": "[data-test=\"learn-try-again\"]",
+        "Exit": "[data-test=\"learn-exit\"]",
+        "Continue": "[data-test=\"learn-exit-continue\"]",
+        "Back to Home": "[data-test=\"learn-exit-confirm\"]"
+    },
+    "link": {
+    },
+    "textbox": {
+        "Fill Blank Input": "[data-test=\"exercise-fill-blank-input\"]"
+    },
+    "checkbox": {
+    },
+    "tab": {
+    },
+    "messagebox": {
+        "Exit Modal": "[data-test=\"learn-exit-modal\"]",
+        "Check Result": "[data-test=\"learn-check-result\"]"
+    },
+    "list": {
+        "Progress": "[data-test=\"learn-exercise-progress-text\"]",
+        "Header Bar": "[data-test=\"learn-header-bar\"]",
+        "Hearts": "[data-test=\"learn-hearts\"]",
+        "Option": "[data-test^=\"exercise-option-\"]",
+        "Lesson Summary": "[data-test=\"lesson-summary\"]",
+        "Lesson Summary Stats": "[data-test=\"lesson-summary-stats\"]",
+        "Lesson Summary Recap": "[data-test=\"lesson-summary-recap\"]"
+    },
+    "modal": {
+    }
+}
