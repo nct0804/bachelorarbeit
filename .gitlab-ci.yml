@@ -3,6 +3,10 @@ stages:
 
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  NPM_CACHE_DIR: "$CI_PROJECT_DIR/.cache/npm"
+  PLAYWRIGHT_BROWSERS_PATH: "/ms-playwright"
+  ROBOT_FRAMEWORK_BROWSER_NODE_DIR: "$CI_PROJECT_DIR/.cache/robotframework-browser"
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
   ROBOT_OUTPUT_DIR: "Results"
   ROBOT_SUITE: "robot-tests"
   ROBOT_HEADLESS: "True"
@@ -11,23 +15,33 @@ variables:
   VITE_CLERK_PUBLISHABLE_KEY: "pk_test_aW1tdW5lLWhlcm9uLTMwLmNsZXJrLmFjY291bnRzLmRldiQ"
 
 cache:
+  key:
+    files:
+      - requirements.txt
+      - frontend/package-lock.json
   paths:
     - .cache/pip
-    - frontend/node_modules
+    - .cache/npm
+    - .cache/robotframework-browser
 
 robot_tests:
   stage: robot
-  image: node:20-bullseye
+  image: mcr.microsoft.com/playwright:v1.52.0-jammy
   services: []
   before_script:
-    - apt-get update && apt-get install -y python3 python3-pip curl
+    - apt-get update && apt-get install -y --no-install-recommends python3-pip
     - python3 -m pip install --upgrade pip
-    - pip install robotframework robotframework-browser robotframework-seleniumlibrary
-    - rfbrowser init
-    - npx --yes playwright install --with-deps
+    - pip install --cache-dir "$PIP_CACHE_DIR" -r requirements.txt
+    - |
+      if [ ! -d "$ROBOT_FRAMEWORK_BROWSER_NODE_DIR/node_modules" ]; then
+        echo "Initializing Browser library runtime..."
+        rfbrowser init --skip-browsers
+      else
+        echo "Browser library runtime cache found. Skipping rfbrowser init."
+      fi
   script:
     - cd frontend
-    - npm ci
+    - npm ci --cache "$NPM_CACHE_DIR" --prefer-offline --no-audit --progress=false
     - npm run dev -- --host 0.0.0.0 --port 4242 &
     - cd ..
     - |
