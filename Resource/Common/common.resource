@@ -102,7 +102,14 @@ Wait For Category Element State
     [Tags]    basic
     [Arguments]    ${CATEGORY}    ${NAME}    ${STATE}=visible    ${TIMEOUT}=15s
     ${SELECTOR}=    Get Locator In Category    ${CATEGORY}    ${NAME}
-    Wait For Elements State    css=${SELECTOR}    ${STATE}    timeout=${TIMEOUT}
+    ${STATE_KEY}=    Convert To Lowercase    ${STATE}
+    ${COUNT}=    Get Element Count    css=${SELECTOR}
+    ${IS_ABSENT_OK}=    Evaluate    $STATE_KEY in ['hidden', 'detached']
+    ${IS_ABSENT}=    Evaluate    int($COUNT) == 0
+    IF    ${IS_ABSENT_OK} and ${IS_ABSENT}
+        RETURN
+    END
+    Wait For Elements State    css=${SELECTOR} >> nth=0    ${STATE}    timeout=${TIMEOUT}
 
 Category Element Should Be Visible
     [Documentation]    Assert a category element is visible on the page.
@@ -153,8 +160,8 @@ Get Category Element Text
     [Tags]    basic
     [Arguments]    ${CATEGORY}    ${NAME}
     ${SELECTOR}=    Get Locator In Category    ${CATEGORY}    ${NAME}
-    Wait For Elements State    css=${SELECTOR}    visible    timeout=15s
-    ${TEXT}=    Get Text    css=${SELECTOR}
+    Wait For Elements State    css=${SELECTOR} >> nth=0    visible    timeout=15s
+    ${TEXT}=    Get Text    css=${SELECTOR} >> nth=0
     RETURN    ${TEXT}
 
 Category Element Text Should Contain
