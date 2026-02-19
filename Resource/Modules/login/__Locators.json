@@ -11,17 +11,18 @@
     "secondary": ""
   },
   "link": {
-    "primary": ""
+    "Forgot Password": "[data-test=\"login-forgot-password\"]"
   },
   "textbox": {
     "Email Address": "[data-test=\"login-email\"]",
     "Password": "[data-test=\"login-password\"]"
   },
   "checkbox": {
-    "primary": ""
+    "Remember Me": "[data-test=\"login-remember\"]"
   },
   "text": {
-    "Sign Up": "[data-test=\"login-signup-link\"]"
+    "Sign Up": "[data-test=\"login-signup-link\"]",
+    "Forgot Password": "[data-test=\"login-forgot-password\"]"
   },
   "notification": {
     "Error": "[data-test=\"login-form\"]"
