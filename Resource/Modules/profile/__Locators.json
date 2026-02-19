@@ -1,0 +1,42 @@
+{
+    "meta": {
+        "page": "",
+        "version": 1
+    },
+    "page": [
+        "Profile",
+        "User Profile"
+    ],
+    "root": "[data-test=\"page-profile\"]",
+    "button": {
+        "Retry": "[data-test=\"profile-retry\"]",
+        "Learn": "[data-test=\"rightbar-lesson-start\"]",
+        "Start Challenge": "[data-test=\"rightbar-challenge-start\"]",
+        "Refresh Quote": "[data-test=\"topbar-quote-refresh\"]"
+    },
+    "link": {
+    },
+    "textbox": {
+    },
+    "checkbox": {
+    },
+    "tab": {
+    },
+    "messagebox": {
+        "Loading": "[data-test=\"profile-loading\"]",
+        "Error": "[data-test=\"profile-error\"]",
+        "Empty": "[data-test=\"profile-empty\"]"
+    },
+    "list": {
+        "Header Card": "[data-test=\"profile-header-card\"]",
+        "Stats": "[data-test=\"profile-stats\"]",
+        "Stat Xp": "[data-test=\"profile-stat-xp\"]",
+        "Stat Streak": "[data-test=\"profile-stat-streak\"]",
+        "Stat Level": "[data-test=\"profile-stat-level\"]",
+        "Activity": "[data-test=\"profile-activity\"]",
+        "Achievements": "[data-test=\"profile-achievements\"]",
+        "Favorites": "[data-test=\"profile-favorites\"]"
+    },
+    "modal": {
+    }
+}
