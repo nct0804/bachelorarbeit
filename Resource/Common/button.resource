@@ -1,25 +1,39 @@
 *** Settings ***
-Documentation       Locator map loader and resolver
+Documentation       Button interaction keywords.
 
-Resource            ../MainLib.resource
-Library             Collections
-Library             OperatingSystem
-Library             String
+Resource            common.resource
 
 
 *** Keywords ***
 Click Button
-    [Documentation]    Click a button using its locator from the current locator map.
-    [Tags]    basic
+    [Documentation]    Click a button locator by logical name.
+    [Tags]    Basic
     [Arguments]    ${NAME}
-    ${CURRENT}=    Get Variable Value    ${LOC}    ${NONE}
-    IF    $CURRENT == $NONE
-        Fail    No locator map loaded. Call "the user is on the '<Page>' page" first.
-    END
-    ${SELECTOR}=    Get Locator    button.${NAME}
-    Click    css=${SELECTOR}
+    Click Category Element    button    ${NAME}
+
+Click Button At Index
+    [Documentation]    Click a button locator using an index for repeated selectors.
+    [Tags]    Basic
+    [Arguments]    ${NAME}    ${INDEX}=0
+    Click Category Element At Index    button    ${NAME}    ${INDEX}
+
+Button Should Be Visible
+    [Documentation]    Assert that a button locator is visible.
+    [Tags]    Basic
+    [Arguments]    ${NAME}
+    Category Element Should Be Visible    button    ${NAME}
 
 the user clicks the '${Button}' button
-    [Documentation]    Click a button using its locator from the current locator map.
-    [Tags]    gherkin
+    [Documentation]    Click the named button on the current page.
+    [Tags]    Gherkin
     Click Button    ${Button}
+
+the user clicks the '${Button}' button at index '${Index}'
+    [Documentation]    Click the named repeated button at the given index.
+    [Tags]    Gherkin
+    Click Button At Index    ${Button}    ${Index}
+
+the '${Button}' button should be visible
+    [Documentation]    Assert that the named button is visible.
+    [Tags]    Gherkin
+    Button Should Be Visible    ${Button}

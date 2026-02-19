@@ -1,5 +1,4 @@
 *** Settings ***
-Documentation       Library resource for Home Page
+Documentation       Main page module keywords.
 
-Library             Browser
-Resource            ../../MainLib.resource
+Resource            ../../Common/__lib.resource
