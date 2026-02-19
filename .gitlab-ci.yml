@@ -12,6 +12,8 @@ variables:
   ROBOT_HEADLESS: "True"
   ROBOT_TESTCASE: ""
   ROBOT_VARIABLES: ""
+  QASE_MODE: "testops"
+  QASE_TESTOPS_PROJECT: "WA"
   VITE_CLERK_PUBLISHABLE_KEY: "pk_test_aW1tdW5lLWhlcm9uLTMwLmNsZXJrLmFjY291bnRzLmRldiQ"
 
 cache:
@@ -56,12 +58,22 @@ robot_tests:
       curl -sf http://localhost:4242/ > /dev/null
     - mkdir -p "$ROBOT_OUTPUT_DIR"
     - |
+      DEFAULT_QASE_REPORT="$(python3 -c "import start; print('true' if start.QASE_REPORT else 'false')")"
+      EFFECTIVE_QASE_REPORT="${QASE_REPORT:-$DEFAULT_QASE_REPORT}"
+      ROBOT_LISTENER_ARGS=""
+      if [ "$(echo "$EFFECTIVE_QASE_REPORT" | tr '[:upper:]' '[:lower:]')" = "true" ]; then
+        echo "Qase reporting enabled."
+        ROBOT_LISTENER_ARGS="--listener qase.robotframework.Listener"
+      else
+        echo "Qase reporting disabled."
+      fi
+    - |
       if [ -n "$ROBOT_TESTCASE" ]; then
         echo "Running single test: $ROBOT_TESTCASE"
-        robot --outputdir "$ROBOT_OUTPUT_DIR" --variable HEADLESS:$ROBOT_HEADLESS $ROBOT_VARIABLES --test "$ROBOT_TESTCASE" $ROBOT_SUITE
+        robot $ROBOT_LISTENER_ARGS --outputdir "$ROBOT_OUTPUT_DIR" --variable HEADLESS:$ROBOT_HEADLESS $ROBOT_VARIABLES --test "$ROBOT_TESTCASE" $ROBOT_SUITE
       else
         echo "Running full suite: $ROBOT_SUITE"
-        robot --outputdir "$ROBOT_OUTPUT_DIR" --variable HEADLESS:$ROBOT_HEADLESS $ROBOT_VARIABLES $ROBOT_SUITE
+        robot $ROBOT_LISTENER_ARGS --outputdir "$ROBOT_OUTPUT_DIR" --variable HEADLESS:$ROBOT_HEADLESS $ROBOT_VARIABLES $ROBOT_SUITE
       fi
   artifacts:
     when: always
