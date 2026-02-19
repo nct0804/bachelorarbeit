@@ -1,0 +1,30 @@
+{
+    "meta": {
+        "page": "",
+        "version": 1
+    },
+    "page": [
+        "Achievements",
+        "Badges"
+    ],
+    "root": "[data-test=\"page-achievements\"]",
+    "button": {
+        "Refresh Quote": "[data-test=\"topbar-quote-refresh\"]",
+        "Learn": "[data-test=\"rightbar-lesson-start\"]",
+        "Start Challenge": "[data-test=\"rightbar-challenge-start\"]"
+    },
+    "link": {
+    },
+    "textbox": {
+    },
+    "checkbox": {
+    },
+    "tab": {
+    },
+    "messagebox": {
+    },
+    "list": {
+    },
+    "modal": {
+    }
+}
