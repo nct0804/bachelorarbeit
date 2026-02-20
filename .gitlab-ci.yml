@@ -12,6 +12,7 @@ variables:
   ROBOT_HEADLESS: "True"
   ROBOT_TESTCASE: ""
   ROBOT_VARIABLES: ""
+  QASE_PULL_CONFIG: ""
   QASE_MODE: "testops"
   QASE_TESTOPS_PROJECT: "WA"
   VITE_CLERK_PUBLISHABLE_KEY: "pk_test_aW1tdW5lLWhlcm9uLTMwLmNsZXJrLmFjY291bnRzLmRldiQ"
@@ -57,6 +58,20 @@ robot_tests:
       done
       curl -sf http://localhost:4242/ > /dev/null
     - mkdir -p "$ROBOT_OUTPUT_DIR"
+    - |
+      DEFAULT_QASE_PULL="$(python3 -c "import start; print('true' if start.QASE_PULL else 'false')")"
+      DEFAULT_QASE_PULL_CONFIG="$(python3 -c "import start; print(start.QASE_PULL_CONFIG_PATH)")"
+      EFFECTIVE_QASE_PULL="${QASE_PULL:-$DEFAULT_QASE_PULL}"
+      EFFECTIVE_QASE_PULL_CONFIG="${QASE_PULL_CONFIG:-$DEFAULT_QASE_PULL_CONFIG}"
+      if [ "$(echo "$EFFECTIVE_QASE_PULL" | tr '[:upper:]' '[:lower:]')" = "true" ]; then
+        echo "Pulling suites from Qase before Robot execution..."
+        if [ -n "${QASE_TESTOPS_API_TOKEN}" ]; then
+          export QASE_TOKEN="${QASE_TESTOPS_API_TOKEN}"
+        fi
+        python3 src/components/qaseconnector.py --config qase.config.json --pull-config "$EFFECTIVE_QASE_PULL_CONFIG" --g2rf-out robot-tests
+      else
+        echo "Skipping Qase pull step."
+      fi
     - |
       DEFAULT_QASE_REPORT="$(python3 -c "import start; print('true' if start.QASE_REPORT else 'false')")"
       EFFECTIVE_QASE_REPORT="${QASE_REPORT:-$DEFAULT_QASE_REPORT}"
