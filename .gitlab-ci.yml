@@ -7,6 +7,10 @@ variables:
   PLAYWRIGHT_BROWSERS_PATH: "/ms-playwright"
   ROBOT_FRAMEWORK_BROWSER_NODE_DIR: "$CI_PROJECT_DIR/.cache/robotframework-browser"
   PIP_DISABLE_PIP_VERSION_CHECK: "1"
+  DATABASE_URL: "postgresql://germangains:germangains@db:5432/germangainsdb?schema=public"
+  POSTGRES_DB: "germangainsdb"
+  POSTGRES_USER: "germangains"
+  POSTGRES_PASSWORD: "germangains"
   ROBOT_OUTPUT_DIR: "Results"
   ROBOT_SUITE: "robot-tests"
   ROBOT_HEADLESS: "True"
@@ -21,6 +25,7 @@ cache:
   key:
     files:
       - requirements.txt
+      - backend/package-lock.json
       - frontend/package-lock.json
   paths:
     - .cache/pip
@@ -30,7 +35,9 @@ cache:
 robot_tests:
   stage: robot
   image: mcr.microsoft.com/playwright:v1.56.0-jammy
-  services: []
+  services:
+    - name: postgres:15
+      alias: db
   before_script:
     - apt-get update && apt-get install -y --no-install-recommends python3-pip
     - python3 -m pip install --upgrade pip
@@ -43,6 +50,37 @@ robot_tests:
         echo "Browser library runtime cache found. Skipping rfbrowser init."
       fi
   script:
+    - cd backend
+    - npm ci --cache "$NPM_CACHE_DIR" --prefer-offline --no-audit --progress=false
+    - npx prisma generate
+    - |
+      MIGRATION_DONE="false"
+      for i in $(seq 1 30); do
+        if npx prisma migrate deploy; then
+          echo "Database migrations applied."
+          MIGRATION_DONE="true"
+          break
+        fi
+        echo "Waiting for database to be ready... (${i}/30)"
+        sleep 2
+      done
+      if [ "$MIGRATION_DONE" != "true" ]; then
+        echo "Database was not ready for migrations."
+        exit 1
+      fi
+    - npx prisma db seed
+    - npm run dev &
+    - cd ..
+    - |
+      for i in $(seq 1 60); do
+        if curl -s http://localhost:3000/ > /dev/null; then
+          echo "Backend is ready."
+          break
+        fi
+        echo "Waiting for backend to be ready... (${i}/60)"
+        sleep 1
+      done
+      curl -s http://localhost:3000/ > /dev/null
     - cd frontend
     - npm ci --cache "$NPM_CACHE_DIR" --prefer-offline --no-audit --progress=false
     - npm run dev -- --host 0.0.0.0 --port 4242 &
@@ -58,17 +96,6 @@ robot_tests:
       done
       curl -sf http://localhost:4242/ > /dev/null
     - mkdir -p "$ROBOT_OUTPUT_DIR"
-    - |
-      if [ -n "$QASE_TESTOPS_API_TOKEN" ]; then
-        echo "Debug: QASE_TESTOPS_API_TOKEN is present."
-      else
-        echo "Debug: QASE_TESTOPS_API_TOKEN is missing."
-      fi
-      if [ -n "$QASE_TOKEN" ]; then
-        echo "Debug: QASE_TOKEN is present."
-      else
-        echo "Debug: QASE_TOKEN is missing."
-      fi
     - |
       DEFAULT_QASE_PULL="$(python3 -c "import start; print('true' if start.QASE_PULL else 'false')")"
       DEFAULT_QASE_PULL_CONFIG="$(python3 -c "import start; print(start.QASE_PULL_CONFIG_PATH)")"

@@ -23,6 +23,11 @@ Sign In With Credentials
     Fill Textbox    Password    ${PASSWORD}
     Click Button    Sign In
     Wait For Load State    networkidle    timeout=15s
+    ${ON_MAIN_PAGE}=    Run Keyword And Return Status    Validate Page Is Opened    Main Learning Page
+    IF    not ${ON_MAIN_PAGE}
+        Navigate To Page    Main Learning Page
+        Validate Page Is Opened    Main Learning Page
+    END
 
 Sign In With Suite Credentials
     [Documentation]    Sign in using suite-level credential variables.
