@@ -102,6 +102,8 @@ def _split_gherkin_sentences(text: str) -> list[tuple[str | None, str]]:
     text = re.sub(r"\s+", " ", text).strip()
     if not text:
         return []
+    # Split on canonical Gherkin keywords. The post-processing merger handles
+    # specific cases like "...email... And password..." as one domain keyword.
     pattern = re.compile(r"\b(given|when|then|and|but)\b", re.IGNORECASE)
     matches = list(pattern.finditer(text))
     if not matches:
@@ -119,6 +121,42 @@ def _split_gherkin_sentences(text: str) -> list[tuple[str | None, str]]:
 
 def _normalize_quotes(text: str) -> str:
     return text.replace('"', "'")
+
+
+def _sanitize_step_sentence(text: str) -> str:
+    return text.strip().rstrip("#").strip()
+
+
+def _merge_sign_in_steps(feature_steps: list[str]) -> list[str]:
+    merged: list[str] = []
+    index = 0
+    sign_in_pattern = re.compile(
+        r"^(Given|When|Then|And|But)\s+the user signs in with email\s+'([^']+)'$",
+        re.IGNORECASE,
+    )
+    password_pattern = re.compile(
+        r"^(Given|When|Then|And|But)\s+password\s+'([^']+)'$",
+        re.IGNORECASE,
+    )
+
+    while index < len(feature_steps):
+        current = feature_steps[index]
+        if index + 1 < len(feature_steps):
+            current_match = sign_in_pattern.match(current)
+            next_match = password_pattern.match(feature_steps[index + 1])
+            if current_match and next_match:
+                keyword = current_match.group(1).capitalize()
+                email = current_match.group(2)
+                password = next_match.group(2)
+                merged.append(
+                    f"{keyword} the user signs in with email '{email}' and password '{password}'"
+                )
+                index += 2
+                continue
+        merged.append(current)
+        index += 1
+
+    return merged
 
 
 def _suite_path(suite_id: int | None, suite_map: dict) -> list[str]:
@@ -164,13 +202,102 @@ def _build_suite_outputs(cases: list[dict]) -> dict:
     return suites
 
 
+def _parse_suite_ids(raw_suite_ids: list) -> set[int]:
+    suite_ids: set[int] = set()
+    for raw in raw_suite_ids:
+        try:
+            suite_ids.add(int(raw))
+        except (TypeError, ValueError):
+            continue
+    return suite_ids
+
+
+def _parse_suite_names(raw_suite_names: list) -> set[str]:
+    suite_names: set[str] = set()
+    for raw in raw_suite_names:
+        if raw is None:
+            continue
+        name = str(raw).strip()
+        if name:
+            suite_names.add(name.lower())
+    return suite_names
+
+
+def _get_case_suite_id(case: dict) -> int | None:
+    suite_id = case.get("suite_id") or case.get("suiteId") or case.get("suite")
+    try:
+        return int(suite_id)
+    except (TypeError, ValueError):
+        return None
+
+
+def _get_suite_id(suite: dict) -> int | None:
+    suite_id = suite.get("id")
+    try:
+        return int(suite_id)
+    except (TypeError, ValueError):
+        return None
+
+
+def _load_pull_config(pull_config_path: str | None) -> tuple[set[int], set[str], bool]:
+    if not pull_config_path:
+        return set(), set(), True
+    config = _read_config(pull_config_path)
+    suite_ids = _parse_suite_ids(config.get("suite_ids", []))
+    suite_names = _parse_suite_names(config.get("suite_names", []))
+    pull_all_when_empty = bool(config.get("pull_all_when_empty", False))
+    return suite_ids, suite_names, pull_all_when_empty
+
+
+def _get_suite_name(suite: dict) -> str:
+    name = suite.get("title") or suite.get("name") or ""
+    return str(name).strip().lower()
+
+
+def _resolve_suite_ids_by_name(suites: list[dict], wanted_names: set[str]) -> tuple[set[int], set[str]]:
+    if not wanted_names:
+        return set(), set()
+    resolved: set[int] = set()
+    unresolved = set(wanted_names)
+    for suite in suites:
+        suite_name = _get_suite_name(suite)
+        suite_id = _get_suite_id(suite)
+        if suite_name in wanted_names and suite_id is not None:
+            resolved.add(suite_id)
+            unresolved.discard(suite_name)
+    return resolved, unresolved
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Pull Qase cases and run gherkin2robotframework.")
     parser.add_argument("--config", default="qase.config.json", help="Path to qase.config.json")
     parser.add_argument("--base-url", default=os.getenv("QASE_BASE_URL", DEFAULT_BASE_URL))
-    parser.add_argument("--project", default=os.getenv("QASE_PROJECT"))
-    parser.add_argument("--token", default=os.getenv("QASE_TOKEN"))
+    parser.add_argument(
+        "--project",
+        default=os.getenv("QASE_PROJECT") or os.getenv("QASE_TESTOPS_PROJECT"),
+    )
+    parser.add_argument(
+        "--token",
+        default=os.getenv("QASE_TOKEN") or os.getenv("QASE_TESTOPS_API_TOKEN"),
+    )
     parser.add_argument("--g2rf-out", default="robot-tests", help="Output folder for gherkin2robotframework.")
+    parser.add_argument(
+        "--pull-config",
+        default=None,
+        help="Path to pull config JSON containing suite_ids.",
+    )
+    parser.add_argument(
+        "--suite-ids",
+        nargs="*",
+        default=[],
+        help="Optional suite IDs to pull. Example: --suite-ids 12 19",
+    )
+    parser.add_argument(
+        "--suite-names",
+        nargs="*",
+        default=[],
+        help='Optional suite names to pull. Example: --suite-names "Smoke Tests"',
+    )
     parser.add_argument("--insecure", action="store_true", help="Disable SSL verification (use only for local MITM/corporate proxies).")
     args = parser.parse_args()
 
@@ -189,8 +316,37 @@ def main() -> int:
     if args.insecure:
         ssl_context = ssl._create_unverified_context()
 
+    configured_suite_ids, configured_suite_names, pull_all_when_empty = _load_pull_config(args.pull_config)
+    cli_suite_ids = _parse_suite_ids(args.suite_ids)
+    cli_suite_names = _parse_suite_names(args.suite_names)
+    selected_suite_ids = configured_suite_ids.union(cli_suite_ids)
+    selected_suite_names = configured_suite_names.union(cli_suite_names)
+    if not selected_suite_ids and not selected_suite_names and not pull_all_when_empty:
+        print(
+            "No suite_ids/suite_names configured. Define in pull config or pass --suite-ids/--suite-names.",
+            file=sys.stderr,
+        )
+        return 2
+
     suites = _fetch_paginated(args.base_url, token, "suite", project, ssl_context)
+    resolved_ids, unresolved_names = _resolve_suite_ids_by_name(suites, selected_suite_names)
+    if unresolved_names:
+        print(
+            f"Suite names not found: {sorted(unresolved_names)}.",
+            file=sys.stderr,
+        )
+        return 4
+    selected_suite_ids = selected_suite_ids.union(resolved_ids)
     cases = _fetch_paginated(args.base_url, token, "case", project, ssl_context)
+    if selected_suite_ids:
+        suites = [suite for suite in suites if _get_suite_id(suite) in selected_suite_ids]
+        cases = [case for case in cases if _get_case_suite_id(case) in selected_suite_ids]
+        if not cases:
+            print(
+                f"No Qase cases found for suite_ids={sorted(selected_suite_ids)}.",
+                file=sys.stderr,
+            )
+            return 4
 
     suite_map = {s.get("id"): s for s in suites if isinstance(s, dict)}
     cases_by_suite = _build_suite_outputs(cases)
@@ -229,6 +385,9 @@ def main() -> int:
                     sentences = [(None, action)]
 
                 for keyword, sentence in sentences:
+                    sentence = _sanitize_step_sentence(sentence)
+                    if not sentence:
+                        continue
                     if keyword:
                         feature_step = f"{keyword.capitalize()} {sentence}"
                     else:
@@ -236,6 +395,7 @@ def main() -> int:
                         feature_step = f"{fallback.capitalize()} {sentence}"
                     feature_steps.append(feature_step)
 
+            feature_steps = _merge_sign_in_steps(feature_steps)
             for step_line in feature_steps:
                 feature_lines.append(f"  {step_line}\n")
             feature_lines.append("\n")
@@ -272,6 +432,29 @@ def main() -> int:
         else:
             content = settings_block + content
         resource_path.write_text(content, encoding="utf-8")
+
+    # Prevent autogenerated failing step-definition stubs from shadowing real project keywords.
+    for robot_path in Path(out_root).rglob("*.robot"):
+        content = robot_path.read_text(encoding="utf-8")
+        lines = content.splitlines()
+        filtered_lines: list[str] = []
+        inserted_mainlib = False
+        rel_mainlib = os.path.relpath(Path("Resource/MainLib.resource"), robot_path.parent)
+        rel_mainlib = rel_mainlib.replace("\\", "/")
+        mainlib_line = f"Resource    {rel_mainlib}"
+
+        for line in lines:
+            if "_step_definitions.resource" in line:
+                continue
+            filtered_lines.append(line)
+            if line.strip() == "*** Settings ***":
+                filtered_lines.append(mainlib_line)
+                inserted_mainlib = True
+
+        if not inserted_mainlib:
+            filtered_lines = ["*** Settings ***", mainlib_line, ""] + filtered_lines
+
+        robot_path.write_text("\n".join(filtered_lines) + "\n", encoding="utf-8")
 
     print(f"Generated {len(cases)} cases across {len(cases_by_suite)} suite folders.")
     return 0

@@ -7,17 +7,30 @@ variables:
   PLAYWRIGHT_BROWSERS_PATH: "/ms-playwright"
   ROBOT_FRAMEWORK_BROWSER_NODE_DIR: "$CI_PROJECT_DIR/.cache/robotframework-browser"
   PIP_DISABLE_PIP_VERSION_CHECK: "1"
+  DATABASE_URL: "postgresql://germangains:germangains@db:5432/germangainsdb?schema=public"
+  POSTGRES_DB: "germangainsdb"
+  POSTGRES_USER: "germangains"
+  POSTGRES_PASSWORD: "germangains"
+  DEFAULT_LOGIN_ENABLED: "true"
+  DEFAULT_LOGIN_EMAIL: "chithien.nguyen@germangains.com"
+  DEFAULT_LOGIN_PASSWORD: "password123"
+  DEFAULT_LOGIN_USERNAME: "nct0804"
+  DEFAULT_LOGIN_FIRST_NAME: "Chi"
+  DEFAULT_LOGIN_LAST_NAME: "Thien"
   ROBOT_OUTPUT_DIR: "Results"
   ROBOT_SUITE: "robot-tests"
   ROBOT_HEADLESS: "True"
   ROBOT_TESTCASE: ""
   ROBOT_VARIABLES: ""
+  QASE_PULL_CONFIG: ""
+  QASE_MODE: "testops"
+  QASE_TESTOPS_PROJECT: "WA"
   VITE_CLERK_PUBLISHABLE_KEY: "pk_test_aW1tdW5lLWhlcm9uLTMwLmNsZXJrLmFjY291bnRzLmRldiQ"
 
 cache:
   key:
     files:
-      - requirements.txt
+      - backend/package-lock.json
       - frontend/package-lock.json
   paths:
     - .cache/pip
@@ -27,7 +40,9 @@ cache:
 robot_tests:
   stage: robot
   image: mcr.microsoft.com/playwright:v1.56.0-jammy
-  services: []
+  services:
+    - name: postgres:15
+      alias: db
   before_script:
     - apt-get update && apt-get install -y --no-install-recommends python3-pip
     - python3 -m pip install --upgrade pip
@@ -40,6 +55,37 @@ robot_tests:
         echo "Browser library runtime cache found. Skipping rfbrowser init."
       fi
   script:
+    - cd backend
+    - npm ci --cache "$NPM_CACHE_DIR" --prefer-offline --no-audit --progress=false
+    - npx prisma generate
+    - |
+      MIGRATION_DONE="false"
+      for i in $(seq 1 30); do
+        if npx prisma migrate deploy; then
+          echo "Database migrations applied."
+          MIGRATION_DONE="true"
+          break
+        fi
+        echo "Waiting for database to be ready... (${i}/30)"
+        sleep 2
+      done
+      if [ "$MIGRATION_DONE" != "true" ]; then
+        echo "Database was not ready for migrations."
+        exit 1
+      fi
+    - npx prisma db seed
+    - npm run dev &
+    - cd ..
+    - |
+      for i in $(seq 1 60); do
+        if curl -s http://localhost:3000/ > /dev/null; then
+          echo "Backend is ready."
+          break
+        fi
+        echo "Waiting for backend to be ready... (${i}/60)"
+        sleep 1
+      done
+      curl -s http://localhost:3000/ > /dev/null
     - cd frontend
     - npm ci --cache "$NPM_CACHE_DIR" --prefer-offline --no-audit --progress=false
     - npm run dev -- --host 0.0.0.0 --port 4242 &
@@ -56,12 +102,47 @@ robot_tests:
       curl -sf http://localhost:4242/ > /dev/null
     - mkdir -p "$ROBOT_OUTPUT_DIR"
     - |
+      DEFAULT_QASE_PULL="$(python3 -c "import start; print('true' if start.QASE_PULL else 'false')")"
+      DEFAULT_QASE_PULL_CONFIG="$(python3 -c "import start; print(start.QASE_PULL_CONFIG_PATH)")"
+      EFFECTIVE_QASE_PULL="${QASE_PULL:-$DEFAULT_QASE_PULL}"
+      EFFECTIVE_QASE_PULL_CONFIG="${QASE_PULL_CONFIG:-$DEFAULT_QASE_PULL_CONFIG}"
+      EFFECTIVE_QASE_PROJECT="${QASE_TESTOPS_PROJECT:-$QASE_PROJECT}"
+      EFFECTIVE_QASE_TOKEN="${QASE_TESTOPS_API_TOKEN:-$QASE_TOKEN}"
+      if [ "$(echo "$EFFECTIVE_QASE_PULL" | tr '[:upper:]' '[:lower:]')" = "true" ]; then
+        echo "Pulling suites from Qase before Robot execution..."
+        if [ -z "$EFFECTIVE_QASE_TOKEN" ]; then
+          echo "Qase token is missing. Set QASE_TESTOPS_API_TOKEN (or QASE_TOKEN) in GitLab CI/CD variables."
+          exit 1
+        fi
+        if [ -z "$EFFECTIVE_QASE_PROJECT" ]; then
+          echo "Qase project is missing. Set QASE_TESTOPS_PROJECT (or QASE_PROJECT) in GitLab CI/CD variables."
+          exit 1
+        fi
+        python3 src/components/qaseconnector.py --config qase.config.json --project "$EFFECTIVE_QASE_PROJECT" --token "$EFFECTIVE_QASE_TOKEN" --pull-config "$EFFECTIVE_QASE_PULL_CONFIG" --g2rf-out robot-tests
+      else
+        echo "Skipping Qase pull step."
+      fi
+    - |
+      DEFAULT_QASE_REPORT="$(python3 -c "import start; print('true' if start.QASE_REPORT else 'false')")"
+      EFFECTIVE_QASE_REPORT="${QASE_REPORT:-$DEFAULT_QASE_REPORT}"
+      EFFECTIVE_QASE_PROJECT="${QASE_TESTOPS_PROJECT:-$QASE_PROJECT}"
+      EFFECTIVE_QASE_TOKEN="${QASE_TESTOPS_API_TOKEN:-$QASE_TOKEN}"
+      export QASE_TESTOPS_PROJECT="$EFFECTIVE_QASE_PROJECT"
+      export QASE_TESTOPS_API_TOKEN="$EFFECTIVE_QASE_TOKEN"
+      ROBOT_LISTENER_ARGS=""
+      if [ "$(echo "$EFFECTIVE_QASE_REPORT" | tr '[:upper:]' '[:lower:]')" = "true" ]; then
+        echo "Qase reporting enabled."
+        ROBOT_LISTENER_ARGS="--listener qase.robotframework.Listener"
+      else
+        echo "Qase reporting disabled."
+      fi
+    - |
       if [ -n "$ROBOT_TESTCASE" ]; then
         echo "Running single test: $ROBOT_TESTCASE"
-        robot --outputdir "$ROBOT_OUTPUT_DIR" --variable HEADLESS:$ROBOT_HEADLESS $ROBOT_VARIABLES --test "$ROBOT_TESTCASE" $ROBOT_SUITE
+        robot $ROBOT_LISTENER_ARGS --outputdir "$ROBOT_OUTPUT_DIR" --variable HEADLESS:$ROBOT_HEADLESS $ROBOT_VARIABLES --test "$ROBOT_TESTCASE" $ROBOT_SUITE
       else
         echo "Running full suite: $ROBOT_SUITE"
-        robot --outputdir "$ROBOT_OUTPUT_DIR" --variable HEADLESS:$ROBOT_HEADLESS $ROBOT_VARIABLES $ROBOT_SUITE
+        robot $ROBOT_LISTENER_ARGS --outputdir "$ROBOT_OUTPUT_DIR" --variable HEADLESS:$ROBOT_HEADLESS $ROBOT_VARIABLES $ROBOT_SUITE
       fi
   artifacts:
     when: always
