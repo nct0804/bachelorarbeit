@@ -11,6 +11,12 @@ variables:
   POSTGRES_DB: "germangainsdb"
   POSTGRES_USER: "germangains"
   POSTGRES_PASSWORD: "germangains"
+  DEFAULT_LOGIN_ENABLED: "true"
+  DEFAULT_LOGIN_EMAIL: "chithien.nguyen@germangains.com"
+  DEFAULT_LOGIN_PASSWORD: "password123"
+  DEFAULT_LOGIN_USERNAME: "nct0804"
+  DEFAULT_LOGIN_FIRST_NAME: "Chi"
+  DEFAULT_LOGIN_LAST_NAME: "Thien"
   ROBOT_OUTPUT_DIR: "Results"
   ROBOT_SUITE: "robot-tests"
   ROBOT_HEADLESS: "True"
@@ -24,7 +30,6 @@ variables:
 cache:
   key:
     files:
-      - requirements.txt
       - backend/package-lock.json
       - frontend/package-lock.json
   paths:
