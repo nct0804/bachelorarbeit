@@ -8,7 +8,7 @@ from src.components.robot_component import delete_results, start_robot_tests
 # Toggle by editing True/False when using Run/Debug button in IDE.
 # Flow: Pull from Qase -> Delete previous Results -> Run Robot -> Upload to Qase.
 QASE_REPORT = True
-QASE_PULL = True
+QASE_PULL = False
 QASE_PULL_CONFIG_PATH = "qase.pull.json"
 QASE_CONFIG_PATH = "qase.config.json"
 QASE_CONNECTOR_INSECURE = True
