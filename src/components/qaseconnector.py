@@ -272,8 +272,14 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Pull Qase cases and run gherkin2robotframework.")
     parser.add_argument("--config", default="qase.config.json", help="Path to qase.config.json")
     parser.add_argument("--base-url", default=os.getenv("QASE_BASE_URL", DEFAULT_BASE_URL))
-    parser.add_argument("--project", default=os.getenv("QASE_PROJECT"))
-    parser.add_argument("--token", default=os.getenv("QASE_TOKEN"))
+    parser.add_argument(
+        "--project",
+        default=os.getenv("QASE_PROJECT") or os.getenv("QASE_TESTOPS_PROJECT"),
+    )
+    parser.add_argument(
+        "--token",
+        default=os.getenv("QASE_TOKEN") or os.getenv("QASE_TESTOPS_API_TOKEN"),
+    )
     parser.add_argument("--g2rf-out", default="robot-tests", help="Output folder for gherkin2robotframework.")
     parser.add_argument(
         "--pull-config",
