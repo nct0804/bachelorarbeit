@@ -59,6 +59,17 @@ robot_tests:
       curl -sf http://localhost:4242/ > /dev/null
     - mkdir -p "$ROBOT_OUTPUT_DIR"
     - |
+      if [ -n "$QASE_TESTOPS_API_TOKEN" ]; then
+        echo "Debug: QASE_TESTOPS_API_TOKEN is present."
+      else
+        echo "Debug: QASE_TESTOPS_API_TOKEN is missing."
+      fi
+      if [ -n "$QASE_TOKEN" ]; then
+        echo "Debug: QASE_TOKEN is present."
+      else
+        echo "Debug: QASE_TOKEN is missing."
+      fi
+    - |
       DEFAULT_QASE_PULL="$(python3 -c "import start; print('true' if start.QASE_PULL else 'false')")"
       DEFAULT_QASE_PULL_CONFIG="$(python3 -c "import start; print(start.QASE_PULL_CONFIG_PATH)")"
       EFFECTIVE_QASE_PULL="${QASE_PULL:-$DEFAULT_QASE_PULL}"
