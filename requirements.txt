@@ -6,3 +6,8 @@ robotframework-tidy
 gherkin2robotframework
 robotframework-browser
 robotframework-robocop
+
+sentence-transformers
+pandas
+matplotlib
+tabulate
