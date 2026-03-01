@@ -5,6 +5,7 @@
 
 # Qase
 qase.config.json
+qase.pull.json
 robot-tests
 
 # General
@@ -75,6 +76,7 @@ coverage
 
 # Bower dependency directory (https://bower.io/)
 bower_components
+qase.pull.json
 
 # node-waf configuration
 .lock-wscript
