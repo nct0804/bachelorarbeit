@@ -22,7 +22,10 @@ variables:
   ROBOT_HEADLESS: "True"
   ROBOT_TESTCASE: ""
   ROBOT_VARIABLES: ""
-  QASE_PULL_CONFIG: ""
+  QASE_PULL_CONFIG: "src/components/qase/qase.pull.ci.json"
+  QASE_PULL_SUITE_NAMES: "Google Search"
+  QASE_PULL_SUITE_IDS: ""
+  QASE_PULL_CASE_IDS: ""
   QASE_MODE: "testops"
   QASE_TESTOPS_PROJECT: "WA"
   VITE_CLERK_PUBLISHABLE_KEY: "pk_test_aW1tdW5lLWhlcm9uLTMwLmNsZXJrLmFjY291bnRzLmRldiQ"
@@ -46,7 +49,7 @@ robot_tests:
   before_script:
     - apt-get update && apt-get install -y --no-install-recommends python3-pip
     - python3 -m pip install --upgrade pip
-    - pip install --cache-dir "$PIP_CACHE_DIR" -r requirements.txt
+    - pip install --cache-dir "$PIP_CACHE_DIR" -r requirements.robot-ci.txt
     - |
       if [ ! -d "$ROBOT_FRAMEWORK_BROWSER_NODE_DIR/node_modules" ]; then
         echo "Initializing Browser library runtime..."
@@ -103,9 +106,8 @@ robot_tests:
     - mkdir -p "$ROBOT_OUTPUT_DIR"
     - |
       DEFAULT_QASE_PULL="$(python3 -c "import start; print('true' if start.QASE_PULL else 'false')")"
-      DEFAULT_QASE_PULL_CONFIG="$(python3 -c "import start; print(start.QASE_PULL_CONFIG_PATH)")"
       EFFECTIVE_QASE_PULL="${QASE_PULL:-$DEFAULT_QASE_PULL}"
-      EFFECTIVE_QASE_PULL_CONFIG="${QASE_PULL_CONFIG:-$DEFAULT_QASE_PULL_CONFIG}"
+      EFFECTIVE_QASE_PULL_CONFIG="${QASE_PULL_CONFIG}"
       EFFECTIVE_QASE_PROJECT="${QASE_TESTOPS_PROJECT:-$QASE_PROJECT}"
       EFFECTIVE_QASE_TOKEN="${QASE_TESTOPS_API_TOKEN:-$QASE_TOKEN}"
       if [ "$(echo "$EFFECTIVE_QASE_PULL" | tr '[:upper:]' '[:lower:]')" = "true" ]; then
@@ -118,7 +120,37 @@ robot_tests:
           echo "Qase project is missing. Set QASE_TESTOPS_PROJECT (or QASE_PROJECT) in GitLab CI/CD variables."
           exit 1
         fi
-        python3 src/components/qaseconnector.py --config qase.config.json --project "$EFFECTIVE_QASE_PROJECT" --token "$EFFECTIVE_QASE_TOKEN" --pull-config "$EFFECTIVE_QASE_PULL_CONFIG" --g2rf-out robot-tests
+        PULL_CMD=(python3 src/components/qase/qaseconnector.py --config src/components/qase/qase.config.json --project "$EFFECTIVE_QASE_PROJECT" --token "$EFFECTIVE_QASE_TOKEN" --g2rf-out robot-tests)
+        if [ -n "$EFFECTIVE_QASE_PULL_CONFIG" ]; then
+          PULL_CMD+=(--pull-config "$EFFECTIVE_QASE_PULL_CONFIG")
+        fi
+        if [ -n "$QASE_PULL_SUITE_IDS" ]; then
+          read -r -a SUITE_ID_ARGS <<< "$QASE_PULL_SUITE_IDS"
+          if [ "${#SUITE_ID_ARGS[@]}" -gt 0 ]; then
+            PULL_CMD+=(--suite-ids "${SUITE_ID_ARGS[@]}")
+          fi
+        fi
+        if [ -n "$QASE_PULL_CASE_IDS" ]; then
+          read -r -a CASE_ID_ARGS <<< "$QASE_PULL_CASE_IDS"
+          if [ "${#CASE_ID_ARGS[@]}" -gt 0 ]; then
+            PULL_CMD+=(--case-ids "${CASE_ID_ARGS[@]}")
+          fi
+        fi
+        if [ -n "$QASE_PULL_SUITE_NAMES" ]; then
+          SUITE_NAMES_CSV="$QASE_PULL_SUITE_NAMES"
+          IFS=',' read -r -a SUITE_NAME_PARTS <<< "$SUITE_NAMES_CSV"
+          SUITE_NAME_ARGS=()
+          for SUITE_NAME in "${SUITE_NAME_PARTS[@]}"; do
+            SUITE_NAME_TRIMMED="$(echo "$SUITE_NAME" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+            if [ -n "$SUITE_NAME_TRIMMED" ]; then
+              SUITE_NAME_ARGS+=("$SUITE_NAME_TRIMMED")
+            fi
+          done
+          if [ "${#SUITE_NAME_ARGS[@]}" -gt 0 ]; then
+            PULL_CMD+=(--suite-names "${SUITE_NAME_ARGS[@]}")
+          fi
+        fi
+        "${PULL_CMD[@]}"
       else
         echo "Skipping Qase pull step."
       fi
@@ -153,4 +185,10 @@ robot_tests:
     - if: '$CI_PIPELINE_SOURCE == "push"'
       when: on_success
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_success
+    - if: '$CI_PIPELINE_SOURCE == "web"'
+      when: on_success
+    - if: '$CI_PIPELINE_SOURCE == "api"'
+      when: on_success
+    - if: '$CI_PIPELINE_SOURCE == "trigger"'
       when: on_success

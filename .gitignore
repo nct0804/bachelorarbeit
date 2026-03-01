@@ -5,6 +5,7 @@
 
 # Qase
 qase.config.json
+qase.pull.json
 robot-tests
 
 # General
@@ -75,6 +76,7 @@ coverage
 
 # Bower dependency directory (https://bower.io/)
 bower_components
+qase.pull.json
 
 # node-waf configuration
 .lock-wscript
@@ -188,4 +190,6 @@ coverage/
 .build/
 Draft/
 .github/instructions
+.gitlab.local.env
+qase.pull.json
 # End of https://www.toptal.com/developers/gitignore/api/macos,node

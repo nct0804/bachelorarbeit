@@ -5,7 +5,7 @@ Outputs:
 - gherkin2robotframework output folder (Robot Framework files)
 
 
-RUN: python3 /Users/ChiThien/Saveloads/HDA/PPundBA/Website-to-learn-german/src/components/qaseconnector.py --insecure
+RUN: python3 /Users/ChiThien/Saveloads/HDA/PPundBA/Website-to-learn-german/src/components/qase/qaseconnector.py --insecure
 
 """
 
@@ -223,6 +223,16 @@ def _parse_suite_names(raw_suite_names: list) -> set[str]:
     return suite_names
 
 
+def _parse_case_ids(raw_case_ids: list) -> set[int]:
+    case_ids: set[int] = set()
+    for raw in raw_case_ids:
+        try:
+            case_ids.add(int(raw))
+        except (TypeError, ValueError):
+            continue
+    return case_ids
+
+
 def _get_case_suite_id(case: dict) -> int | None:
     suite_id = case.get("suite_id") or case.get("suiteId") or case.get("suite")
     try:
@@ -239,14 +249,23 @@ def _get_suite_id(suite: dict) -> int | None:
         return None
 
 
-def _load_pull_config(pull_config_path: str | None) -> tuple[set[int], set[str], bool]:
+def _get_case_id(case: dict) -> int | None:
+    case_id = case.get("id") or case.get("case_id") or case.get("caseId")
+    try:
+        return int(case_id)
+    except (TypeError, ValueError):
+        return None
+
+
+def _load_pull_config(pull_config_path: str | None) -> tuple[set[int], set[str], set[int], bool]:
     if not pull_config_path:
-        return set(), set(), True
+        return set(), set(), set(), True
     config = _read_config(pull_config_path)
     suite_ids = _parse_suite_ids(config.get("suite_ids", []))
     suite_names = _parse_suite_names(config.get("suite_names", []))
+    case_ids = _parse_case_ids(config.get("case_ids", []))
     pull_all_when_empty = bool(config.get("pull_all_when_empty", False))
-    return suite_ids, suite_names, pull_all_when_empty
+    return suite_ids, suite_names, case_ids, pull_all_when_empty
 
 
 def _get_suite_name(suite: dict) -> str:
@@ -284,13 +303,19 @@ def main() -> int:
     parser.add_argument(
         "--pull-config",
         default=None,
-        help="Path to pull config JSON containing suite_ids.",
+        help="Path to pull config JSON containing suite_ids/suite_names/case_ids.",
     )
     parser.add_argument(
         "--suite-ids",
         nargs="*",
         default=[],
         help="Optional suite IDs to pull. Example: --suite-ids 12 19",
+    )
+    parser.add_argument(
+        "--case-ids",
+        nargs="*",
+        default=[],
+        help="Optional case IDs to pull. Example: --case-ids 120 152",
     )
     parser.add_argument(
         "--suite-names",
@@ -316,14 +341,16 @@ def main() -> int:
     if args.insecure:
         ssl_context = ssl._create_unverified_context()
 
-    configured_suite_ids, configured_suite_names, pull_all_when_empty = _load_pull_config(args.pull_config)
+    configured_suite_ids, configured_suite_names, configured_case_ids, pull_all_when_empty = _load_pull_config(args.pull_config)
     cli_suite_ids = _parse_suite_ids(args.suite_ids)
+    cli_case_ids = _parse_case_ids(args.case_ids)
     cli_suite_names = _parse_suite_names(args.suite_names)
     selected_suite_ids = configured_suite_ids.union(cli_suite_ids)
     selected_suite_names = configured_suite_names.union(cli_suite_names)
-    if not selected_suite_ids and not selected_suite_names and not pull_all_when_empty:
+    selected_case_ids = configured_case_ids.union(cli_case_ids)
+    if not selected_suite_ids and not selected_suite_names and not selected_case_ids and not pull_all_when_empty:
         print(
-            "No suite_ids/suite_names configured. Define in pull config or pass --suite-ids/--suite-names.",
+            "No suite_ids/suite_names/case_ids configured. Define in pull config or pass --suite-ids/--suite-names/--case-ids.",
             file=sys.stderr,
         )
         return 2
@@ -341,12 +368,23 @@ def main() -> int:
     if selected_suite_ids:
         suites = [suite for suite in suites if _get_suite_id(suite) in selected_suite_ids]
         cases = [case for case in cases if _get_case_suite_id(case) in selected_suite_ids]
-        if not cases:
-            print(
-                f"No Qase cases found for suite_ids={sorted(selected_suite_ids)}.",
-                file=sys.stderr,
-            )
-            return 4
+    if selected_case_ids:
+        cases = [case for case in cases if _get_case_id(case) in selected_case_ids]
+
+    if not cases:
+        active_filters = []
+        if selected_suite_ids:
+            active_filters.append(f"suite_ids={sorted(selected_suite_ids)}")
+        if selected_case_ids:
+            active_filters.append(f"case_ids={sorted(selected_case_ids)}")
+        if selected_suite_names:
+            active_filters.append(f"suite_names={sorted(selected_suite_names)}")
+        filter_text = ", ".join(active_filters) if active_filters else "no filters"
+        print(
+            f"No Qase cases found for {filter_text}.",
+            file=sys.stderr,
+        )
+        return 4
 
     suite_map = {s.get("id"): s for s in suites if isinstance(s, dict)}
     cases_by_suite = _build_suite_outputs(cases)
@@ -368,7 +406,10 @@ def main() -> int:
         feature_lines.append(f"Feature: {suite_title}\n\n")
 
         for case in suite_cases:
+            case_id = _get_case_id(case)
             case_title = case.get("title") or case.get("name") or f"Case {case.get('id')}"
+            if case_id is not None:
+                feature_lines.append(f"@Q-{case_id}\n")
             feature_lines.append(f"Scenario: {_normalize_quotes(case_title)}\n")
             if case.get("description"):
                 for line in str(case.get("description")).splitlines():

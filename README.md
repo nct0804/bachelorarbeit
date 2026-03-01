@@ -314,6 +314,47 @@ The project includes automated tests for the backend using Jest. To run the test
 cd backend
 npm run test
 ```
+
+### Requirement-to-Keyword Semantic Mapping
+
+The repository includes a semantic mapper that links requirement statements to Robot Framework keywords.
+
+```bash
+python3 src/components/semantic/semantic_mapper.py \
+  --requirements scripts/requirements/mixed_requirement_types.txt \
+  --resource-root Resource \
+  --output-dir Results/semantic-mapping \
+  --top-k 3
+```
+
+Detailed guide: `docs/semantic-keyword-mapping.md`
+Example phrase-map customization: `scripts/requirements/phrase_map.json`
+NLP preprocessing (`src/components/semantic/nlp_processor.py`) is enabled by default for free-form requirement types.
+
+Single command pipeline (mapper + benchmark + readable report):
+
+```bash
+./scripts/run_semantic_pipeline.sh
+```
+
+Benchmark command:
+
+```bash
+python3 src/components/semantic/semantic_evaluation.py \
+  --requirements scripts/requirements/representative_requirements.csv \
+  --resource-root Resource \
+  --output-root Results/semantic-evaluation
+```
+
+Readable report command (Best Match vs Requirement):
+
+```bash
+python3 src/components/semantic/semantic_report.py \
+  --metrics-csv Results/semantic-evaluation/metrics.csv \
+  --runs-root Results/semantic-evaluation/runs \
+  --output-dir Results/semantic-readable-report
+```
+
 ## Contributors
 - Chi Thien Nguyen
 - Thanh Trung Le
