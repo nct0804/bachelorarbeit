@@ -191,4 +191,5 @@ coverage/
 Draft/
 .github/instructions
 .gitlab.local.env
+qase.pull.json
 # End of https://www.toptal.com/developers/gitignore/api/macos,node
