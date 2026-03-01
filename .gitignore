@@ -192,4 +192,5 @@ Draft/
 .github/instructions
 .gitlab.local.env
 qase.pull.json
+Features
 # End of https://www.toptal.com/developers/gitignore/api/macos,node
