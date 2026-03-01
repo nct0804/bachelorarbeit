@@ -49,7 +49,7 @@ robot_tests:
   before_script:
     - apt-get update && apt-get install -y --no-install-recommends python3-pip
     - python3 -m pip install --upgrade pip
-    - pip install --cache-dir "$PIP_CACHE_DIR" -r requirements.txt
+    - pip install --cache-dir "$PIP_CACHE_DIR" -r requirements.robot-ci.txt
     - |
       if [ ! -d "$ROBOT_FRAMEWORK_BROWSER_NODE_DIR/node_modules" ]; then
         echo "Initializing Browser library runtime..."

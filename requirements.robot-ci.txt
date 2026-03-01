@@ -1,0 +1,8 @@
+robotframework~=7.2
+qase-robotframework
+robotframework-pabot
+robotframework-randomlibrary
+robotframework-tidy
+gherkin2robotframework
+robotframework-browser
+robotframework-robocop

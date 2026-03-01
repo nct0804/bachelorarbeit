@@ -8,7 +8,7 @@ from src.components.robot_component import delete_results, start_robot_tests
 
 
 QASE_REPORT = False
-QASE_PULL = False
+QASE_PULL = True
 QASE_PULL_CONFIG_PATH = "src/components/qase/qase.pull.json"
 QASE_CONFIG_PATH = "src/components/qase/qase.config.json"
 QASE_CONNECTOR_INSECURE = True
