@@ -1,5 +1,6 @@
 {
     "suite_ids": [],
-    "suite_names": [],
+    "suite_names": ["Human"],
+    "case_ids": [],
     "pull_all_when_empty": true
 }

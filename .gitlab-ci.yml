@@ -118,7 +118,7 @@ robot_tests:
           echo "Qase project is missing. Set QASE_TESTOPS_PROJECT (or QASE_PROJECT) in GitLab CI/CD variables."
           exit 1
         fi
-        python3 src/components/qaseconnector.py --config qase.config.json --project "$EFFECTIVE_QASE_PROJECT" --token "$EFFECTIVE_QASE_TOKEN" --pull-config "$EFFECTIVE_QASE_PULL_CONFIG" --g2rf-out robot-tests
+        python3 src/components/qase/qaseconnector.py --config qase.config.json --project "$EFFECTIVE_QASE_PROJECT" --token "$EFFECTIVE_QASE_TOKEN" --pull-config "$EFFECTIVE_QASE_PULL_CONFIG" --g2rf-out robot-tests
       else
         echo "Skipping Qase pull step."
       fi
