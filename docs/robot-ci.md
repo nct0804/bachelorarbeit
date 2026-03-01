@@ -27,3 +27,29 @@ This workflow is dedicated to running Robot Framework tests on demand.
 ## Notes
 - Tests open `http://localhost:4242/`.
 - If your tests need backend APIs, you can extend the workflow to start the backend and database.
+
+## GitLab CI (Qase Pull)
+- Default pull suite in `.gitlab-ci.yml` is `Google Search` via `QASE_PULL_SUITE_NAMES`.
+- Pipeline does not depend on editing `qase.pull.json` for suite selection.
+
+### Trigger GitLab with explicit suite from terminal
+Use:
+```bash
+GITLAB_PROJECT_ID=<project_id> \
+GITLAB_TOKEN=<personal_access_token> \
+scripts/trigger_gitlab_robot_suite.sh --suite "Google Search"
+```
+
+Multiple suites:
+```bash
+GITLAB_PROJECT_ID=<project_id> \
+GITLAB_TOKEN=<personal_access_token> \
+scripts/trigger_gitlab_robot_suite.sh --suite "Smoke Tests,Regression"
+```
+
+Optional custom branch:
+```bash
+GITLAB_PROJECT_ID=<project_id> \
+GITLAB_TOKEN=<personal_access_token> \
+scripts/trigger_gitlab_robot_suite.sh --suite "Google Search" --ref develop
+```

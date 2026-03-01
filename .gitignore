@@ -190,4 +190,5 @@ coverage/
 .build/
 Draft/
 .github/instructions
+.gitlab.local.env
 # End of https://www.toptal.com/developers/gitignore/api/macos,node
