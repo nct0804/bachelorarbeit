@@ -16,13 +16,3 @@ Notification Should Contain Text
     [Tags]    Basic
     [Arguments]    ${NAME}    ${EXPECTED_TEXT}
     Category Element Text Should Contain    notification    ${NAME}    ${EXPECTED_TEXT}
-
-the '${Notification}' notification should be visible
-    [Documentation]    Assert that the named notification is visible.
-    [Tags]    Gherkin
-    Notification Should Be Visible    ${Notification}
-
-the '${Notification}' notification should contain '${Text}'
-    [Documentation]    Assert named notification contains expected text.
-    [Tags]    Gherkin
-    Notification Should Contain Text    ${Notification}    ${Text}

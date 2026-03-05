@@ -41,23 +41,3 @@ Sign In Error Should Contain
     [Tags]    Basic
     [Arguments]    ${EXPECTED_TEXT}
     Category Element Text Should Contain    notification    Error    ${EXPECTED_TEXT}
-
-the user go to sign in page
-    [Documentation]    Navigate to the Sign In page.
-    [Tags]    Gherkin
-    Go To Sign In Page
-
-the user signs in with email '${Email}' and password '${Password}'
-    [Documentation]    Sign in using explicit credentials.
-    [Tags]    Gherkin
-    Sign In With Credentials    ${Email}    ${Password}
-
-the user signs in with their credentials
-    [Documentation]    Sign in using suite-level credential variables.
-    [Tags]    Gherkin
-    Sign In With Suite Credentials
-
-the sign in error should contain '${Text}'
-    [Documentation]    Verify sign-in error text contains expected content.
-    [Tags]    Gherkin
-    Sign In Error Should Contain    ${Text}

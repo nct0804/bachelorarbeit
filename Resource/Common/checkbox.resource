@@ -17,13 +17,3 @@ Checkbox Should Be Visible
     [Tags]    basic
     [Arguments]    ${NAME}
     Category Element Should Be Visible    checkbox    ${NAME}
-
-the user clicks the '${Checkbox}' checkbox
-    [Documentation]    Set the named checkbox to provided state.
-    [Tags]    gherkin
-    Set Checkbox    ${Checkbox}
-
-the '${Checkbox}' checkbox should be visible
-    [Documentation]    Assert that the named checkbox is visible.
-    [Tags]    gherkin
-    Checkbox Should Be Visible    ${Checkbox}

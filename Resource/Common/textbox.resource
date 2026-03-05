@@ -30,23 +30,3 @@ Textbox Value Should Contain
     ${SELECTOR}=    Get Locator In Category    textbox    ${NAME}
     ${VALUE}=    Get Property    css=${SELECTOR}    value
     Should Contain    ${VALUE}    ${EXPECTED_VALUE}
-
-the user fills the '${Textbox}' textbox with '${Value}'
-    [Documentation]    Fill the named textbox with provided value.
-    [Tags]    Gherkin
-    Fill Textbox    ${Textbox}    ${Value}
-
-the user clears the '${Textbox}' textbox
-    [Documentation]    Clear the named textbox value.
-    [Tags]    Gherkin
-    Clear Textbox    ${Textbox}
-
-the '${Textbox}' textbox should be visible
-    [Documentation]    Assert that the named textbox is visible.
-    [Tags]    Gherkin
-    Textbox Should Be Visible    ${Textbox}
-
-the '${Textbox}' textbox should contain '${Value}'
-    [Documentation]    Assert that textbox value contains expected text.
-    [Tags]    Gherkin
-    Textbox Value Should Contain    ${Textbox}    ${Value}

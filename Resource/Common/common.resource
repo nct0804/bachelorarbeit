@@ -185,28 +185,3 @@ Validate Current Page Categories
             Wait For Category Element State    ${CATEGORY}    ${NAME}    visible    10s
         END
     END
-
-the user open the '${TYPE}' browser
-    [Documentation]    Open a browser session using provided browser type.
-    [Tags]    gherkin
-    Open Browser Session    ${TYPE}
-
-the user closes the browser
-    [Documentation]    Close the current browser session.
-    [Tags]    gherkin
-    Close Browser Session
-
-the user navigates to the '${PAGE}' page
-    [Documentation]    Navigate directly to a page by alias.
-    [Tags]    gherkin
-    Navigate To Page    ${PAGE}
-
-the user is on the '${PAGE}' page
-    [Documentation]    Validate that user is currently on the expected page.
-    [Tags]    gherkin
-    Validate Page Is Opened    ${PAGE}
-
-the '${PAGE}' page should be opened
-    [Documentation]    Assert that the expected page is opened.
-    [Tags]    gherkin
-    Validate Page Is Opened    ${PAGE}

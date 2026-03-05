@@ -16,13 +16,3 @@ Text Should Be Visible
     [Tags]    Basic
     [Arguments]    ${NAME}
     Category Element Should Be Visible    text    ${NAME}
-
-the user clicks the '${Text}' text
-    [Documentation]    Click the named text element on the current page.
-    [Tags]    Gherkin
-    Click Text    ${Text}
-
-the '${Text}' text should be visible
-    [Documentation]    Assert that the named text element is visible.
-    [Tags]    Gherkin
-    Text Should Be Visible    ${Text}

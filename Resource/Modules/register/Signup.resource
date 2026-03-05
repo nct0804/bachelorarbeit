@@ -71,18 +71,3 @@ Verify Registration Status
         RETURN
     END
     Fail    Unsupported registration status: ${STATUS}
-
-the user signs up with '${FirstName}' '${LastName}' '${Username}' '${Email}' '${Password}'
-    [Documentation]    Sign up using explicit registration values in positional order.
-    [Tags]    Gherkin
-    Sign Up With Information    ${FirstName}    ${LastName}    ${Username}    ${Email}    ${Password}
-
-the user signs up with the information
-    [Documentation]    Sign up using suite-level registration values.
-    [Tags]    Gherkin
-    Sign Up With Suite Information
-
-the user verifies the registration is '${Status}'
-    [Documentation]    Verify registration status from notification title.
-    [Tags]    Gherkin
-    Verify Registration Status    ${Status}

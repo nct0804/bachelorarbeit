@@ -18,13 +18,3 @@ List Item Count Should Be At Least
     ${COUNT}=    Get Category Element Count    list    ${NAME}
     ${COUNT_OK}=    Evaluate    int($COUNT) >= int($MIN_COUNT)
     Should Be True    ${COUNT_OK}
-
-the '${List}' list should be visible
-    [Documentation]    Assert that the named list is visible.
-    [Tags]    gherkin
-    List Should Be Visible    ${List}
-
-the '${List}' list should have at least '${Count}' items
-    [Documentation]    Assert list has at least the expected number of items.
-    [Tags]    gherkin
-    List Item Count Should Be At Least    ${List}    ${Count}
