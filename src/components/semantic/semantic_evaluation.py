@@ -12,6 +12,14 @@ import subprocess
 import sys
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Iterable
+
+DEFAULT_WEIGHT_PAIRS = [
+    (1.0, 0.0),
+    (0.85, 0.15),
+    (0.70, 0.30),
+]
+ALLOWED_BACKENDS = {"auto", "local", "sentence-transformers"}
 
 
 @dataclass
@@ -21,56 +29,111 @@ class EvaluationConfig:
     semantic_weight: float
     lexical_weight: float
     sentence_model: str = "all-MiniLM-L6-v2"
+    embedding_dim: int = 384
 
 
 def sentence_transformers_available() -> bool:
     return importlib.util.find_spec("sentence_transformers") is not None
 
 
-def build_default_configs(include_sentence_transformers: bool) -> list[EvaluationConfig]:
-    configs = [
-        EvaluationConfig(
-            name="local_semantic_only",
-            embedding_backend="local",
-            semantic_weight=1.0,
-            lexical_weight=0.0,
-        ),
-        EvaluationConfig(
-            name="local_hybrid_85_15",
-            embedding_backend="local",
-            semantic_weight=0.85,
-            lexical_weight=0.15,
-        ),
-        EvaluationConfig(
-            name="local_hybrid_70_30",
-            embedding_backend="local",
-            semantic_weight=0.70,
-            lexical_weight=0.30,
-        ),
-    ]
-    if include_sentence_transformers:
-        configs.extend(
-            [
+def normalize_backend(raw_backend: str) -> str:
+    cleaned = str(raw_backend or "").strip().lower()
+    if cleaned in {"sentence", "sentence-transformer", "sentence-transformers", "st"}:
+        return "sentence-transformers"
+    return cleaned
+
+
+def parse_embedding_backends(
+    raw_backends: str | None,
+    include_sentence_transformers: bool,
+) -> list[str]:
+    if raw_backends:
+        tokens = [normalize_backend(token) for token in raw_backends.split(",") if token.strip()]
+    else:
+        tokens = ["local"]
+        if include_sentence_transformers:
+            tokens.append("sentence-transformers")
+
+    invalid = [token for token in tokens if token not in ALLOWED_BACKENDS]
+    if invalid:
+        raise SystemExit(f"Unsupported embedding backend(s): {', '.join(invalid)}")
+
+    resolved: list[str] = []
+    skipped: list[str] = []
+    for token in tokens:
+        if token == "sentence-transformers" and not include_sentence_transformers:
+            skipped.append(token)
+            continue
+        resolved.append(token)
+
+    if skipped:
+        print("sentence-transformers not installed; skipping backends: " + ", ".join(skipped))
+    if not resolved:
+        raise SystemExit("No embedding backends available for evaluation.")
+    return resolved
+
+
+def parse_weight_pairs(raw_pairs: str | None) -> list[tuple[float, float]]:
+    if not raw_pairs:
+        return list(DEFAULT_WEIGHT_PAIRS)
+
+    pairs: list[tuple[float, float]] = []
+    for token in raw_pairs.split(","):
+        cleaned = token.strip()
+        if not cleaned:
+            continue
+        if "/" in cleaned:
+            left, right = cleaned.split("/", 1)
+        elif ":" in cleaned:
+            left, right = cleaned.split(":", 1)
+        else:
+            raise SystemExit(f"Invalid weight pair '{cleaned}'. Use semantic/lexical (e.g. 0.85/0.15).")
+        try:
+            semantic_weight = float(left.strip())
+            lexical_weight = float(right.strip())
+        except ValueError as error:
+            raise SystemExit(f"Invalid weight pair '{cleaned}': {error}") from error
+        if semantic_weight < 0 or lexical_weight < 0:
+            raise SystemExit("Weight pairs must be non-negative.")
+        if semantic_weight == 0 and lexical_weight == 0:
+            raise SystemExit("Weight pairs must include at least one non-zero value.")
+        pairs.append((semantic_weight, lexical_weight))
+
+    if not pairs:
+        raise SystemExit("No valid weight pairs provided.")
+    return pairs
+
+
+def format_config_name(
+    backend: str,
+    semantic_weight: float,
+    lexical_weight: float,
+) -> str:
+    backend_label = "sentence" if backend == "sentence-transformers" else backend
+    semantic_pct = int(round(semantic_weight * 100))
+    lexical_pct = int(round(lexical_weight * 100))
+    return f"{backend_label}_s{semantic_pct}_l{lexical_pct}"
+
+
+def build_configs(
+    backends: Iterable[str],
+    weight_pairs: Iterable[tuple[float, float]],
+    sentence_model: str,
+    embedding_dim: int,
+) -> list[EvaluationConfig]:
+    configs: list[EvaluationConfig] = []
+    for backend in backends:
+        for semantic_weight, lexical_weight in weight_pairs:
+            configs.append(
                 EvaluationConfig(
-                    name="sentence_semantic_only",
-                    embedding_backend="sentence-transformers",
-                    semantic_weight=1.0,
-                    lexical_weight=0.0,
-                ),
-                EvaluationConfig(
-                    name="sentence_hybrid_85_15",
-                    embedding_backend="sentence-transformers",
-                    semantic_weight=0.85,
-                    lexical_weight=0.15,
-                ),
-                EvaluationConfig(
-                    name="sentence_hybrid_70_30",
-                    embedding_backend="sentence-transformers",
-                    semantic_weight=0.70,
-                    lexical_weight=0.30,
-                ),
-            ]
-        )
+                    name=format_config_name(backend, semantic_weight, lexical_weight),
+                    embedding_backend=backend,
+                    semantic_weight=semantic_weight,
+                    lexical_weight=lexical_weight,
+                    sentence_model=sentence_model,
+                    embedding_dim=embedding_dim,
+                )
+            )
     return configs
 
 
@@ -79,11 +142,12 @@ def run_mapper(
     requirements: Path,
     resource_root: Path,
     output_dir: Path,
-    phrase_map_file: Path | None,
     top_k: int,
     strong_threshold: float,
     review_threshold: float,
     disable_nlp_preprocess: bool,
+    requirement_text_field: str | None,
+    requirement_id_prefix: str | None,
 ) -> tuple[bool, str]:
     mapper_path = Path(__file__).with_name("semantic_mapper.py")
     command = [
@@ -105,15 +169,19 @@ def run_mapper(
         config.embedding_backend,
         "--sentence-model",
         config.sentence_model,
+        "--embedding-dim",
+        str(config.embedding_dim),
         "--semantic-weight",
         str(config.semantic_weight),
         "--lexical-weight",
         str(config.lexical_weight),
     ]
-    if phrase_map_file:
-        command.extend(["--phrase-map-file", str(phrase_map_file)])
     if disable_nlp_preprocess:
         command.append("--disable-nlp-preprocess")
+    if requirement_text_field:
+        command.extend(["--requirement-text-field", requirement_text_field])
+    if requirement_id_prefix:
+        command.extend(["--requirement-id-prefix", requirement_id_prefix])
 
     result = subprocess.run(command, capture_output=True, text=True, check=False)
     output = "\n".join([result.stdout.strip(), result.stderr.strip()]).strip()
@@ -196,6 +264,8 @@ def write_metrics_csv(rows: list[dict[str, str]], output_path: Path) -> None:
     headers = [
         "CONFIG",
         "BACKEND",
+        "SENTENCE_MODEL",
+        "EMBEDDING_DIM",
         "SEMANTIC_WEIGHT",
         "LEXICAL_WEIGHT",
         "TOTAL_REQ",
@@ -224,12 +294,12 @@ def write_metrics_markdown(rows: list[dict[str, str]], output_path: Path) -> Non
     lines = [
         "# Semantic Mapper Benchmark",
         "",
-        "| Config | Backend | Weights (S/L) | Auto | Review | No Match | Coverage | Avg Top1 | Efficiency | Status |",
-        "|---|---|---|---:|---:|---:|---:|---:|---:|---|",
+        "| Config | Backend | Sentence Model | Embedding Dim | Weights (S/L) | Auto | Review | No Match | Coverage | Avg Top1 | Efficiency | Status |",
+        "|---|---|---|---:|---|---:|---:|---:|---:|---:|---:|---|",
     ]
     for row in rows:
         lines.append(
-            "| {CONFIG} | {BACKEND} | {SEMANTIC_WEIGHT}/{LEXICAL_WEIGHT} | {AUTO} | {REVIEW} | {NO_MATCH} | {COVERAGE_RATE} | {AVG_TOP1_SCORE} | {EFFICIENCY_INDEX} | {STATUS} |".format(
+            "| {CONFIG} | {BACKEND} | {SENTENCE_MODEL} | {EMBEDDING_DIM} | {SEMANTIC_WEIGHT}/{LEXICAL_WEIGHT} | {AUTO} | {REVIEW} | {NO_MATCH} | {COVERAGE_RATE} | {AVG_TOP1_SCORE} | {EFFICIENCY_INDEX} | {STATUS} |".format(
                 **row
             )
         )
@@ -249,14 +319,40 @@ def main() -> int:
         default="Results/semantic-evaluation",
         help="Output root folder for benchmark artifacts.",
     )
-    parser.add_argument(
-        "--phrase-map-file",
-        default=None,
-        help="Optional phrase map JSON path.",
-    )
     parser.add_argument("--top-k", type=int, default=3, help="Top-k matches.")
     parser.add_argument("--strong-threshold", type=float, default=0.45, help="AUTO threshold.")
     parser.add_argument("--review-threshold", type=float, default=0.30, help="REVIEW threshold.")
+    parser.add_argument(
+        "--embedding-backends",
+        default=None,
+        help="Comma-separated embedding backends (auto, local, sentence-transformers).",
+    )
+    parser.add_argument(
+        "--weight-pairs",
+        default=None,
+        help="Comma-separated semantic/lexical weight pairs (e.g. 1/0,0.85/0.15).",
+    )
+    parser.add_argument(
+        "--sentence-model",
+        default="all-MiniLM-L6-v2",
+        help="SentenceTransformer model name.",
+    )
+    parser.add_argument(
+        "--embedding-dim",
+        type=int,
+        default=384,
+        help="Vector dimension for the local hashing embedding model.",
+    )
+    parser.add_argument(
+        "--requirement-text-field",
+        default=None,
+        help="Optional CSV/JSON field name containing requirement text.",
+    )
+    parser.add_argument(
+        "--requirement-id-prefix",
+        default="REQ",
+        help="ID prefix for generated requirement IDs in free-form datasets.",
+    )
     parser.add_argument(
         "--disable-nlp-preprocess",
         action="store_true",
@@ -267,17 +363,27 @@ def main() -> int:
     requirements = Path(args.requirements)
     resource_root = Path(args.resource_root)
     output_root = Path(args.output_root)
-    phrase_map_file = Path(args.phrase_map_file) if args.phrase_map_file else None
 
     if not requirements.exists():
         raise SystemExit(f"Requirements file not found: {requirements}")
     if not resource_root.exists():
         raise SystemExit(f"Resource root not found: {resource_root}")
-    if phrase_map_file and not phrase_map_file.exists():
-        raise SystemExit(f"Phrase map file not found: {phrase_map_file}")
+    if args.top_k <= 0:
+        raise SystemExit("--top-k must be a positive integer.")
+    if args.review_threshold > args.strong_threshold:
+        raise SystemExit("--review-threshold must be <= --strong-threshold.")
+    if args.embedding_dim <= 0:
+        raise SystemExit("--embedding-dim must be a positive integer.")
 
     include_sentence = sentence_transformers_available()
-    configs = build_default_configs(include_sentence_transformers=include_sentence)
+    backends = parse_embedding_backends(args.embedding_backends, include_sentence_transformers=include_sentence)
+    weight_pairs = parse_weight_pairs(args.weight_pairs)
+    configs = build_configs(
+        backends=backends,
+        weight_pairs=weight_pairs,
+        sentence_model=args.sentence_model,
+        embedding_dim=args.embedding_dim,
+    )
 
     rows: list[dict[str, str]] = []
     run_root = output_root / "runs"
@@ -295,11 +401,12 @@ def main() -> int:
             requirements=requirements,
             resource_root=resource_root,
             output_dir=run_output_dir,
-            phrase_map_file=phrase_map_file,
             top_k=args.top_k,
             strong_threshold=args.strong_threshold,
             review_threshold=args.review_threshold,
             disable_nlp_preprocess=args.disable_nlp_preprocess,
+            requirement_text_field=args.requirement_text_field,
+            requirement_id_prefix=args.requirement_id_prefix,
         )
 
         mapping_report_path = run_output_dir / "mapping_report.csv"
@@ -308,6 +415,8 @@ def main() -> int:
         row = {
             "CONFIG": config.name,
             "BACKEND": config.embedding_backend,
+            "SENTENCE_MODEL": config.sentence_model if config.embedding_backend != "local" else "-",
+            "EMBEDDING_DIM": str(config.embedding_dim),
             "SEMANTIC_WEIGHT": f"{config.semantic_weight:.2f}",
             "LEXICAL_WEIGHT": f"{config.lexical_weight:.2f}",
             "TOTAL_REQ": str(metrics["total"]),
@@ -342,8 +451,6 @@ def main() -> int:
     print(f"Metrics CSV: {metrics_csv}")
     print(f"Metrics Markdown: {metrics_md}")
     print(f"Metrics JSON: {metrics_json}")
-    if not include_sentence:
-        print("sentence-transformers not installed; sentence backend configs were skipped.")
     return 0
 
 

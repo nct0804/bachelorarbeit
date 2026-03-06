@@ -11,11 +11,22 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import re
-from typing import Dict, List
+from typing import Any, Dict, List
 
 
 TEXT_SPACES = re.compile(r"\s+")
 LIST_PREFIX = re.compile(r"^\s*(?:[-*•]|\d+[.)])\s+")
+BUILTIN_PHRASE_MAP = {
+    "page": ["tab", "screen", "view"],
+    "home page": ["home tab"],
+    "challenge page": ["challenge tab"],
+    "ranking page": ["leaderboard tab"],
+    "email": ["account", "email"],
+    "password": ["password", "pwd", "passcode", "pass"],
+    "notification": ["error popup", "error message", "failure message"],
+    "issue": ["bug", "defect"],
+    "section": ["section", "datagrid", "secion"],
+}
 
 
 @dataclass
@@ -42,18 +53,22 @@ class ProcessedRequirement:
 class RequirementNLPProcessor:
     """Extracts requirement type and action candidates from free text."""
 
+    DEFAULT_PHRASE_MAP = BUILTIN_PHRASE_MAP
+
     SYNONYMS = {
-        "click": ["click", "press", "tap", "select", "hit"],
-        "input": ["input", "type", "enter", "fill", "write"],
-        "verify": ["verify", "check", "assert", "validate", "confirm", "ensure"],
-        "navigate": ["navigate", "go", "open", "visit", "browse", "access"],
-        "wait": ["wait", "pause", "delay", "sleep"],
-        "close": ["close", "quit", "exit", "terminate", "end"],
-        "submit": ["submit", "send", "post", "confirm"],
-        "scroll": ["scroll", "swipe", "drag"],
-        "search": ["search", "find", "locate", "query", "lookup"],
-        "login": ["login", "signin", "authenticate", "logon"],
-        "logout": ["logout", "signout", "logoff"],
+        "click": ["click", "press", "tap", "select", "hit","clicks", "presses", "taps", "selects", "hits"],
+        "input": ["input", "type", "enter", "fill", "write", "inputs", "types", "enters", "fills", "writes"],
+        "verify": ["verify", "check", "assert", "validate", "confirm", "ensure", "expects", "verifies", "checks", "asserts", "validates", "confirms", "ensures"],
+        "navigate": ["navigates", "go","goes", "open", "visit", "browse", "access", "reach", "move to", "head to", "jump to", "opens", "visits", "browses", "accesses", "reaches", "moves to", "heads to", "jumps to"],
+        "wait": ["wait", "pause", "delay", "sleep", "waits", "pauses", "delays", "sleeps"],
+        "close": ["close", "quit", "exit", "terminate", "end", "closes", "quits", "exits", "terminates", "ends"],
+        "submit": ["submit", "send", "post", "confirm", "submits", "sends", "posts", "confirms"],
+        "scroll": ["scroll", "swipe", "drag", "scrolls", "swipes", "drags","scrolling"],
+        "search": ["search", "find", "locate", "query", "lookup", "look for", "seek", "explore", "look up"],
+        "login": ["login", "signin", "authenticate", "logon", "sign in", "log in", "sign on", "log on"],
+        "logout": ["logout", "signout", "logoff", "sign off", "log off", "sign out", "logs out", "signs out",  "sign offs"],
+        "select": ["selects", "chooses","choose", "pick", "picks", "triggers", "trigger"],
+
     }
 
     ACTION_PATTERNS = {
@@ -77,9 +92,40 @@ class RequirementNLPProcessor:
             ]
     }
 
-    def __init__(self, phrase_map: Dict[str, str] | None = None) -> None:
-        self.phrase_map = {k.lower().strip(): v.lower().strip() for k, v in (phrase_map or {}).items()}
+    def __init__(self, phrase_map: Dict[str, Any] | None = None) -> None:
+        resolved_phrase_map = dict(self.DEFAULT_PHRASE_MAP)
+        if phrase_map:
+            resolved_phrase_map.update(phrase_map)
+        self.phrase_map = self._normalize_phrase_map(resolved_phrase_map)
         self.synonym_map = self._build_synonym_map()
+
+    def _normalize_phrase_map(self, raw_phrase_map: Dict[str, Any]) -> Dict[str, str]:
+        normalized: Dict[str, str] = {}
+        for source, target in raw_phrase_map.items():
+            canonical = str(source).lower().strip()
+            if not canonical:
+                continue
+
+            if isinstance(target, str):
+                target_text = target.lower().strip()
+                if target_text:
+                    normalized[canonical] = target_text
+                continue
+
+            # Support canonical -> [synonym, ...] style phrase maps.
+            if isinstance(target, (list, tuple, set)):
+                normalized[canonical] = canonical
+                for raw_variant in target:
+                    variant = str(raw_variant).lower().strip()
+                    if variant:
+                        normalized[variant] = canonical
+                continue
+
+            target_text = str(target).lower().strip()
+            if target_text:
+                normalized[canonical] = target_text
+
+        return normalized
 
     def preprocess_requirement_text(self, text: str) -> ProcessedRequirement:
         """Convert requirement text to a normalized, action-augmented mapping text."""

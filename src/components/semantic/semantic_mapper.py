@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Requirement-to-keyword semantic mapping for Robot Framework resources.
 
-This tool maps free-form requirements to project Gherkin keywords using:
+This tool maps free-form requirements to executable project keywords using:
 - semantic similarity (embedding-based)
 - lexical similarity (wording overlap)
 - optional NLP preprocessing for requirement type and action extraction
@@ -67,13 +67,7 @@ OPTIONAL_STOPS = {
     "must",
     "need",
 }
-DEFAULT_PHRASE_MAP = {
-    "log in": "sign in",
-    "login": "sign in",
-    "log out": "logout",
-    "sign up": "register",
-    "tab": "page",
-}
+DEFAULT_PHRASE_MAP: dict[str, str] = {}
 ACTIVE_PHRASE_MAP: dict[str, str] = dict(DEFAULT_PHRASE_MAP)
 
 
@@ -199,19 +193,6 @@ def apply_phrase_map(text: str) -> str:
     return mapped_text
 
 
-def load_phrase_map_file(path: Path) -> dict[str, str]:
-    data = json.loads(path.read_text(encoding="utf-8"))
-    if not isinstance(data, dict):
-        raise ValueError("Phrase map must be a JSON object of string:string pairs.")
-    phrase_map: dict[str, str] = {}
-    for source, target in data.items():
-        source_text = str(source).strip().lower()
-        target_text = str(target).strip().lower()
-        if source_text and target_text:
-            phrase_map[source_text] = target_text
-    return phrase_map
-
-
 def load_requirement_nlp_processor_class():
     """Dynamically load RequirementNLPProcessor from sibling module."""
     semantic_dir = Path(__file__).resolve().parent
@@ -233,6 +214,22 @@ def load_requirement_nlp_processor_class():
     sys.modules[spec.name] = module
     spec.loader.exec_module(module)
     return getattr(module, "RequirementNLPProcessor", None)
+
+
+def load_default_phrase_map_from_nlp() -> dict[str, str]:
+    processor_class = load_requirement_nlp_processor_class()
+    if processor_class is None:
+        return dict(DEFAULT_PHRASE_MAP)
+    raw_phrase_map = getattr(processor_class, "DEFAULT_PHRASE_MAP", None)
+    if not isinstance(raw_phrase_map, dict):
+        return dict(DEFAULT_PHRASE_MAP)
+    normalized: dict[str, str] = {}
+    for source, target in raw_phrase_map.items():
+        source_text = str(source).strip().lower()
+        target_text = str(target).strip().lower()
+        if source_text and target_text:
+            normalized[source_text] = target_text
+    return normalized
 
 
 def normalize_vector(vector: list[float]) -> list[float]:
@@ -578,8 +575,8 @@ def save_keyword_catalog(catalog: list[KeywordEntry], output_path: Path) -> None
             )
 
 
-def filter_catalog_to_gherkin(catalog: list[KeywordEntry]) -> list[KeywordEntry]:
-    return [entry for entry in catalog if entry.tag_type.lower() == "gherkin"]
+def filter_catalog_to_executable(catalog: list[KeywordEntry]) -> list[KeywordEntry]:
+    return [entry for entry in catalog if entry.tag_type.lower() != "gherkin"]
 
 
 def map_requirements(
@@ -792,11 +789,6 @@ def build_argument_parser() -> argparse.ArgumentParser:
         help="ID prefix used for generated requirement IDs in free-form input.",
     )
     parser.add_argument(
-        "--phrase-map-file",
-        default=None,
-        help="Optional JSON file for custom phrase normalization (e.g., log in -> sign in).",
-    )
-    parser.add_argument(
         "--disable-nlp-preprocess",
         action="store_true",
         help="Disable NLP preprocessing of free-form requirements.",
@@ -877,7 +869,6 @@ def main() -> int:
     requirements_path = Path(args.requirements)
     resource_root = Path(args.resource_root)
     output_dir = Path(args.output_dir)
-    phrase_map_path = Path(args.phrase_map_file) if args.phrase_map_file else None
 
     if not requirements_path.exists():
         raise SystemExit(f"Requirement dataset not found: {requirements_path}")
@@ -887,17 +878,13 @@ def main() -> int:
         raise SystemExit("--top-k must be a positive integer.")
     if args.review_threshold > args.strong_threshold:
         raise SystemExit("--review-threshold must be less than or equal to --strong-threshold.")
-    if phrase_map_path and not phrase_map_path.exists():
-        raise SystemExit(f"Phrase map file not found: {phrase_map_path}")
     if args.semantic_weight < 0 or args.lexical_weight < 0:
         raise SystemExit("Similarity weights must be non-negative.")
     if args.semantic_weight == 0 and args.lexical_weight == 0:
         raise SystemExit("At least one of --semantic-weight or --lexical-weight must be > 0.")
 
     global ACTIVE_PHRASE_MAP
-    ACTIVE_PHRASE_MAP = dict(DEFAULT_PHRASE_MAP)
-    if phrase_map_path:
-        ACTIVE_PHRASE_MAP.update(load_phrase_map_file(phrase_map_path))
+    ACTIVE_PHRASE_MAP = load_default_phrase_map_from_nlp()
 
     nlp_processor = None
     nlp_enabled = not args.disable_nlp_preprocess
@@ -920,9 +907,9 @@ def main() -> int:
     if not catalog:
         raise SystemExit("No keywords found under the resource root.")
 
-    scoped_catalog = filter_catalog_to_gherkin(catalog)
+    scoped_catalog = filter_catalog_to_executable(catalog)
     if not scoped_catalog:
-        raise SystemExit("No Gherkin keywords found under the resource root.")
+        raise SystemExit("No executable keywords found under the resource root.")
 
     model, embedding_backend = build_embedding_model(
         backend=args.embedding_backend,
