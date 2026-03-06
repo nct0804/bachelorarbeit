@@ -10,3 +10,4 @@ Resource            checkbox.resource
 Resource            list.resource
 Resource            messagebox.resource
 Resource            notification.resource
+Resource            section.resource
