@@ -19,8 +19,7 @@
         "Features": "[data-test=\"landing-nav-features\"]",
         "Reviews": "[data-test=\"landing-nav-reviews\"]",
         "About": "[data-test=\"landing-nav-about\"]",
-        "Start Learning Now": "[data-test=\"hero-start-learning\"]",
-        "Start Learning Now - It's Free!": "[data-test=\"hero-start-learning-free\"]"
+        "Start Learning Now": "[data-test=\"hero-start-learning\"], [data-test=\"hero-start-learning-free\"]"
 
     },
     "link": {
@@ -38,6 +37,9 @@
         "Features": "[data-test=\"landing-features\"]",
         "Reviews": "[data-test=\"landing-testimonials\"]",
         "About": "[data-test=\"landing-about\"]",
-        "Benefits": "[data-test=\"landing-benefits\"]"
+        "Benefits": "[data-test=\"landing-benefits\"]",
+        "Course Features": "[data-test=\"landing-features\"]",
+        "About Us": "[data-test=\"landing-about\"]",
+        "What Our Students Say": "[data-test=\"landing-testimonials\"]"
     }
 }

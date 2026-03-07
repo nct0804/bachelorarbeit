@@ -185,3 +185,11 @@ Validate Current Page Categories
             Wait For Category Element State    ${CATEGORY}    ${NAME}    visible    10s
         END
     END
+
+Scroll Into Element
+    [Documentation]    Scroll to a category element by name.
+    [Tags]    basic
+    [Arguments]    ${NAME}
+    ${SELECTOR}=    Get Locator In Category    section    ${NAME}
+    Wait For Elements State    css=${SELECTOR} >> nth=0    visible    timeout=15s
+    Scroll To Element    css=${SELECTOR} >> nth=0
