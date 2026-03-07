@@ -64,7 +64,6 @@ Single-command pipeline (mapper + benchmark + readable report):
 The script uses:
 
 - `scripts/requirements/mixed_requirement_types.txt`
-- `scripts/requirements/phrase_map.json`
 - `Resource`
 - `Results/semantic-mapping`, `Results/semantic-evaluation`, `Results/semantic-readable-report`
 
@@ -81,18 +80,7 @@ python3 src/components/semantic/semantic_mapper.py \
   --output-dir Results/semantic-mapping
 ```
 
-Optional phrase mapping customization:
-
-```bash
-python3 src/components/semantic/semantic_mapper.py \
-  --requirements scripts/requirements/mixed_requirement_types.txt \
-  --phrase-map-file scripts/requirements/phrase_map.json \
-  --resource-root Resource \
-  --output-dir Results/semantic-mapping
-```
-
-`phrase_map.json` is shared by both the mapper normalization and the NLP preprocessor.
-This keeps free-form wording normalization consistent across extraction and matching.
+Phrase normalization is built into `nlp_processor.py` and applied automatically by default.
 
 Disable NLP preprocessing (if needed for ablation):
 
@@ -167,7 +155,6 @@ You can tune the embedding behavior directly in CLI:
 - `--embedding-dim` to change vector size
 - `--strong-threshold` and `--review-threshold` to tune confidence levels
 - `--top-k` to return more or fewer candidate keywords
-- `--phrase-map-file` to inject your own domain synonyms
 - `--disable-nlp-preprocess` to disable free-form NLP structuring
 - `--semantic-weight` and `--lexical-weight` for hybrid ranking
 
@@ -213,7 +200,6 @@ NLP ablation benchmark (same configs, NLP preprocessing disabled):
 ```bash
 python3 src/components/semantic/semantic_evaluation.py \
   --requirements scripts/requirements/representative_requirements.csv \
-  --phrase-map-file scripts/requirements/phrase_map.json \
   --resource-root Resource \
   --output-root Results/semantic-evaluation-no-nlp \
   --disable-nlp-preprocess
@@ -224,7 +210,6 @@ With mixed requirement types (user stories + functional + bug reports):
 ```bash
 python3 src/components/semantic/semantic_evaluation.py \
   --requirements scripts/requirements/mixed_requirement_types.txt \
-  --phrase-map-file scripts/requirements/phrase_map.json \
   --resource-root Resource \
   --output-root Results/semantic-evaluation-mixed-types
 ```
