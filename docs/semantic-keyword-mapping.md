@@ -69,6 +69,45 @@ The script uses:
 
 Run `./scripts/run_semantic_pipeline.sh --help` for tuning options.
 
+Thesis main path (recommended, simplified):
+
+```bash
+./scripts/run_thesis_main_pipeline.sh \
+  --requirements scripts/requirements/mixed_requirement_types.txt \
+  --resource-root Resource
+```
+
+This command performs:
+
+1. `semantic_mapper.py`: requirement-to-keyword retrieval.
+2. `llm_payload_builder.py`: builds LLM-ready payload directly from semantic mapper output.
+3. `llm_gherkin_generator.py`: calls the LLM and writes executable `.feature` files.
+
+Main path:
+
+- Requirements -> semantic_mapper -> RAG payload + prompting -> LLM -> executable Gherkin.
+
+Environment:
+
+- Set `OPENAI_API_KEY` for real LLM calls.
+- Use `--llm-dry-run` to validate pipeline wiring without API calls.
+- TLS options (if cert errors occur): `--llm-ca-bundle /path/to/ca.pem` or `--llm-insecure-skip-tls-verify`.
+
+Optional strict downstream gate (not part of the minimal thesis path):
+
+```bash
+./scripts/run_option_a_pipeline.sh \
+  --requirements scripts/requirements/mixed_requirement_types.txt \
+  --features-root Features \
+  --resource-root Resource \
+  --fail-on-unmapped
+```
+
+This command performs:
+
+1. `rag_context_builder.py`: retrieves top-k executable keyword context per requirement.
+2. `feature_pipeline.py --mapping-mode strict`: validates LLM-generated feature steps against existing keywords.
+
 Optional for custom CSV/JSON:
 
 ```bash
@@ -99,6 +138,23 @@ python3 src/components/semantic/semantic_mapper.py \
 - `Results/semantic-mapping/unmapped_requirements.csv`
 - `Results/semantic-mapping/summary.md`
 
+Option A outputs:
+
+- `Results/rag-context/retrieval_context.json`
+- `Results/rag-context/llm_generation_payload.json`
+- `Results/rag-context/retrieval_context.csv`
+- `Results/rag-context/summary.md`
+- `Results/feature-pipeline-strict/*.analysis.json`
+
+Thesis main path outputs:
+
+- `Results/thesis-main/semantic-mapping/*`
+- `Results/thesis-main/rag-context/llm_generation_payload.json`
+- `Results/thesis-main/rag-context/summary.md`
+- `Results/thesis-main/llm-generation/summary.md`
+- `Results/thesis-main/llm-generation/generation_results.json`
+- `Features/generated-llm/*.feature`
+
 The mapping report includes NLP-specific fields:
 
 - `REQUIREMENT_TYPE` (`user_story`, `functional_requirement`, `bug_report`, `general_requirement`)
@@ -109,6 +165,24 @@ The mapping report includes NLP-specific fields:
 - `AUTO_SUGGEST`: score >= `--strong-threshold` (default `0.45`)
 - `NEEDS_REVIEW`: score >= `--review-threshold` (default `0.30`) and below strong threshold
 - `NO_MATCH`: score < review threshold
+
+## Option A Strict Step Format
+
+Strict mode expects each feature step to contain an explicit existing keyword call.
+
+Accepted patterns:
+
+- `Given Open Browser Session | chromium`
+- `When Fill Textbox | email | user@example.com`
+- `Then Validate Page Is Opened | Home`
+- `Then Recommend New Keyword: Reset Password With Token`
+
+Rules:
+
+- In strict mode, unknown keyword names are marked as `strict_hallucination`.
+- In strict mode, malformed/non-explicit step formats are marked as `strict_format_mismatch`.
+- `Recommend New Keyword: ...` is treated as a non-executable recommendation, not a hallucinated executable keyword.
+- Use `--fail-on-unmapped` to fail fast on unknown/hallucinated executable keyword calls.
 
 ## Match Formula
 

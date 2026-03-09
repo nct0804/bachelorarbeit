@@ -27,9 +27,11 @@ try:
     from sentence_transformers import SentenceTransformer
 
     SENTENCE_TRANSFORMERS_AVAILABLE = True
+    SENTENCE_TRANSFORMERS_IMPORT_ERROR = None
 except Exception:
     SENTENCE_TRANSFORMERS_AVAILABLE = False
     SentenceTransformer = None
+    SENTENCE_TRANSFORMERS_IMPORT_ERROR = str(sys.exc_info()[1])
 
 
 TEXT_SPLIT_PATTERN = re.compile(r"[^a-z0-9]+")
@@ -850,7 +852,22 @@ def build_embedding_model(
 ) -> tuple[object, str]:
     normalized_backend = backend.strip().lower()
     if normalized_backend == "sentence-transformers":
-        return SentenceTransformerEmbeddingModel(model_name=sentence_model), "sentence-transformers"
+        if not SENTENCE_TRANSFORMERS_AVAILABLE:
+            details_suffix = ""
+            if SENTENCE_TRANSFORMERS_IMPORT_ERROR:
+                details_suffix = f" Import error: {SENTENCE_TRANSFORMERS_IMPORT_ERROR}"
+            raise SystemExit(
+                "Embedding backend 'sentence-transformers' is not available in this environment. "
+                "Install it with 'pip install sentence-transformers' or run with "
+                f"--embedding-backend auto/local.{details_suffix}"
+            )
+        try:
+            return SentenceTransformerEmbeddingModel(model_name=sentence_model), "sentence-transformers"
+        except Exception as error:
+            raise SystemExit(
+                f"Failed to initialize sentence-transformers backend: {error}. "
+                "Try --embedding-backend auto/local or a different --sentence-model."
+            ) from error
     if normalized_backend == "local":
         return LocalEmbeddingModel(dimension=embedding_dim), "local"
 
