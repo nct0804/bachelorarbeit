@@ -108,7 +108,7 @@ def main():
     os.environ["QASE_REPORT"] = "true" if QASE_REPORT else "false"
     os.environ["QASE_CONFIG_PATH"] = QASE_CONFIG_PATH
     _configure_qase_reporting_env()
-    # _pull_tests_from_qase()
+    _pull_tests_from_qase()
     _generate_robot_tests_from_features()
     delete_results()
     # start_robot_tests()

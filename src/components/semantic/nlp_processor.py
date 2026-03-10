@@ -16,18 +16,6 @@ from typing import Any, Dict, List
 
 TEXT_SPACES = re.compile(r"\s+")
 LIST_PREFIX = re.compile(r"^\s*(?:[-*•]|\d+[.)])\s+")
-BUILTIN_PHRASE_MAP = {
-    "page": ["tab", "screen", "view"],
-    "home page": ["home tab"],
-    "challenge page": ["challenge tab"],
-    "ranking page": ["leaderboard tab"],
-    "email": ["account", "email"],
-    "password": ["password", "pwd", "passcode", "pass"],
-    "notification": ["error popup", "error message", "failure message"],
-    "issue": ["bug", "defect"],
-    "section": ["section", "datagrid", "secion"],
-}
-
 
 @dataclass
 class RequirementAction:
@@ -53,7 +41,18 @@ class ProcessedRequirement:
 class RequirementNLPProcessor:
     """Extracts requirement type and action candidates from free text."""
 
-    DEFAULT_PHRASE_MAP = BUILTIN_PHRASE_MAP
+    DEFAULT_PHRASE_MAP = {
+    "page": ["tab", "screen", "view"],
+    "home page": ["home tab"],
+    "challenge page": ["challenge tab"],
+    "ranking page": ["leaderboard tab"],
+    "email": ["account", "email"],
+    "password": ["password", "pwd", "passcode", "pass"],
+    "notification": ["error popup", "error message", "failure message"],
+    "issue": ["bug", "defect"],
+    "section": ["section", "datagrid", "secion"],
+}
+
 
     SYNONYMS = {
         "click": ["click", "press", "tap", "select", "hit","clicks", "presses", "taps", "selects", "hits"],

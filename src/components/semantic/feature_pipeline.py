@@ -921,7 +921,7 @@ class FeatureExecutionPipeline:
 
     def _build_generated_keyword_name(self, scenario_index: int, step_index: int, mapped_keyword: str) -> str:
         title = sanitize_keyword_title(mapped_keyword)
-        return f"Step {scenario_index:02d} {step_index:02d} {title}"
+        return f"{step_index:02d}: {title}"
 
     def _write_feature_outputs(
         self,
