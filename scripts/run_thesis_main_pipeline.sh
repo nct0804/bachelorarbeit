@@ -14,9 +14,11 @@ REVIEW_THRESHOLD="0.30"
 EMBEDDING_BACKEND="auto"
 SEMANTIC_WEIGHT="0.85"
 LEXICAL_WEIGHT="0.15"
-LLM_MODEL="gemini-3-flash-preview"
+LLM_MODEL="gpt-4o"
+LLM_API_BASE_URL="https://models.inference.ai.azure.com"
+LLM_API_KEY_ENV="OPENAI_API_KEY"
 LLM_TEMPERATURE="0.1"
-LLM_MAX_TOKENS="700"
+LLM_MAX_TOKENS="1500"
 LLM_DRY_RUN="false"
 LLM_CA_BUNDLE=""
 LLM_INSECURE_SKIP_TLS_VERIFY="false"
@@ -42,6 +44,8 @@ Options:
   --semantic-weight FLOAT      Semantic score weight.
   --lexical-weight FLOAT       Lexical score weight.
   --llm-model NAME             LLM model for generation.
+  --llm-api-base-url URL       LLM API base URL (default: GitHub Models).
+  --llm-api-key-env NAME       Env var holding the API key (default: OPENAI_API_KEY).
   --llm-temperature FLOAT      LLM sampling temperature.
   --llm-max-tokens INT         LLM max output tokens per requirement.
   --llm-ca-bundle PATH         CA bundle (PEM) for LLM HTTPS calls.
@@ -129,6 +133,14 @@ while [[ $# -gt 0 ]]; do
             LLM_MODEL="$2"
             shift 2
             ;;
+        --llm-api-base-url)
+            LLM_API_BASE_URL="$2"
+            shift 2
+            ;;
+        --llm-api-key-env)
+            LLM_API_KEY_ENV="$2"
+            shift 2
+            ;;
         --llm-temperature)
             LLM_TEMPERATURE="$2"
             shift 2
@@ -211,6 +223,8 @@ LLM_CMD=(
     --features-output-dir "$FEATURES_OUTPUT_DIR"
     --results-dir "$LLM_RESULTS_DIR"
     --model "$LLM_MODEL"
+    --api-base-url "$LLM_API_BASE_URL"
+    --api-key-env "$LLM_API_KEY_ENV"
     --temperature "$LLM_TEMPERATURE"
     --max-tokens "$LLM_MAX_TOKENS"
 )

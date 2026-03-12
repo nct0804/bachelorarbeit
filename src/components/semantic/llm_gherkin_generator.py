@@ -8,11 +8,19 @@ import json
 import os
 import re
 import ssl
+import sys
 import time
 import urllib.error
 import urllib.request
 from dataclasses import dataclass
 from pathlib import Path
+
+CURRENT_DIR = Path(__file__).resolve().parent
+WORKSPACE_ROOT = CURRENT_DIR.parent.parent.parent
+if str(WORKSPACE_ROOT) not in sys.path:
+    sys.path.insert(0, str(WORKSPACE_ROOT))
+
+from src.components.semantic.llm_prompt_template import build_system_prompt, build_user_prompt
 
 try:
     import certifi
@@ -59,7 +67,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--model",
-        default="gemini-3-flash-preview",
+        default="gpt-4o",
         help="LLM model used for generation.",
     )
     parser.add_argument(
@@ -71,17 +79,17 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--max-tokens",
         type=int,
-        default=700,
+        default=1500,
         help="Maximum output tokens per requirement.",
     )
     parser.add_argument(
         "--api-base-url",
-        default="https://generativelanguage.googleapis.com/v1beta/openai/",
+        default="https://models.inference.ai.azure.com",
         help="OpenAI-compatible API base URL.",
     )
     parser.add_argument(
         "--api-key-env",
-        default="GOOGLE_API_KEY",
+        default="OPENAI_API_KEY",
         help="Environment variable containing API key.",
     )
     parser.add_argument(
@@ -140,46 +148,6 @@ def parse_model_json(text: str) -> dict:
         return json.loads(match.group(0))
     except json.JSONDecodeError as error:
         raise ValueError(f"Model JSON parse failed: {error}") from error
-
-
-def build_system_prompt() -> str:
-    return (
-        "You are a strict Robot Framework Gherkin generator.\n"
-        "Return ONLY JSON.\n"
-        "Use only keywords from `allowed_keywords` for executable steps.\n"
-        "Never invent executable keyword names outside allowed_keywords.\n"
-        "If no allowed keyword can satisfy requirement and `allow_new_keyword_recommendation` is true, "
-        "return empty steps and provide one recommendation.\n"
-        "Prefer concrete argument values from the requirement text.\n"
-        "Output schema:\n"
-        "{\n"
-        '  "feature_name": "string",\n'
-        '  "scenario_name": "string",\n'
-        '  "tags": ["generated", "requirement_type"],\n'
-        '  "steps": [{"clause":"Given|When|Then|And|But","keyword":"...","args":["..."]}],\n'
-        '  "new_keyword_recommendation": null | {"keyword_name":"...","reason":"..."}\n'
-        "}\n"
-    )
-
-
-def build_user_prompt(entry: dict) -> str:
-    keyword_lines = []
-    for index, item in enumerate(entry.get("keyword_context", []), start=1):
-        keyword_lines.append(
-            f"{index}. {item.get('keyword_name', '')} | args: {item.get('arguments', '')} | "
-            f"doc: {item.get('documentation', '')}"
-        )
-    keyword_block = "\n".join(keyword_lines)
-    return (
-        f"REQ_ID: {entry.get('req_id', '')}\n"
-        f"Requirement Type: {entry.get('requirement_type', 'general_requirement')}\n"
-        f"Requirement Text: {entry.get('requirement_text', '')}\n"
-        f"Retrieval Risk: {entry.get('retrieval_risk', '')}\n"
-        f"Allowed Keywords: {', '.join(entry.get('allowed_keywords', []))}\n"
-        f"Allow New Keyword Recommendation: {entry.get('allow_new_keyword_recommendation', False)}\n"
-        f"Keyword Context:\n{keyword_block}\n"
-        "Generate executable Gherkin steps now."
-    )
 
 
 def call_chat_completions(
@@ -268,23 +236,60 @@ def build_ssl_context(ca_bundle: str | None, insecure_skip_tls_verify: bool) -> 
 
 
 def deterministic_fallback(entry: dict) -> dict:
+    """Generate a multi-step baseline scenario from retrieved keywords and full catalog."""
     keyword_context = entry.get("keyword_context", [])
-    if not keyword_context:
-        recommendation = {
-            "keyword_name": "New Keyword Needed",
-            "reason": "No retrieved keyword context available for this requirement.",
-        }
+    full_catalog = entry.get("full_keyword_catalog", [])
+
+    if not keyword_context and not full_catalog:
         return {
             "feature_name": f"Requirement {entry.get('req_id', '')}",
             "scenario_name": f"Scenario {entry.get('req_id', '')}",
             "tags": ["generated", str(entry.get("requirement_type", "general_requirement"))],
             "steps": [],
-            "new_keyword_recommendation": recommendation,
+            "new_keyword_recommendation": {
+                "keyword_name": "New Keyword Needed",
+                "reason": "No retrieved keyword context available for this requirement.",
+            },
         }
 
-    top_keyword = keyword_context[0]
-    arg_names = parse_argument_names(top_keyword.get("arguments", ""))
-    args = [f"<{name.lower()}>" for name in arg_names]
+    # Build catalog lookup for argument resolution.
+    catalog_lookup: dict[str, dict] = {}
+    for item in full_catalog:
+        catalog_lookup[item.get("keyword_name", "")] = item
+
+    def make_step(clause: str, keyword_name: str) -> dict | None:
+        catalog_entry = catalog_lookup.get(keyword_name)
+        if catalog_entry is None:
+            return None
+        arg_names = parse_argument_names(catalog_entry.get("arguments", ""))
+        args = [f"<{name.lower()}>" for name in arg_names]
+        return {"clause": clause, "keyword": keyword_name, "args": args}
+
+    steps: list[dict] = []
+
+    # Setup: open browser (if catalog has it).
+    browser_step = make_step("Given", "Open Browser Session")
+    if browser_step:
+        steps.append(browser_step)
+
+    # Navigate: navigate to page (if catalog has it).
+    navigate_step = make_step("And", "Navigate To Page")
+    if navigate_step:
+        steps.append(navigate_step)
+
+    # Action: use the top retrieved keyword.
+    if keyword_context:
+        top_keyword = keyword_context[0]
+        top_name = top_keyword.get("keyword_name", "")
+        arg_names = parse_argument_names(top_keyword.get("arguments", ""))
+        args = [f"<{name.lower()}>" for name in arg_names]
+        steps.append({"clause": "When", "keyword": top_name, "args": args})
+
+    # Assertion: validate page (if catalog has it).
+    validate_step = make_step("Then", "Validate Page Is Opened")
+    if validate_step:
+        steps.append(validate_step)
+
     return {
         "feature_name": safe_feature_name(
             f"Generated Feature {entry.get('req_id', '')}",
@@ -295,18 +300,12 @@ def deterministic_fallback(entry: dict) -> dict:
             fallback=f"Generated Scenario {entry.get('req_id', '')}",
         ),
         "tags": ["generated", str(entry.get("requirement_type", "general_requirement"))],
-        "steps": [
-            {
-                "clause": "Given",
-                "keyword": top_keyword.get("keyword_name", ""),
-                "args": args,
-            }
-        ],
+        "steps": steps,
         "new_keyword_recommendation": None,
     }
 
 
-def normalize_generated_payload(generated: dict, entry: dict) -> dict:
+def normalize_generated_payload(generated: dict, entry: dict, catalog_names: set[str]) -> dict:
     feature_name = safe_feature_name(
         generated.get("feature_name", f"Requirement {entry.get('req_id', '')}"),
         fallback=f"Requirement {entry.get('req_id', '')}",
@@ -320,7 +319,6 @@ def normalize_generated_payload(generated: dict, entry: dict) -> dict:
     if "generated" not in tags:
         tags.insert(0, "generated")
 
-    allowed_keywords = {str(item).strip() for item in entry.get("allowed_keywords", [])}
     normalized_steps: list[dict] = []
     for raw_step in generated.get("steps", []):
         if not isinstance(raw_step, dict):
@@ -332,7 +330,7 @@ def normalize_generated_payload(generated: dict, entry: dict) -> dict:
             raise ValueError(f"Invalid Gherkin clause: {clause}")
         if not keyword:
             raise ValueError("Step keyword is empty.")
-        if keyword not in allowed_keywords:
+        if keyword not in catalog_names:
             raise ValueError(f"Hallucinated keyword detected: {keyword}")
         if not isinstance(args, list):
             raise ValueError("Step args must be a list.")
@@ -408,6 +406,20 @@ def main() -> int:
     entries = payload.get("entries", [])
     if not isinstance(entries, list) or not entries:
         raise SystemExit("Payload contains no entries.")
+
+    # Build full catalog name set for hallucination validation.
+    full_catalog = payload.get("full_keyword_catalog", [])
+    catalog_names: set[str] = {
+        str(item.get("keyword_name", "")).strip()
+        for item in full_catalog
+        if str(item.get("keyword_name", "")).strip()
+    }
+    if not catalog_names:
+        raise SystemExit("Payload missing full_keyword_catalog or it is empty.")
+
+    # Inject full catalog into each entry so prompts and dry-run can access it.
+    for entry in entries:
+        entry["full_keyword_catalog"] = full_catalog
 
     api_key = os.getenv(args.api_key_env, "").strip()
     if not args.dry_run and not api_key:
@@ -499,7 +511,7 @@ def main() -> int:
             continue
 
         try:
-            normalized = normalize_generated_payload(generated_payload, entry)
+            normalized = normalize_generated_payload(generated_payload, entry, catalog_names)
             file_name = f"{req_slug}_{slugify(normalized['scenario_name'], fallback='scenario')}.feature"
             file_path = features_output_dir / file_name
             file_content = render_feature_file(req_id=req_id, normalized=normalized)

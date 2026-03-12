@@ -105,6 +105,21 @@ def load_keyword_catalog(catalog_path: Path) -> dict[str, dict[str, str]]:
     return lookup
 
 
+def build_full_keyword_catalog(keyword_lookup: dict[str, dict[str, str]]) -> list[dict]:
+    """Build a compact list of all keywords for inclusion in the LLM prompt."""
+    catalog: list[dict] = []
+    for keyword_name, row in keyword_lookup.items():
+        catalog.append(
+            {
+                "keyword_name": keyword_name,
+                "module": str(row.get("MODULE", "")).strip(),
+                "documentation": str(row.get("DOCUMENTATION", "")).strip(),
+                "arguments": str(row.get("ARGUMENTS", "")).strip(),
+            }
+        )
+    return catalog
+
+
 def build_payload(
     mapping_rows: list[dict[str, str]],
     keyword_lookup: dict[str, dict[str, str]],
@@ -165,14 +180,10 @@ def build_payload(
                 "keyword_context": candidates,
                 "existing_keyword_available": existing_keyword_available,
                 "allow_new_keyword_recommendation": allow_new_keyword_recommendation,
-                "generation_rules": [
-                    "Use only keyword names from `allowed_keywords` for executable steps.",
-                    "Do not invent keyword names outside `allowed_keywords`.",
-                    "If `allow_new_keyword_recommendation` is true and no allowed keyword fits, recommend exactly one new keyword.",
-                    "Generate only executable Gherkin steps that map to existing Robot keywords.",
-                ],
             }
         )
+
+    full_catalog = build_full_keyword_catalog(keyword_lookup)
 
     payload = {
         "metadata": {
@@ -182,7 +193,9 @@ def build_payload(
             "ambiguity_margin": ambiguity_margin,
             "top_k": top_k,
             "requirements": len(entries),
+            "catalog_size": len(full_catalog),
         },
+        "full_keyword_catalog": full_catalog,
         "entries": entries,
     }
     return payload, risk_counter
