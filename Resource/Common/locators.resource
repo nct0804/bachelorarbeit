@@ -15,8 +15,8 @@ ${LOCATOR_FILE}     ${EMPTY}
 *** Keywords ***
 Normalize Page Name
     [Documentation]    Normalize a page name value for case-insensitive matching.
-    [Tags]    Basic
     [Arguments]    ${PAGE}
+
     ${TEXT}=    Convert To String    ${PAGE}
     ${TEXT}=    Strip String    ${TEXT}
     ${TEXT}=    Convert To Lowercase    ${TEXT}
@@ -24,14 +24,14 @@ Normalize Page Name
 
 Clear Locators
     [Documentation]    Clear the current locator map and current page context.
-    [Tags]    Basic
+
     Set Suite Variable    ${LOC}    ${NONE}
     Set Suite Variable    ${CURRENT_PAGE}    ${EMPTY}
     Set Suite Variable    ${LOCATOR_FILE}    ${EMPTY}
 
 Ensure Locator Map Is Loaded
     [Documentation]    Ensure locators are loaded before locator-based interactions.
-    [Tags]    Basic
+
     ${HAS_MAP}=    Run Keyword And Return Status    Should Not Be Equal    ${LOC}    ${NONE}
     IF    not ${HAS_MAP}
         Fail    No locator map loaded. Call "the user is on the '<Page>' page" first.
@@ -39,8 +39,8 @@ Ensure Locator Map Is Loaded
 
 Get Locator File For Page
     [Documentation]    Find locator file whose aliases include the requested page name.
-    [Tags]    Basic
     [Arguments]    ${PAGE}
+
     ${MODULES_DIR}=    Set Variable    ${CURDIR}/../Modules
     @{DIRS}=    List Directories In Directory    ${MODULES_DIR}
     ${PAGE_KEY}=    Normalize Page Name    ${PAGE}
@@ -59,9 +59,7 @@ Get Locator File For Page
             END
             FOR    ${ALIAS}    IN    @{ALIAS_LIST}
                 ${ALIAS_KEY}=    Normalize Page Name    ${ALIAS}
-                IF    '${ALIAS_KEY}' == '${PAGE_KEY}'
-                    RETURN    ${FILE}
-                END
+                IF    '${ALIAS_KEY}' == '${PAGE_KEY}'    RETURN    ${FILE}
             END
         END
     END
@@ -69,8 +67,8 @@ Get Locator File For Page
 
 Load Locators
     [Documentation]    Load locators for a page from its locator JSON file.
-    [Tags]    Basic
     [Arguments]    ${PAGE}
+
     Clear Locators
     ${FILE}=    Get Locator File For Page    ${PAGE}
     ${RAW}=    Get File    ${FILE}
@@ -81,8 +79,8 @@ Load Locators
 
 Get Locator
     [Documentation]    Resolve a locator value by dot-path from the loaded locator map.
-    [Tags]    Basic
     [Arguments]    ${PATH}
+
     Ensure Locator Map Is Loaded
     @{PARTS}=    Split String    ${PATH}    .
     ${VALUE}=    Set Variable    ${LOC}
@@ -94,21 +92,19 @@ Get Locator
 
 Locator Exists
     [Documentation]    Check if a locator path exists and contains a non-empty selector.
-    [Tags]    Basic
     [Arguments]    ${PATH}
+
     ${STATUS}    ${VALUE}=    Run Keyword And Ignore Error    Get Locator    ${PATH}
     IF    '${STATUS}' == 'PASS'
         ${HAS_VALUE}=    Run Keyword And Return Status    Should Not Be Empty    ${VALUE}
-        IF    ${HAS_VALUE}
-            RETURN    ${TRUE}
-        END
+        IF    ${HAS_VALUE}    RETURN    ${TRUE}
     END
     RETURN    ${FALSE}
 
 Get Locator In Category
     [Documentation]    Resolve selector by category and name from loaded locators.
-    [Tags]    Basic
     [Arguments]    ${CATEGORY}    ${NAME}
+
     ${PATH}=    Set Variable    ${CATEGORY}.${NAME}
     ${SELECTOR}=    Get Locator    ${PATH}
     Should Not Be Empty    ${SELECTOR}
@@ -116,8 +112,8 @@ Get Locator In Category
 
 Get Locator Names In Category
     [Documentation]    Return non-empty locator names for a category from current page map.
-    [Tags]    Basic
     [Arguments]    ${CATEGORY}
+
     Ensure Locator Map Is Loaded
     ${HAS_CATEGORY}=    Run Keyword And Return Status    Dictionary Should Contain Key    ${LOC}    ${CATEGORY}
     IF    not ${HAS_CATEGORY}
@@ -135,33 +131,29 @@ Get Locator Names In Category
     FOR    ${NAME}    IN    @{NAMES}
         ${VALUE}=    Get From Dictionary    ${CATEGORY_MAP}    ${NAME}
         ${HAS_SELECTOR}=    Run Keyword And Return Status    Should Not Be Empty    ${VALUE}
-        IF    ${HAS_SELECTOR}
-            Append To List    ${VALID_NAMES}    ${NAME}
-        END
+        IF    ${HAS_SELECTOR}    Append To List    ${VALID_NAMES}    ${NAME}
     END
     RETURN    @{VALID_NAMES}
 
 Get Locator Categories
     [Documentation]    Return supported locator categories from current page map.
-    [Tags]    Basic
+
     Ensure Locator Map Is Loaded
     @{ALL_KEYS}=    Get Dictionary Keys    ${LOC}
     @{CATEGORIES}=    Evaluate    []
     @{RESERVED}=    Evaluate    ['meta', 'page', 'root']
     FOR    ${KEY}    IN    @{ALL_KEYS}
         ${IS_RESERVED}=    Run Keyword And Return Status    List Should Contain Value    ${RESERVED}    ${KEY}
-        IF    not ${IS_RESERVED}
-            Append To List    ${CATEGORIES}    ${KEY}
-        END
+        IF    not ${IS_RESERVED}    Append To List    ${CATEGORIES}    ${KEY}
     END
     RETURN    @{CATEGORIES}
 
 Get Current Page
     [Documentation]    Return currently loaded page alias value.
-    [Tags]    Basic
+
     RETURN    ${CURRENT_PAGE}
 
 Get Locator File
     [Documentation]    Return currently loaded locator file path.
-    [Tags]    Basic
+
     RETURN    ${LOCATOR_FILE}

@@ -175,7 +175,7 @@ Example with stronger lexical influence:
 
 ```bash
 python3 src/components/semantic/semantic_mapper.py \
-  --requirements scripts/requirements/representative_requirements.csv \
+  --requirements scripts/requirements/mixed_requirement_types.txt \
   --resource-root Resource \
   --output-dir Results/semantic-mapping-hybrid-csv-70-30 \
   --embedding-backend auto \

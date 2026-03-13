@@ -12,13 +12,13 @@ ${TEST_PASSWORD}    ${EMPTY}
 *** Keywords ***
 Go To Sign In Page
     [Documentation]    Navigate directly to the Sign In page.
-    [Tags]    Basic
+
     Navigate To Page    Sign In
 
 Sign In With Credentials
     [Documentation]    Fill and submit sign-in form with provided credentials.
-    [Tags]    Basic
     [Arguments]    ${EMAIL}    ${PASSWORD}
+
     Fill Textbox    Email Address    ${EMAIL}
     Fill Textbox    Password    ${PASSWORD}
     Click Button    Sign In
@@ -31,13 +31,13 @@ Sign In With Credentials
 
 Sign In With Suite Credentials
     [Documentation]    Sign in using suite-level credential variables.
-    [Tags]    Basic
+
     Should Not Be Empty    ${TEST_EMAIL}
     Should Not Be Empty    ${TEST_PASSWORD}
     Sign In With Credentials    ${TEST_EMAIL}    ${TEST_PASSWORD}
 
 Sign In Error Should Contain
     [Documentation]    Assert sign-in notification area contains expected error text.
-    [Tags]    Basic
     [Arguments]    ${EXPECTED_TEXT}
+
     Category Element Text Should Contain    notification    Error    ${EXPECTED_TEXT}

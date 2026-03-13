@@ -7,14 +7,14 @@ Resource            common.resource
 *** Keywords ***
 List Should Be Visible
     [Documentation]    Assert that a list locator is visible.
-    [Tags]    basic
     [Arguments]    ${NAME}
+
     Category Element Should Be Visible    list    ${NAME}
 
 List Item Count Should Be At Least
     [Documentation]    Assert that list locator has at least expected item count.
-    [Tags]    basic
     [Arguments]    ${NAME}    ${MIN_COUNT}=1
+
     ${COUNT}=    Get Category Element Count    list    ${NAME}
     ${COUNT_OK}=    Evaluate    int($COUNT) >= int($MIN_COUNT)
     Should Be True    ${COUNT_OK}
