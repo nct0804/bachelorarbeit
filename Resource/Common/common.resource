@@ -4,7 +4,7 @@ Documentation       Common Browser and page navigation keywords.
 Library             Collections
 Library             String
 Library             Browser
-Resource            locators.resource
+Resource            ../MainLib.resource
 
 
 *** Variables ***
@@ -97,6 +97,13 @@ Validate Page Is Opened
     Wait For Load State    domcontentloaded
     Validate Current Page Root
 
+Open Page From Main Navigation
+    [Documentation]    Click a main navigation button and validate the target page is opened.
+    [Arguments]    ${BUTTON}    ${PAGE}
+
+    Click Button    ${BUTTON}
+    Validate Page Is Opened    ${PAGE}
+
 Wait For Category Element State
     [Documentation]    Wait for a locator category element to reach target state.
     [Arguments]    ${CATEGORY}    ${NAME}    ${STATE}=visible    ${TIMEOUT}=15s
@@ -168,6 +175,17 @@ Category Element Text Should Contain
 
     ${TEXT}=    Get Category Element Text    ${CATEGORY}    ${NAME}
     Should Contain    ${TEXT}    ${EXPECTED_TEXT}
+
+Validate Category Elements If Present
+    [Documentation]    Validate category locators are visible when present in the locator map.
+    [Arguments]    ${CATEGORY}    @{NAMES}
+
+    FOR    ${NAME}    IN    @{NAMES}
+        ${HAS_LOCATOR}=    Locator Exists    ${CATEGORY}.${NAME}
+        IF    ${HAS_LOCATOR}
+            Category Element Should Be Visible    ${CATEGORY}    ${NAME}
+        END
+    END
 
 Validate Current Page Categories
     [Documentation]    Validate that non-empty locators in selected categories are visible.
