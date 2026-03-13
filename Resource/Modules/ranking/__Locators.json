@@ -35,7 +35,15 @@
     "checkbox": {
     },
     "tab": {
-        "Tabs": "[data-test=\"ranking-tabs\"]"
+        "Tabs": "[data-test=\"ranking-tabs\"]",
+        "Home": "[data-test=\"main-nav-home\"]",
+        "Challenge": "[data-test=\"main-nav-challenge\"]",
+        "Ranking": "[data-test=\"main-nav-ranking\"]",
+        "Pronunciation": "[data-test=\"main-nav-pronunciation\"]",
+        "Speak": "[data-test=\"main-nav-speak\"]",
+        "Review": "[data-test=\"main-nav-review\"]",
+        "Inbox": "[data-test=\"main-nav-inbox\"]",
+        "Achievements": "[data-test=\"main-nav-achievements\"]"
     },
     "messagebox": {
     },
