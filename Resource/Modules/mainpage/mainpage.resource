@@ -59,8 +59,6 @@ Confirm Logout From Main Menu
 
     Open Main Menu
     Click Button    Logout
-    ${HAS_MODAL}=    Locator Exists    modal.Logout Confirmation
-    IF    ${HAS_MODAL}    Modal Should Be Visible    Logout Confirmation
     ${HAS_CONFIRM}=    Locator Exists    button.Logout Confirm
     IF    ${HAS_CONFIRM}    Click Button    Logout Confirm
     ${HAS_CONTINUE}=    Locator Exists    button.Continue

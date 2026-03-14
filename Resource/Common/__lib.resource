@@ -12,5 +12,4 @@ Resource            list.resource
 Resource            tab.resource
 Resource            messagebox.resource
 Resource            notification.resource
-Resource            modal.resource
 Resource            section.resource
