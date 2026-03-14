@@ -11,6 +11,12 @@ Messagebox Should Be Visible
 
     Category Element Should Be Visible    messagebox    ${NAME}
 
+Messagebox Should Not Be Visible
+    [Documentation]    Assert that a messagebox locator is not visible.
+    [Arguments]    ${NAME}
+
+    Category Element Should Not Be Visible    messagebox    ${NAME}
+
 Messagebox Should Contain Text
     [Documentation]    Assert messagebox text contains expected content.
     [Arguments]    ${NAME}    ${EXPECTED_TEXT}

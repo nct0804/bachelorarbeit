@@ -11,6 +11,12 @@ Notification Should Be Visible
 
     Category Element Should Be Visible    notification    ${NAME}
 
+Notification Should Not Be Visible
+    [Documentation]    Assert that a notification locator is not visible.
+    [Arguments]    ${NAME}
+
+    Category Element Should Not Be Visible    notification    ${NAME}
+
 Notification Should Contain Text
     [Documentation]    Assert notification text contains expected content.
     [Arguments]    ${NAME}    ${EXPECTED_TEXT}

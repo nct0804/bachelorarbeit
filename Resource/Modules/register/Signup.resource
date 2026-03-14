@@ -18,6 +18,19 @@ Go To Sign Up Page
 
     Navigate To Page    Sign Up
 
+Sign Up Page Should Be Ready
+    [Documentation]    Validate sign-up form fields and actions are visible.
+
+    Validate Page Is Opened    Sign Up
+    Textbox Should Be Visible    First Name
+    Textbox Should Be Visible    Last Name
+    Textbox Should Be Visible    Username
+    Textbox Should Be Visible    Email Address
+    Textbox Should Be Visible    Password
+    Button Should Be Visible    Create Account
+    Validate Category Elements If Present    button    Google    Facebook
+    Validate Category Elements If Present    link    Sign In
+
 Fill Registration Form
     [Documentation]    Fill the registration form fields with provided values.
     [Arguments]    ${FIRST_NAME}    ${LAST_NAME}    ${USERNAME}    ${EMAIL}    ${PASSWORD}
@@ -55,6 +68,11 @@ Sign Up With Suite Information
     ...    ${TEST_USERNAME}
     ...    ${TEST_EMAIL}
     ...    ${TEST_PASSWORD}
+
+Registration Error Should Be Visible
+    [Documentation]    Assert registration error message box is visible.
+
+    Messagebox Should Be Visible    Registration Error
 
 Verify Registration Status
     [Documentation]    Verify registration notification title for expected status.
