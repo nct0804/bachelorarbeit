@@ -74,7 +74,6 @@ ACTIVE_PHRASE_MAP: dict[str, str] = dict(DEFAULT_PHRASE_MAP)
 @dataclass
 class KeywordEntry:
     keyword_name: str
-    tag_type: str
     module: str
     source_file: str
     documentation: str
@@ -226,8 +225,17 @@ def load_default_phrase_map_from_nlp() -> dict[str, str]:
     normalized: dict[str, str] = {}
     for source, target in raw_phrase_map.items():
         source_text = str(source).strip().lower()
+        if not source_text:
+            continue
+        if isinstance(target, (list, tuple, set)):
+            normalized[source_text] = source_text
+            for raw_variant in target:
+                variant = str(raw_variant).strip().lower()
+                if variant:
+                    normalized[variant] = source_text
+            continue
         target_text = str(target).strip().lower()
-        if source_text and target_text:
+        if target_text:
             normalized[source_text] = target_text
     return normalized
 
@@ -266,23 +274,14 @@ def parse_robot_keywords(resource_path: Path) -> list[KeywordEntry]:
     current_keyword_name = ""
     current_documentation = ""
     current_arguments = ""
-    current_tags: list[str] = []
 
     def flush_keyword() -> None:
         nonlocal current_keyword_name
         nonlocal current_documentation
         nonlocal current_arguments
-        nonlocal current_tags
 
         if not current_keyword_name:
             return
-
-        tag_type = "Unknown"
-        lowered = {tag.lower() for tag in current_tags}
-        if "gherkin" in lowered:
-            tag_type = "Gherkin"
-        elif "basic" in lowered:
-            tag_type = "Basic"
 
         module_name = resource_path.parent.name
         normalized_keyword_text = normalize_text(
@@ -292,7 +291,6 @@ def parse_robot_keywords(resource_path: Path) -> list[KeywordEntry]:
         entries.append(
             KeywordEntry(
                 keyword_name=current_keyword_name,
-                tag_type=tag_type,
                 module=module_name,
                 source_file=str(resource_path),
                 documentation=current_documentation,
@@ -303,7 +301,6 @@ def parse_robot_keywords(resource_path: Path) -> list[KeywordEntry]:
         current_keyword_name = ""
         current_documentation = ""
         current_arguments = ""
-        current_tags = []
 
     for raw_line in lines:
         line = raw_line.rstrip("\n")
@@ -336,10 +333,6 @@ def parse_robot_keywords(resource_path: Path) -> list[KeywordEntry]:
         if stripped.startswith("[Arguments]"):
             current_arguments = stripped.replace("[Arguments]", "", 1).strip()
             continue
-        if stripped.startswith("[Tags]"):
-            raw_tags = stripped.replace("[Tags]", "", 1).strip()
-            split_tags = [tag.strip() for tag in re.split(r"\s{2,}", raw_tags) if tag.strip()]
-            current_tags.extend(split_tags)
 
     flush_keyword()
     return entries
@@ -553,7 +546,6 @@ def save_keyword_catalog(catalog: list[KeywordEntry], output_path: Path) -> None
         writer.writerow(
             [
                 "KEYWORD_NAME",
-                "TAG_TYPE",
                 "MODULE",
                 "SOURCE_FILE",
                 "DOCUMENTATION",
@@ -565,7 +557,6 @@ def save_keyword_catalog(catalog: list[KeywordEntry], output_path: Path) -> None
             writer.writerow(
                 [
                     entry.keyword_name,
-                    entry.tag_type,
                     entry.module,
                     entry.source_file,
                     entry.documentation,
@@ -573,10 +564,6 @@ def save_keyword_catalog(catalog: list[KeywordEntry], output_path: Path) -> None
                     entry.normalized_text,
                 ]
             )
-
-
-def filter_catalog_to_executable(catalog: list[KeywordEntry]) -> list[KeywordEntry]:
-    return [entry for entry in catalog if entry.tag_type.lower() != "gherkin"]
 
 
 def map_requirements(
@@ -650,7 +637,6 @@ def map_requirements(
                     lexical_score = current_lexical
                     break
             row[f"MATCH_{rank}_KEYWORD"] = keyword.keyword_name
-            row[f"MATCH_{rank}_TAG"] = keyword.tag_type
             row[f"MATCH_{rank}_MODULE"] = keyword.module
             row[f"MATCH_{rank}_SOURCE"] = keyword.source_file
             row[f"MATCH_{rank}_SEMANTIC"] = f"{semantic_score:.4f}"
@@ -687,7 +673,6 @@ def write_mapping_csv(rows: list[dict], output_path: Path, top_k: int) -> None:
         headers.extend(
             [
                 f"MATCH_{rank}_KEYWORD",
-                f"MATCH_{rank}_TAG",
                 f"MATCH_{rank}_MODULE",
                 f"MATCH_{rank}_SOURCE",
                 f"MATCH_{rank}_SEMANTIC",
@@ -748,6 +733,7 @@ def write_summary_markdown(
         f"- user_story: {type_counter.get('user_story', 0)}",
         f"- functional_requirement: {type_counter.get('functional_requirement', 0)}",
         f"- bug_report: {type_counter.get('bug_report', 0)}",
+        f"- gherkin: {type_counter.get('gherkin', 0)}",
         f"- general_requirement: {type_counter.get('general_requirement', 0)}",
         "",
         "## Notes",
@@ -907,9 +893,7 @@ def main() -> int:
     if not catalog:
         raise SystemExit("No keywords found under the resource root.")
 
-    scoped_catalog = filter_catalog_to_executable(catalog)
-    if not scoped_catalog:
-        raise SystemExit("No executable keywords found under the resource root.")
+    scoped_catalog = catalog
 
     model, embedding_backend = build_embedding_model(
         backend=args.embedding_backend,
