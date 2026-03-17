@@ -8,10 +8,10 @@ Resource            ../../Common/__lib.resource
 Go To Speak Page
     [Documentation]    Navigate to the Speak page and validate it is opened.
 
-    Navigate To Page    Speak
-    Validate Page Is Opened    Speak
+    Navigate To Page 'Speak'
+    Validate Page 'Speak' Is Opened
 
 Speak Page Should Be Ready
     [Documentation]    Validate the Speak page is opened.
 
-    Validate Page Is Opened    Speak
+    Validate Page 'Speak' Is Opened

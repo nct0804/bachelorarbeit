@@ -22,12 +22,12 @@ Sign Up Page Should Be Ready
     [Documentation]    Validate sign-up form fields and actions are visible.
 
     Validate Page 'Sign Up' Is Opened
-    Textbox 'First Name' Should Be Visible    
-    Textbox 'Last Name' Should Be Visible 
-    Textbox 'Username' Should Be Visible    
-    Textbox 'Email Address' Should Be Visible    
-    Textbox 'Password' Should Be Visible    
-    Button 'Create Account' Should Be Visible    
+    Textbox 'First Name' Should Be Visible
+    Textbox 'Last Name' Should Be Visible
+    Textbox 'Username' Should Be Visible
+    Textbox 'Email Address' Should Be Visible
+    Textbox 'Password' Should Be Visible
+    Button 'Create Account' Should Be Visible
     Validate Category Elements If Present    button    Google    Facebook
     Validate Category Elements If Present    link    Sign In
 
@@ -75,16 +75,16 @@ Registration Error Should Be Visible
     Messagebox 'Registration Error' Should Be Visible
 
 Verify Registration Status '${STATUS}'
-    [Documentation]    Verify registration notification title for expected status. 
+    [Documentation]    Verify registration notification title for expected status.
 
     ${STATUS_KEY}=    Normalize Page '${STATUS}' Name
-    Notification 'Registration Status' Should Be Visible    Container
+    Notification 'Container' Should Be Visible
     IF    '${STATUS_KEY}' == 'successful' or '${STATUS_KEY}' == 'success'
-        Notification 'Registration Status' Should Contain Text    Title    Registration Successful!
+        Notification 'Title' Should Contain Text 'Registration Successful!'
         RETURN
     END
     IF    '${STATUS_KEY}' == 'failed' or '${STATUS_KEY}' == 'failure' or '${STATUS_KEY}' == 'error'
-        Notification 'Registration Status' Should Contain Text    Title    Registration Failed
+        Notification 'Title' Should Contain Text 'Registration Failed'
         RETURN
     END
     Fail    Unsupported registration status: ${STATUS}

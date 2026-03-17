@@ -18,11 +18,11 @@ Learn Page Should Be Ready
     Validate Page 'Learn' Is Opened
     Validate Category Elements If Present    list    Header Bar    Hearts    Progress
 
-Select Learn Option At Index
+Select Learn Option At Index '${INDEX}'
     [Documentation]    Select a learn option by index.
     [Arguments]    ${INDEX}=0
 
-    Click List Item 'Option' At Index    ${INDEX}
+    Click List Item 'Option' At Index '${INDEX}'
 
 Fill Learn Blank Answer '${ANSWER}'
     [Documentation]    Fill the blank input with the provided answer.
@@ -33,7 +33,7 @@ Submit Learn Check
     [Documentation]    Submit the current learn exercise for checking.
 
     Click Button 'Check'
-    Messagebox 'Check Result' Should Be Visible    
+    Messagebox 'Check Result' Should Be Visible
 
 Try Learn Again
     [Documentation]    Retry the current learn exercise.

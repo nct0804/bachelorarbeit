@@ -10,18 +10,18 @@ Click List Item '${NAME}'
 
     Click Category Element    list    ${NAME}
 
-Click List Item '${NAME}' At Index
+Click List Item '${NAME}' At Index '${INDEX}'
     [Documentation]    Click a list locator using an index for repeated selectors.
     [Arguments]    ${INDEX}=0
 
     Click Category Element At Index    list    ${NAME}    ${INDEX}
 
 List '${NAME}' Should Be Visible
-    [Documentation]    Assert that a list locator is visible. 
+    [Documentation]    Assert that a list locator is visible.
 
     Category Element Should Be Visible    list    ${NAME}
 
-List Item '${NAME}' Count Should Be At Least
+List Item '${NAME}' Count Should Be At Least '${MIN_COUNT}'
     [Documentation]    Assert that list locator has at least expected item count.
     [Arguments]    ${MIN_COUNT}=1
 
