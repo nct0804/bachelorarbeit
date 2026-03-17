@@ -9,42 +9,41 @@ Resource            ../../MainLib.resource
 Go To Learn Page
     [Documentation]    Navigate to the Learn page and validate it is opened.
 
-    Navigate To Page    Learn
-    Validate Page Is Opened    Learn
+    Navigate To Page 'Learn'
+    Validate Page 'Learn' Is Opened
 
 Learn Page Should Be Ready
     [Documentation]    Validate learn page panels are visible.
 
-    Validate Page Is Opened    Learn
+    Validate Page 'Learn' Is Opened
     Validate Category Elements If Present    list    Header Bar    Hearts    Progress
 
 Select Learn Option At Index
     [Documentation]    Select a learn option by index.
     [Arguments]    ${INDEX}=0
 
-    Click List Item At Index    Option    ${INDEX}
+    Click List Item 'Option' At Index    ${INDEX}
 
-Fill Learn Blank Answer
+Fill Learn Blank Answer '${ANSWER}'
     [Documentation]    Fill the blank input with the provided answer.
-    [Arguments]    ${ANSWER}
 
-    Fill Textbox    Fill Blank Input    ${ANSWER}
+    Fill Textbox 'Fill Blank Input' With Value '${ANSWER}'
 
 Submit Learn Check
     [Documentation]    Submit the current learn exercise for checking.
 
-    Click Button    Check
-    Messagebox Should Be Visible    Check Result
+    Click Button 'Check'
+    Messagebox 'Check Result' Should Be Visible    
 
 Try Learn Again
     [Documentation]    Retry the current learn exercise.
 
-    Click Button    Try Again
+    Click Button 'Try Again'
 
 Exit Learn Session
     [Documentation]    Exit the learn session and return to the main page.
 
-    Click Button    Exit
-    Messagebox Should Be Visible    Exit Modal
-    Click Button    Back to Home
-    Validate Page Is Opened    Main Page
+    Click Button 'Exit'
+    Messagebox 'Exit Modal' Should Be Visible
+    Click Button 'Back to Home'
+    Validate Page 'Main Page' Is Opened

@@ -13,16 +13,16 @@ ${TEST_PASSWORD}    ${EMPTY}
 Go To Sign In Page
     [Documentation]    Navigate directly to the Sign In page.
 
-    Navigate To Page    Sign In
-    Validate Page Is Opened    Sign In
+    Navigate To Page 'Sign In'
+    Validate Page 'Sign In' Is Opened
 
 Sign In Page Should Be Ready
     [Documentation]    Validate sign-in form fields and actions are visible.
 
-    Validate Page Is Opened    Sign In
-    Textbox Should Be Visible    Email Address
-    Textbox Should Be Visible    Password
-    Button Should Be Visible    Sign In
+    Validate Page 'Sign In' Is Opened
+    Textbox 'Email Address' Should Be Visible
+    Textbox 'Password' Should Be Visible
+    Button 'Sign In' Should Be Visible
     Validate Category Elements If Present    button    Sign Up
     Validate Category Elements If Present    checkbox    Remember Me
 
@@ -31,14 +31,14 @@ Fill Sign In Form
     [Arguments]    ${EMAIL}    ${PASSWORD}
     
     Go To Sign In Page
-    Fill Textbox    Email Address    ${EMAIL}
-    Fill Textbox    Password    ${PASSWORD}
+    Fill Textbox 'Email Address' with Value '${EMAIL}' 
+    Fill Textbox 'Password' with Value '${PASSWORD}'
 
 Submit Sign In Form
     [Documentation]    Submit the sign-in form.
     
     Go To Sign In Page
-    Click Button    Sign In
+    Click Button 'Sign In'
     Wait For Load State    networkidle    timeout=15s
 
 Sign In With Credentials
@@ -48,10 +48,10 @@ Sign In With Credentials
     Go To Sign In Page
     Fill Sign In Form    ${EMAIL}    ${PASSWORD}
     Submit Sign In Form
-    ${ON_MAIN_PAGE}=    Run Keyword And Return Status    Validate Page Is Opened    Main Learning Page
+    ${ON_MAIN_PAGE}=    Run Keyword And Return Status    Validate Page 'Main Learning Page' Is Opened
     IF    not ${ON_MAIN_PAGE}
-        Navigate To Page    Main Learning Page
-        Validate Page Is Opened    Main Learning Page
+        Navigate To Page 'Main Learning Page'  
+        Validate Page 'Main Learning Page' Is Opened
     END
 
 Sign In With Suite Credentials
@@ -62,19 +62,12 @@ Sign In With Suite Credentials
     Should Not Be Empty    ${TEST_PASSWORD}
     Sign In With Credentials    ${TEST_EMAIL}    ${TEST_PASSWORD}
 
-Open Sign Up From Sign In
-    [Documentation]    Navigate to the sign-up page from sign-in.
-
-    Click Button    Sign Up
-    Validate Page Is Opened    Sign Up
-
 Toggle Remember Me
     [Documentation]    Toggle the remember me checkbox.
 
-    Set Checkbox    Remember Me
+     Set Checkbox 'Remember Me' To Checked State
 
-Sign In Error Should Contain
+Sign In Error Should Contain '${EXPECTED_TEXT}'
     [Documentation]    Assert sign-in notification area contains expected error text.
-    [Arguments]    ${EXPECTED_TEXT}
 
     Category Element Text Should Contain    notification    Error    ${EXPECTED_TEXT}

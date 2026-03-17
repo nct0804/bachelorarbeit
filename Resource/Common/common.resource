@@ -29,11 +29,10 @@ ${HEADLESS}         False
 
 
 *** Keywords ***
-Resolve Browser Type
+Resolve Browser '${BROWSER}' Type
     [Documentation]    Map friendly browser names to Browser library engines.
-    [Arguments]    ${BROWSER}
 
-    ${TYPE}=    Normalize Page Name    ${BROWSER}
+    ${TYPE}=    Normalize Page '${BROWSER}' Name
     IF    '${TYPE}' == 'chrome' or '${TYPE}' == 'chromium' or '${TYPE}' == 'edge'
         RETURN    chromium
     END
@@ -41,21 +40,20 @@ Resolve Browser Type
     IF    '${TYPE}' == 'webkit'    RETURN    webkit
     Fail    Unsupported browser type: ${BROWSER}
 
-Resolve Page Route
+Resolve Page '${PAGE}' Route
     [Documentation]    Resolve a page route path from the PAGE_ROUTES mapping using normalized page name.
-    [Arguments]    ${PAGE}
 
-    ${PAGE_KEY}=    Normalize Page Name    ${PAGE}
+    ${PAGE_KEY}=    Normalize Page '${PAGE}' Name
     ${HAS_ROUTE}=    Run Keyword And Return Status    Dictionary Should Contain Key    ${PAGE_ROUTES}    ${PAGE_KEY}
     IF    not ${HAS_ROUTE}    Fail    No route mapping found for page: ${PAGE}
     ${ROUTE}=    Get From Dictionary    ${PAGE_ROUTES}    ${PAGE_KEY}
     RETURN    ${ROUTE}
 
-Open Browser Session
+Open Browser '${BROWSER}' Session
     [Documentation]    Open browser session and navigate to base URL.
     [Arguments]    ${BROWSER}=chromium
 
-    ${ENGINE}=    Resolve Browser Type    ${BROWSER}
+    ${ENGINE}=    Resolve Browser '${BROWSER}' Type
     ${HEADLESS_BOOL}=    Evaluate    str($HEADLESS).lower() in ['true', '1', 'yes']
     New Browser    ${ENGINE}    headless=${HEADLESS_BOOL}    args=["--start-maximized"]
     New Context    viewport={'width': 1920, 'height': 1080}
@@ -67,19 +65,17 @@ Close Browser Session
 
     Run Keyword And Ignore Error    Close Browser
 
-Go To Relative Path
+Go To Relative Path '${PATH}'
     [Documentation]    Navigate to an application route relative to base URL.
-    [Arguments]    ${PATH}
 
     Go To    ${BASE_URL}${PATH}
     Wait For Load State    networkidle    timeout=20s
 
-Navigate To Page
+Navigate To Page '${PAGE}'
     [Documentation]    Navigate to a page by alias and load matching locator map.
-    [Arguments]    ${PAGE}
 
-    ${PATH}=    Resolve Page Route    ${PAGE}
-    Go To Relative Path    ${PATH}
+    ${PATH}=    Resolve Page '${PAGE}' Route
+    Go To Relative Path '${PATH}'
     Load Locators    ${PAGE}
     Validate Current Page Root
 
@@ -89,20 +85,18 @@ Validate Current Page Root
     ${ROOT}=    Get Locator    root
     Wait For Elements State    css=${ROOT}    visible    timeout=20s
 
-Validate Page Is Opened
+Validate Page '${PAGE}' Is Opened
     [Documentation]    Load locators for page alias and validate root visibility.
-    [Arguments]    ${PAGE}
 
     Load Locators    ${PAGE}
     Wait For Load State    domcontentloaded
     Validate Current Page Root
 
-Open Page From Main Navigation
+Open Page '${PAGE}' From Main Navigation By Clicking '${BUTTON}' button
     [Documentation]    Click a main navigation button and validate the target page is opened.
-    [Arguments]    ${BUTTON}    ${PAGE}
 
-    Click Button    ${BUTTON}
-    Validate Page Is Opened    ${PAGE}
+    Click Button '${BUTTON}'  
+    Validate Page '${PAGE}' Is Opened    
 
 Wait For Category Element State
     [Documentation]    Wait for a locator category element to reach target state.
@@ -202,9 +196,8 @@ Validate Current Page Categories
         END
     END
 
-Scroll Into Element
+Scroll Into Element '${NAME}'
     [Documentation]    Scroll to a category element by name.
-    [Arguments]    ${NAME}
 
     ${SELECTOR}=    Get Locator In Category    section    ${NAME}
     Wait For Elements State    css=${SELECTOR} >> nth=0    visible    timeout=15s

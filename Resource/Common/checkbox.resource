@@ -5,13 +5,11 @@ Resource            common.resource
 
 
 *** Keywords ***
-Set Checkbox
+Set Checkbox '${NAME}' To Checked State
     [Documentation]    Set checkbox locator to target checked state.
-    [Arguments]    ${NAME}
     ${SELECTOR}=    Get Locator In Category    checkbox    ${NAME}
     Click    css=${SELECTOR}
 
-Checkbox Should Be Visible
+Checkbox '${NAME}' Should Be Visible
     [Documentation]    Assert that a checkbox locator is visible.
-    [Arguments]    ${NAME}
     Category Element Should Be Visible    checkbox    ${NAME}

@@ -5,27 +5,23 @@ Resource            common.resource
 
 
 *** Keywords ***
-Fill Textbox
+Fill Textbox '${NAME}' With Value '${VALUE}'
     [Documentation]    Fill a textbox locator with provided value.
-    [Arguments]    ${NAME}    ${VALUE}
 
     Fill Category Element    textbox    ${NAME}    ${VALUE}
 
-Clear Textbox
+Clear Textbox '${NAME}'
     [Documentation]    Clear a textbox locator value.
-    [Arguments]    ${NAME}
 
     Fill Category Element    textbox    ${NAME}    ${EMPTY}
 
-Textbox Should Be Visible
+Textbox '${NAME}' Should Be Visible
     [Documentation]    validate that a textbox locator is visible.
-    [Arguments]    ${NAME}
 
     Category Element Should Be Visible    textbox    ${NAME}
 
-Textbox Value Should Contain
+Textbox '${NAME}' Value Should Contain '${EXPECTED_VALUE}'
     [Documentation]    validate textbox value contains expected text.
-    [Arguments]    ${NAME}    ${EXPECTED_VALUE}
 
     ${SELECTOR}=    Get Locator In Category    textbox    ${NAME}
     ${VALUE}=    Get Property    css=${SELECTOR}    value

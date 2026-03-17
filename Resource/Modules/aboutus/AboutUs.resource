@@ -9,4 +9,4 @@ Resource            ../../MainLib.resource
 About Us Page Should Be Ready
     [Documentation]    Validate the About Us page is opened.
 
-    Validate Page Is Opened    About Us
+    Validate Page 'About Us' Is Opened    

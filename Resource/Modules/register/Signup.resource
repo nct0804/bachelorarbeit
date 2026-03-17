@@ -16,18 +16,18 @@ ${TEST_PASSWORD}        ${EMPTY}
 Go To Sign Up Page
     [Documentation]    Navigate directly to the Sign Up page.
 
-    Navigate To Page    Sign Up
+    Navigate To Page 'Sign Up'
 
 Sign Up Page Should Be Ready
     [Documentation]    Validate sign-up form fields and actions are visible.
 
-    Validate Page Is Opened    Sign Up
-    Textbox Should Be Visible    First Name
-    Textbox Should Be Visible    Last Name
-    Textbox Should Be Visible    Username
-    Textbox Should Be Visible    Email Address
-    Textbox Should Be Visible    Password
-    Button Should Be Visible    Create Account
+    Validate Page 'Sign Up' Is Opened
+    Textbox 'First Name' Should Be Visible    
+    Textbox 'Last Name' Should Be Visible 
+    Textbox 'Username' Should Be Visible    
+    Textbox 'Email Address' Should Be Visible    
+    Textbox 'Password' Should Be Visible    
+    Button 'Create Account' Should Be Visible    
     Validate Category Elements If Present    button    Google    Facebook
     Validate Category Elements If Present    link    Sign In
 
@@ -35,16 +35,16 @@ Fill Registration Form
     [Documentation]    Fill the registration form fields with provided values.
     [Arguments]    ${FIRST_NAME}    ${LAST_NAME}    ${USERNAME}    ${EMAIL}    ${PASSWORD}
 
-    Fill Textbox    First Name    ${FIRST_NAME}
-    Fill Textbox    Last Name    ${LAST_NAME}
-    Fill Textbox    Username    ${USERNAME}
-    Fill Textbox    Email Address    ${EMAIL}
-    Fill Textbox    Password    ${PASSWORD}
+    Fill Textbox 'First Name' With Value '${FIRST_NAME}'
+    Fill Textbox 'Last Name' With Value '${LAST_NAME}'
+    Fill Textbox 'Username' With Value '${USERNAME}'
+    Fill Textbox 'Email Address' With Value '${EMAIL}'
+    Fill Textbox 'Password' With Value '${PASSWORD}'
 
 Submit Registration Form
     [Documentation]    Submit the registration form using create account action.
 
-    Click Button    Create Account
+    Click Button 'Create Account'
     Wait For Load State    networkidle    timeout=15s
 
 Sign Up With Information
@@ -72,20 +72,19 @@ Sign Up With Suite Information
 Registration Error Should Be Visible
     [Documentation]    Assert registration error message box is visible.
 
-    Messagebox Should Be Visible    Registration Error
+    Messagebox 'Registration Error' Should Be Visible
 
-Verify Registration Status
-    [Documentation]    Verify registration notification title for expected status.
-    [Arguments]    ${STATUS}
+Verify Registration Status '${STATUS}'
+    [Documentation]    Verify registration notification title for expected status. 
 
-    ${STATUS_KEY}=    Normalize Page Name    ${STATUS}
-    Notification Should Be Visible    Container
+    ${STATUS_KEY}=    Normalize Page '${STATUS}' Name
+    Notification 'Registration Status' Should Be Visible    Container
     IF    '${STATUS_KEY}' == 'successful' or '${STATUS_KEY}' == 'success'
-        Notification Should Contain Text    Title    Registration Successful!
+        Notification 'Registration Status' Should Contain Text    Title    Registration Successful!
         RETURN
     END
     IF    '${STATUS_KEY}' == 'failed' or '${STATUS_KEY}' == 'failure' or '${STATUS_KEY}' == 'error'
-        Notification Should Contain Text    Title    Registration Failed
+        Notification 'Registration Status' Should Contain Text    Title    Registration Failed
         RETURN
     END
     Fail    Unsupported registration status: ${STATUS}

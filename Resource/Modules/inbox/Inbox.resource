@@ -9,10 +9,10 @@ Resource            ../../MainLib.resource
 Go To Inbox Page
     [Documentation]    Navigate to the Inbox page and validate it is opened.
 
-    Navigate To Page    Inbox
-    Validate Page Is Opened    Inbox
+    Navigate To Page 'Inbox'
+    Validate Page 'Inbox' Is Opened
 
 Inbox Page Should Be Ready
     [Documentation]    Validate the Inbox page is opened.
 
-    Validate Page Is Opened    Inbox
+    Validate Page 'Inbox' Is Opened
