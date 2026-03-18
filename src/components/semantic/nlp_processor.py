@@ -16,23 +16,6 @@ from typing import Any, Dict, List
 
 TEXT_SPACES = re.compile(r"\s+")
 LIST_PREFIX = re.compile(r"^\s*(?:[-*•]|\d+[.)])\s+")
-BUILTIN_PHRASE_MAP = {
-    "page": ["tab", "screen", "view"],
-    "home page": ["home tab"],
-    "challenge page": ["challenge tab"],
-    "ranking page": ["leaderboard tab"],
-    "sign in": ["signin", "sign-in", "login", "log in"],
-    "sign up": ["signup", "sign-up", "register"],
-    "button": ["cta", "action button", "call to action"],
-    "textbox": ["input", "field", "text field"],
-    "list": ["table", "grid", "collection"],
-    "email": ["account", "email"],
-    "password": ["password", "pwd", "passcode", "pass"],
-    "notification": ["error popup", "error message", "failure message"],
-    "issue": ["bug", "defect"],
-    "section": ["section", "datagrid", "secion"],
-}
-
 
 @dataclass
 class RequirementAction:
@@ -58,21 +41,47 @@ class ProcessedRequirement:
 class RequirementNLPProcessor:
     """Extracts requirement type and action candidates from free text."""
 
-    DEFAULT_PHRASE_MAP = BUILTIN_PHRASE_MAP
+    DEFAULT_PHRASE_MAP = {    
+    "welcome page": "welcomepage", "landing page": "welcomepage", "landing": "welcomepage",
+    "login page": "sign in", "log in page": "sign in","signin page": "sign in",
+    "sign in page": "sign in", "sign-in page": "sign in",
+    "signup page": "sign up", "sign up page": "sign up",
+    "sign-up page": "sign up", "register page": "sign up",
+    "main learning page": "main page", "main layout": "main page",
+    "dashboard": "main page",
+    "leaderboard": "ranking",
+    "leaderboard page": "ranking",
+    "sound page": "pronunciation",
+    "sounds page": "pronunciation",
+    "speaking page": "speak",
+    "review page": "review",
+    "notifications": "inbox",
+    "error popup": "notification",
+    "error message": "notification",
+    "message box": "messagebox",
+    "text box": "textbox",
+    "text field": "textbox",
+    "text input": "textbox",
+    "input field": "textbox",
+    "check box": "checkbox",
+    "nav bar": "nav",
+    "top bar": "topbar",
+    "right bar": "rightbar",
+    "side bar": "sidebar",
+    "secion": "section",
+}
 
     SYNONYMS = {
-        "click": ["click", "press", "tap", "select", "hit","clicks", "presses", "taps", "selects", "hits"],
-        "input": ["input", "type", "enter", "fill", "write", "inputs", "types", "enters", "fills", "writes"],
-        "verify": ["verify", "check", "assert", "validate", "confirm", "ensure", "expects", "verifies", "checks", "asserts", "validates", "confirms", "ensures"],
-        "navigate": ["navigates", "go","goes", "open", "visit", "browse", "access", "reach", "move to", "head to", "jump to", "opens", "visits", "browses", "accesses", "reaches", "moves to", "heads to", "jumps to"],
-        "wait": ["wait", "pause", "delay", "sleep", "waits", "pauses", "delays", "sleeps"],
-        "close": ["close", "quit", "exit", "terminate", "end", "closes", "quits", "exits", "terminates", "ends"],
-        "submit": ["submit", "send", "post", "confirm", "submits", "sends", "posts", "confirms"],
-        "scroll": ["scroll", "swipe", "drag", "scrolls", "swipes", "drags","scrolling"],
-        "search": ["search", "find", "locate", "query", "lookup", "look for", "seek", "explore", "look up"],
-        "login": ["login", "signin", "authenticate", "logon", "sign in", "log in", "sign on", "log on"],
-        "logout": ["logout", "signout", "logoff", "sign off", "log off", "sign out", "logs out", "signs out",  "sign offs"],
-        "select": ["selects", "chooses","choose", "pick", "picks", "triggers", "trigger"],
+        "clicking": "click", "clicks": "click", "clicked": "click",
+        "pressing": "press", "presses": "press", "pressed": "press",
+        "navigating": "navigate","redirected to":"navigate",
+        "checking": "check", "checks": "check", "checked": "check",
+        "waiting": "wait", "waits": "wait", "waited": "wait",
+        "selecting": "select", "selects": "select", "selected": "select",
+        "entering": "enter", "enters": "enter", "entered": "enter",
+        "scrolling": "scroll", "scrolls": "scroll", "scrolled": "scroll",
+        "logging": "log", "logged": "log","logs": "log", "log into": "log",
+
 
     }
 
@@ -80,17 +89,25 @@ class RequirementNLPProcessor:
         "authenticate": [
             r"\b(sign in|log in|login|authenticate)\b.+\b(email|account|username)\b.+\b(password|pass)\b",
         ],
-        "navigate": [
-            r"\b(go to|navigate to|open|visit)\s+(?:the\s+)?(.+)$",
+        'navigate': [
+                r'(?:go to|navigate to|open|visit)\s+(.+)',
+                r'open\s+(?:the\s+)?(.+?)(?:\s+page|\s+url)?',
         ],
-        "click": [
-            r"\b(click|press|select|tap)\s+(?:on\s+)?(?:the\s+)?(.+)$",
+        'click': [
+                r'click\s+(?:on\s+)?(?:the\s+)?(.+?)(?:\s+button|\s+link|\s+element)?',
+                r'press\s+(?:the\s+)?(.+?)(?:\s+button)?',
+                r'select\s+(?:the\s+)?(.+?)(?:\s+option)?',
         ],
-        "input": [
-            r"\b(fill|enter|type|input|set)\b.+",
+        'input': [
+                r'(?:enter|type|input)\s+["\'](.+?)["\'](?:\s+into|\s+in)?\s+(?:the\s+)?(.+?)(?:\s+field|\s+box)?',
+                r'fill\s+(?:in\s+)?(?:the\s+)?(.+?)(?:\s+field|\s+box)?\s+with\s+["\'](.+?)["\']',
+                r'set\s+(?:the\s+)?(.+?)\s+to\s+["\'](.+?)["\']',
         ],
-        "verify": [
-            r"\b(should|must|verify|check|confirm|ensure|expect)\b.+",
+        'verify': [
+            r'(?:verify|check|ensure|confirm)\s+(?:that\s+)?(.+)',
+            r'(?:should\s+see|should\s+contain|should\s+display)\s+(.+)',
+            r'expect\s+(.+)',
+            r'assert\s+(.+)',
         ],
         'search': [
             r"\b(search|find|look for)\b.+",
@@ -372,6 +389,13 @@ class RequirementNLPProcessor:
                             action_type=action_type,
                             action_text=f"link '{link_name}' should be visible",
                             target=link_name,
+                        )
+                    if "textbox" in clause:
+                        textbox_name = quoted.group(1) if quoted else "${NAME}"
+                        return RequirementAction(
+                            action_type=action_type,
+                            action_text=f"textbox '{textbox_name}' should be visible",
+                            target=textbox_name,
                         )
                     if "text" in clause:
                         text_name = quoted.group(1) if quoted else "${NAME}"
