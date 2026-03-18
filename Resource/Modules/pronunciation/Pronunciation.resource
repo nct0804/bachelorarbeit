@@ -5,12 +5,6 @@ Resource            ../../Common/__lib.resource
 
 
 *** Keywords ***
-Go To Pronunciation Page
-    [Documentation]    Navigate to the Pronunciation page and validate it is opened.
-
-    Navigate To Page 'Pronunciation'
-    Validate Page 'Pronunciation' Is Opened
-
 Pronunciation Page Should Be Ready
     [Documentation]    Validate pronunciation groups and sounds are visible.
 
@@ -29,12 +23,7 @@ Select Pronunciation Sound At Index
 
     Click List Item 'Sound' At Index '${INDEX}'
 
-Pronunciation Loading Should Be Visible
+Pronunciation '${MESSAGE}' Should Be Visible
     [Documentation]    Assert the pronunciation loading message is visible.
 
-    Messagebox 'Loading' Should Be Visible
-
-Pronunciation Error Should Be Visible
-    [Documentation]    Assert the pronunciation error message is visible.
-
-    Messagebox 'Error' Should Be Visible
+    Messagebox '${MESSAGE}' Should Be Visible

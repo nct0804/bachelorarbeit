@@ -13,12 +13,7 @@ ${TEST_PASSWORD}        ${EMPTY}
 
 
 *** Keywords ***
-Go To Sign Up Page
-    [Documentation]    Navigate directly to the Sign Up page.
-
-    Navigate To Page 'Sign Up'
-
-Sign Up Page Should Be Ready
+Sign Up Page Validation
     [Documentation]    Validate sign-up form fields and actions are visible.
 
     Validate Page 'Sign Up' Is Opened

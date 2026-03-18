@@ -1,7 +1,7 @@
 # Semantic Keyword Mapping
 
 This project includes a requirement-to-keyword semantic mapper for Robot Framework.
-Mapping scope is intentionally constrained to `Gherkin` keywords only.
+The mapper can target **all keywords** or be constrained to **low-level Common keywords** when needed.
 
 ## Purpose
 
@@ -18,6 +18,8 @@ Supported file types:
 - `TXT` / `MD`: one requirement sentence per line (user stories, natural language, bug text)
 - `CSV`: structured or semi-structured rows
 - `JSON`: list of objects or plain string entries
+- `FEATURE`: Gherkin feature files (each step mapped as a requirement)
+- Folder of `.feature` files (recursive)
 
 Example free-form text:
 
@@ -81,6 +83,32 @@ python3 src/components/semantic/semantic_mapper.py \
 ```
 
 Phrase normalization is built into `nlp_processor.py` and applied automatically by default.
+
+### Gherkin Step Mapping (Features)
+
+Map each Gherkin step to low-level keywords:
+
+```bash
+python3 src/components/semantic/semantic_mapper.py \
+  --requirements Features \
+  --resource-root Resource \
+  --output-dir Results/semantic-mapping-gherkin-low \
+  --top-k 3 \
+  --keyword-scope common
+```
+
+### Keyword Scope
+
+- `--keyword-scope all`: default, includes everything under `Resource/`
+- `--keyword-scope common`: low-level keywords only (recommended for Gherkin steps)
+- `--keyword-scope modules`: module-level keywords only
+
+### Ignore Quoted Values (Arguments)
+
+Quoted values are often **arguments** rather than semantic signals (e.g. `"Sign In"` in `the "Sign In" button should be visible`).
+By default, quoted text is ignored for similarity scoring to avoid false matches.
+
+Use `--use-quoted-text` to include quoted values in similarity scoring when needed.
 
 Disable NLP preprocessing (if needed for ablation):
 
@@ -156,6 +184,8 @@ You can tune the embedding behavior directly in CLI:
 - `--strong-threshold` and `--review-threshold` to tune confidence levels
 - `--top-k` to return more or fewer candidate keywords
 - `--disable-nlp-preprocess` to disable free-form NLP structuring
+- `--ignore-quoted-text` or `--use-quoted-text` to toggle quoted-value handling
+- `--keyword-scope` to limit the keyword catalog
 - `--semantic-weight` and `--lexical-weight` for hybrid ranking
 
 Recommended command for thesis experiments:
@@ -218,6 +248,18 @@ Outputs:
 
 - `Results/semantic-evaluation/metrics.csv`
 - `Results/semantic-evaluation/metrics.md`
+
+## Quoted-Value Ablation (RQ3 Support)
+
+Run side-by-side mapping with and without quoted-value filtering:
+
+```bash
+./scripts/run_semantic_quoted_ablation.sh Features Resource Results/semantic-mapping-quoted-ablation common 3
+```
+
+Diff output:
+
+- `Results/semantic-mapping-quoted-ablation/diff.csv`
 - `Results/semantic-evaluation/metrics.json`
 - per-config run artifacts in `Results/semantic-evaluation/runs/`
 

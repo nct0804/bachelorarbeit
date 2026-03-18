@@ -13,3 +13,4 @@ Resource            tab.resource
 Resource            messagebox.resource
 Resource            notification.resource
 Resource            section.resource
+Resource            page.resource

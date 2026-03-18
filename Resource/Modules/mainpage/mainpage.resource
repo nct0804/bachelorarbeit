@@ -5,13 +5,7 @@ Resource            ../../Common/__lib.resource
 
 
 *** Keywords ***
-Go To Main Page
-    [Documentation]    Navigate to the main learning page and validate it is opened.
-
-    Navigate To Page 'Main Page'
-    Validate Page 'Main Page' Is Opened
-
-Main Page Should Be Ready
+Main Page Validation
     [Documentation]    Validate core main layout panels are visible.
 
     Validate Page 'Main Page' Is Opened
@@ -26,22 +20,15 @@ Open Main Menu
 
 Close Main Menu
     [Documentation]    Close the main menu panel if it is open.
+    ${check}=    Run Keyword And Return    Validate Category Elements If Present    list    More Panel
+    IF    ${check}    Click Button 'Menu Toggle'
 
-    Click Button 'Menu Toggle'
-
-Open Profile From Main Menu
-    [Documentation]    Open the profile page from the main menu.
-
-    Open Main Menu
-    Click Button 'Profile'
-    Validate Page 'Profile' Is Opened
-
-Open About From Main Menu
-    [Documentation]    Open the About Us page from the main menu.
+Open '${PAGE}' From Main Menu
+    [Documentation]    Open the specified page from the main menu.
 
     Open Main Menu
-    Click Button 'About'
-    Validate Page 'About Us' Is Opened
+    Click Button '${PAGE}'
+    Validate Page '${PAGE}' Is Opened
 
 Cancel Logout From Main Menu
     [Documentation]    Open the logout modal and cancel the action.
@@ -105,6 +92,6 @@ Select Quick Practice Option At Index
 
     Click Button 'Quick Practice Option' At Index '${INDEX}'
 
-Toggle Dark Mode
+Enable Dark Mode
     [Documentation]    Toggle dark mode from the top bar.
     Click Button 'Dark Mode Toggle'

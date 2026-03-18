@@ -5,22 +5,9 @@ Resource            ../../Common/__lib.resource
 
 
 *** Keywords ***
-Go To Review Page
-    [Documentation]    Navigate to the Review page and validate it is opened.
-
-    Navigate To Page 'Review'
-    Validate Page 'Review' Is Opened  
-
-Review Page Should Be Ready
-    [Documentation]    Validate the Review page is opened.
-
-    Validate Page 'Review' Is Opened    
-
-Rate Review As
+Rate Review As '${RATING}'
     [Documentation]    Submit a review rating by label.
-    [Arguments]    ${RATING}
-
-    ${RATING_KEY}=    Normalize Page '${RATING}' Name    
+    ${RATING_KEY}=    Normalize Page '${RATING}' Name
     IF    '${RATING_KEY}' == 'hard'
         Click Button 'Hard'
         RETURN
@@ -35,7 +22,7 @@ Rate Review If Available
     [Documentation]    Attempt to submit a review rating if the button is visible.
     [Arguments]    ${RATING}
 
-    ${RATING_KEY}=    Normalize Page '${RATING}' Name    
+    ${RATING_KEY}=    Normalize Page '${RATING}' Name
     IF    '${RATING_KEY}' == 'hard'
         ${BUTTON_NAME}=    Set Variable    Hard
     ELSE IF    '${RATING_KEY}' == 'good'

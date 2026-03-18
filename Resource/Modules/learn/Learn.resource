@@ -6,18 +6,6 @@ Resource            ../../MainLib.resource
 
 
 *** Keywords ***
-Go To Learn Page
-    [Documentation]    Navigate to the Learn page and validate it is opened.
-
-    Navigate To Page 'Learn'
-    Validate Page 'Learn' Is Opened
-
-Learn Page Should Be Ready
-    [Documentation]    Validate learn page panels are visible.
-
-    Validate Page 'Learn' Is Opened
-    Validate Category Elements If Present    list    Header Bar    Hearts    Progress
-
 Select Learn Option At Index '${INDEX}'
     [Documentation]    Select a learn option by index.
     [Arguments]    ${INDEX}=0

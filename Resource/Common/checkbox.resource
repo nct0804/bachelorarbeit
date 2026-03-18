@@ -13,3 +13,7 @@ Set Checkbox '${NAME}' To Checked State
 Checkbox '${NAME}' Should Be Visible
     [Documentation]    Assert that a checkbox locator is visible.
     Category Element Should Be Visible    checkbox    ${NAME}
+
+Click Checkbox '${NAME}'
+    [Documentation]    Click a checkbox locator by logical name.
+    Click Category Element    checkbox    ${NAME}
