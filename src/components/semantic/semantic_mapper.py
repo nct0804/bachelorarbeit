@@ -33,9 +33,13 @@ except Exception:
 
 
 TEXT_SPLIT_PATTERN = re.compile(r"[^a-z0-9]+")
-PLACEHOLDER_PATTERN = re.compile(r"\$\{([^}]+)\}")
+PLACEHOLDER_PATTERN = re.compile(r"[$@&]\{([^}]+)\}")
+QUOTED_TEXT_PATTERN = re.compile(r"['\"][^'\"]+['\"]")
 MULTI_SPACE_PATTERN = re.compile(r"\s+")
 LIST_PREFIX_PATTERN = re.compile(r"^\s*(?:[-*•]|\d+[.)])\s+")
+GHERKIN_STEP_PATTERN = re.compile(r"^\s*(Given|When|Then|And|But)\s+(.+?)\s*$", re.IGNORECASE)
+FEATURE_HEADER_PATTERN = re.compile(r"^\s*Feature:\s*(.+?)\s*$", re.IGNORECASE)
+SCENARIO_HEADER_PATTERN = re.compile(r"^\s*Scenario(?: Outline)?:\s*(.+?)\s*$", re.IGNORECASE)
 MIN_REQUIREMENT_CHARS = 8
 OPTIONAL_STOPS = {
     "as",
@@ -164,20 +168,26 @@ class SentenceTransformerEmbeddingModel:
         return vector.tolist()
 
 
-def normalize_text(text: str, remove_stops: bool = False) -> str:
-    text = PLACEHOLDER_PATTERN.sub(r" \1 ", str(text))
-    text = text.lower()
-    text = apply_phrase_map(text)
-    text = TEXT_SPLIT_PATTERN.sub(" ", text)
-    text = MULTI_SPACE_PATTERN.sub(" ", text).strip()
+def normalize_text(
+    text: str,
+    remove_stops: bool = False,
+    ignore_quoted_text: bool = False,
+) -> str:
+    text_value = str(text)
+    if ignore_quoted_text:
+        text_value = QUOTED_TEXT_PATTERN.sub(" ", text_value)
+    text_value = PLACEHOLDER_PATTERN.sub(r" \1 ", text_value)
+    text_value = text_value.lower()
+    text_value = apply_phrase_map(text_value)
+    text_value = TEXT_SPLIT_PATTERN.sub(" ", text_value)
+    text_value = MULTI_SPACE_PATTERN.sub(" ", text_value).strip()
     if not remove_stops:
-        return text
-    filtered = [token for token in text.split() if token not in OPTIONAL_STOPS]
+        return text_value
+    filtered = [token for token in text_value.split() if token not in OPTIONAL_STOPS]
     return " ".join(filtered)
 
-
-def tokenize(text: str) -> list[str]:
-    cleaned = normalize_text(text, remove_stops=True)
+def tokenize(text: str, ignore_quoted_text: bool = False) -> list[str]:
+    cleaned = normalize_text(text, remove_stops=True, ignore_quoted_text=ignore_quoted_text)
     return [token for token in cleaned.split(" ") if token]
 
 
@@ -243,9 +253,22 @@ def dot_product(vector_a: list[float], vector_b: list[float]) -> float:
     return sum(a * b for a, b in zip(vector_a, vector_b))
 
 
-def calculate_lexical_similarity(source: str, target: str) -> float:
-    source_clean = normalize_text(source, remove_stops=True)
-    target_clean = normalize_text(target, remove_stops=True)
+def calculate_lexical_similarity(
+    source: str,
+    target: str,
+    ignore_quoted_text_source: bool = False,
+    ignore_quoted_text_target: bool = False,
+) -> float:
+    source_clean = normalize_text(
+        source,
+        remove_stops=True,
+        ignore_quoted_text=ignore_quoted_text_source,
+    )
+    target_clean = normalize_text(
+        target,
+        remove_stops=True,
+        ignore_quoted_text=ignore_quoted_text_target,
+    )
     if not source_clean or not target_clean:
         return 0.0
 
@@ -256,6 +279,47 @@ def calculate_lexical_similarity(source: str, target: str) -> float:
     union = source_tokens.union(target_tokens)
     jaccard_score = (len(intersection) / len(union)) if union else 0.0
     return (0.6 * sequence_score) + (0.4 * jaccard_score)
+
+
+# Element types for scoring boost
+ELEMENT_TYPES = ["button", "textbox", "text", "checkbox", "link", "section", "list", "notification", "page"]
+
+# Disambiguation pairs: when source contains key, penalize matches containing values
+DISAMBIGUATION_PENALTIES = {
+    "sign in": ["sign up", "signup", "register"],
+    "sign up": ["sign in", "signin", "login"],
+    "textbox": ["text"],  # Prevent textbox matching text-only keywords
+    "should be visible": ["toggle", "click", "set", "fill"],  # Verification vs action
+    "should be opened": ["go to", "navigate", "open"],  # Verification vs navigation
+}
+
+
+def calculate_element_type_boost(source: str, target: str) -> float:
+    """Calculate boost when source and target share exact element type."""
+    source_lower = source.lower()
+    target_lower = target.lower()
+
+    boost = 0.0
+    for elem_type in ELEMENT_TYPES:
+        if elem_type in source_lower and elem_type in target_lower:
+            boost += 0.10  # 10% boost per matching element type
+
+    return min(boost, 0.15)  # Cap at 15%
+
+
+def calculate_disambiguation_penalty(source: str, target: str) -> float:
+    """Calculate penalty when source and target have confusing similar terms."""
+    source_lower = source.lower()
+    target_lower = target.lower()
+
+    penalty = 0.0
+    for key, confused_terms in DISAMBIGUATION_PENALTIES.items():
+        if key in source_lower:
+            for confused in confused_terms:
+                if confused in target_lower and key not in target_lower:
+                    penalty += 0.15  # 15% penalty for confusion
+
+    return min(penalty, 0.25)  # Cap penalty at 25%
 
 
 def parse_robot_keywords(resource_path: Path) -> list[KeywordEntry]:
@@ -359,7 +423,17 @@ def load_requirements(
     requirement_text_field: str | None = None,
     requirement_id_prefix: str = "REQ",
 ) -> list[RequirementEntry]:
+    if requirement_path.is_dir():
+        return load_requirements_from_feature_dir(
+            requirements_dir=requirement_path,
+            requirement_id_prefix=requirement_id_prefix,
+        )
     suffix = requirement_path.suffix.lower()
+    if suffix in {".feature", ".gherkin"}:
+        return load_requirements_from_feature_file(
+            requirement_path=requirement_path,
+            requirement_id_prefix=requirement_id_prefix,
+        )
     if suffix in {".txt", ".md"}:
         return load_requirements_from_text(
             requirement_path=requirement_path,
@@ -503,6 +577,68 @@ def load_requirements_from_text(
     return requirements
 
 
+def load_requirements_from_feature_dir(
+    requirements_dir: Path,
+    requirement_id_prefix: str = "REQ",
+) -> list[RequirementEntry]:
+    feature_files = sorted(requirements_dir.rglob("*.feature"))
+    if not feature_files:
+        raise FileNotFoundError(f"No .feature files found in {requirements_dir}")
+    requirements: list[RequirementEntry] = []
+    index = 1
+    for feature_file in feature_files:
+        entries = load_requirements_from_feature_file(
+            requirement_path=feature_file,
+            requirement_id_prefix=requirement_id_prefix,
+            start_index=index,
+        )
+        requirements.extend(entries)
+        index += len(entries)
+    return requirements
+
+
+def load_requirements_from_feature_file(
+    requirement_path: Path,
+    requirement_id_prefix: str = "REQ",
+    start_index: int = 1,
+) -> list[RequirementEntry]:
+    content = requirement_path.read_text(encoding="utf-8")
+    requirements: list[RequirementEntry] = []
+    feature_name = requirement_path.stem
+    scenario_name = ""
+    index = start_index
+    for raw_line in content.splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or line.startswith("@"):
+            continue
+        feature_match = FEATURE_HEADER_PATTERN.match(line)
+        if feature_match:
+            feature_name = feature_match.group(1).strip() or feature_name
+            continue
+        scenario_match = SCENARIO_HEADER_PATTERN.match(line)
+        if scenario_match:
+            scenario_name = scenario_match.group(1).strip()
+            continue
+        step_match = GHERKIN_STEP_PATTERN.match(line)
+        if not step_match:
+            continue
+        step_text = step_match.group(2).strip()
+        if len(step_text) < MIN_REQUIREMENT_CHARS:
+            continue
+        feature_context = feature_name
+        if scenario_name:
+            feature_context = f"{feature_name}::{scenario_name}"
+        requirements.append(
+            RequirementEntry(
+                req_id=f"{requirement_id_prefix}-{index:03d}",
+                feature=feature_context,
+                requirement_text=step_text,
+            )
+        )
+        index += 1
+    return requirements
+
+
 def clean_requirement_line(line: str) -> str:
     text = LIST_PREFIX_PATTERN.sub("", str(line)).strip()
     text = MULTI_SPACE_PATTERN.sub(" ", text)
@@ -579,6 +715,25 @@ def filter_catalog_to_executable(catalog: list[KeywordEntry]) -> list[KeywordEnt
     return [entry for entry in catalog if entry.tag_type.lower() != "gherkin"]
 
 
+def filter_catalog_by_scope(catalog: list[KeywordEntry], scope: str) -> list[KeywordEntry]:
+    normalized_scope = scope.strip().lower()
+    if normalized_scope in {"all", "any"}:
+        return list(catalog)
+
+    def is_common_entry(entry: KeywordEntry) -> bool:
+        if entry.tag_type.lower() == "basic":
+            return True
+        if entry.module.lower() == "common":
+            return True
+        return "common" in Path(entry.source_file).parts
+
+    if normalized_scope in {"common", "basic", "low-level", "low"}:
+        return [entry for entry in catalog if is_common_entry(entry)]
+    if normalized_scope in {"modules", "module"}:
+        return [entry for entry in catalog if not is_common_entry(entry)]
+    raise ValueError(f"Unsupported keyword scope: {scope}")
+
+
 def map_requirements(
     requirements: list[RequirementEntry],
     catalog: list[KeywordEntry],
@@ -589,8 +744,12 @@ def map_requirements(
     semantic_weight: float,
     lexical_weight: float,
     nlp_processor=None,
+    ignore_quoted_text: bool = False,
 ) -> tuple[list[dict], list[dict]]:
-    keyword_texts = [entry.normalized_text or normalize_text(entry.keyword_name, remove_stops=True) for entry in catalog]
+    keyword_texts = [
+        entry.normalized_text or normalize_text(entry.keyword_name, remove_stops=True)
+        for entry in catalog
+    ]
     model.fit(keyword_texts)
     keyword_vectors = model.encode_many(keyword_texts)
 
@@ -608,7 +767,11 @@ def map_requirements(
             if processed.mapping_text:
                 requirement_mapping_text = processed.mapping_text
 
-        requirement_text = normalize_text(requirement_mapping_text, remove_stops=True)
+        requirement_text = normalize_text(
+            requirement_mapping_text,
+            remove_stops=True,
+            ignore_quoted_text=ignore_quoted_text,
+        )
         requirement_vector = model.encode(requirement_text)
 
         scored: list[tuple[float, KeywordEntry]] = []
@@ -618,8 +781,17 @@ def map_requirements(
             lexical_score = calculate_lexical_similarity(
                 requirement_mapping_text,
                 f"{keyword.keyword_name} {keyword.documentation} {keyword.arguments}",
+                ignore_quoted_text_source=ignore_quoted_text,
             )
-            final_score = (semantic_weight * semantic_score) + (lexical_weight * lexical_score)
+            # Apply element type boost and disambiguation penalty
+            keyword_text = f"{keyword.keyword_name} {keyword.documentation}"
+            element_boost = calculate_element_type_boost(requirement_mapping_text, keyword_text)
+            disambiguation_penalty = calculate_disambiguation_penalty(requirement_mapping_text, keyword_text)
+
+            base_score = (semantic_weight * semantic_score) + (lexical_weight * lexical_score)
+            final_score = base_score + element_boost - disambiguation_penalty
+            final_score = max(0.0, final_score)  # Ensure non-negative
+
             detailed_scores.append((final_score, semantic_score, lexical_score, keyword))
             scored.append((final_score, keyword))
         detailed_scores.sort(key=lambda item: item[0], reverse=True)
@@ -766,12 +938,18 @@ def build_argument_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--requirements",
         required=True,
-        help="Path to requirement dataset (TXT, MD, CSV, or JSON).",
+        help="Path to requirement dataset (TXT, MD, CSV, JSON, FEATURE, or folder of .feature files).",
     )
     parser.add_argument(
         "--resource-root",
         default="Resource",
         help="Root directory containing Robot resource files.",
+    )
+    parser.add_argument(
+        "--keyword-scope",
+        default="all",
+        choices=["all", "common", "modules"],
+        help="Limit keyword catalog scope (all/common/modules).",
     )
     parser.add_argument(
         "--output-dir",
@@ -793,6 +971,18 @@ def build_argument_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Disable NLP preprocessing of free-form requirements.",
     )
+    parser.add_argument(
+        "--ignore-quoted-text",
+        action="store_true",
+        help="Ignore quoted values in requirement text during similarity scoring.",
+    )
+    parser.add_argument(
+        "--use-quoted-text",
+        dest="ignore_quoted_text",
+        action="store_false",
+        help="Include quoted values in requirement text similarity scoring.",
+    )
+    parser.set_defaults(ignore_quoted_text=True)
     parser.add_argument(
         "--top-k",
         type=int,
@@ -891,7 +1081,10 @@ def main() -> int:
     if nlp_enabled:
         processor_class = load_requirement_nlp_processor_class()
         if processor_class is not None:
-            nlp_processor = processor_class(phrase_map=ACTIVE_PHRASE_MAP)
+            nlp_processor = processor_class(
+                phrase_map=ACTIVE_PHRASE_MAP,
+                ignore_quoted_text=args.ignore_quoted_text,
+            )
         else:
             nlp_enabled = False
 
@@ -908,6 +1101,7 @@ def main() -> int:
         raise SystemExit("No keywords found under the resource root.")
 
     scoped_catalog = filter_catalog_to_executable(catalog)
+    scoped_catalog = filter_catalog_by_scope(scoped_catalog, args.keyword_scope)
     if not scoped_catalog:
         raise SystemExit("No executable keywords found under the resource root.")
 
@@ -930,6 +1124,7 @@ def main() -> int:
         semantic_weight=semantic_weight,
         lexical_weight=lexical_weight,
         nlp_processor=nlp_processor,
+        ignore_quoted_text=args.ignore_quoted_text,
     )
 
     keyword_catalog_path = output_dir / "keyword_catalog.csv"
