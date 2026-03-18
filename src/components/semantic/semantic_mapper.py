@@ -33,7 +33,7 @@ except Exception:
 
 
 TEXT_SPLIT_PATTERN = re.compile(r"[^a-z0-9]+")
-PLACEHOLDER_PATTERN = re.compile(r"\$\{([^}]+)\}")
+PLACEHOLDER_PATTERN = re.compile(r"[$@&]\{([^}]+)\}")
 MULTI_SPACE_PATTERN = re.compile(r"\s+")
 LIST_PREFIX_PATTERN = re.compile(r"^\s*(?:[-*•]|\d+[.)])\s+")
 MIN_REQUIREMENT_CHARS = 8
@@ -74,6 +74,7 @@ ACTIVE_PHRASE_MAP: dict[str, str] = dict(DEFAULT_PHRASE_MAP)
 @dataclass
 class KeywordEntry:
     keyword_name: str
+    tag_type: str
     module: str
     source_file: str
     documentation: str
@@ -219,25 +220,54 @@ def load_default_phrase_map_from_nlp() -> dict[str, str]:
     processor_class = load_requirement_nlp_processor_class()
     if processor_class is None:
         return dict(DEFAULT_PHRASE_MAP)
-    raw_phrase_map = getattr(processor_class, "DEFAULT_PHRASE_MAP", None)
-    if not isinstance(raw_phrase_map, dict):
+    try:
+        processor = processor_class()
+    except Exception:
         return dict(DEFAULT_PHRASE_MAP)
-    normalized: dict[str, str] = {}
-    for source, target in raw_phrase_map.items():
-        source_text = str(source).strip().lower()
-        if not source_text:
-            continue
-        if isinstance(target, (list, tuple, set)):
-            normalized[source_text] = source_text
-            for raw_variant in target:
-                variant = str(raw_variant).strip().lower()
-                if variant:
-                    normalized[variant] = source_text
-            continue
-        target_text = str(target).strip().lower()
-        if target_text:
-            normalized[source_text] = target_text
-    return normalized
+    phrase_map = getattr(processor, "phrase_map", None)
+    if isinstance(phrase_map, dict):
+        return dict(phrase_map)
+    return dict(DEFAULT_PHRASE_MAP)
+
+
+def parse_argument_tokens(argument_line: str) -> list[str]:
+    if not argument_line:
+        return []
+    return [token.strip() for token in re.split(r"\s{2,}", argument_line) if token.strip()]
+
+
+def extract_embedded_argument_tokens(keyword_name: str) -> list[str]:
+    return [f"${{{token}}}" for token in PLACEHOLDER_PATTERN.findall(keyword_name)]
+
+
+def merge_argument_tokens(*groups: Iterable[str]) -> list[str]:
+    merged: list[str] = []
+    seen: set[str] = set()
+    for group in groups:
+        for token in group:
+            normalized = token.strip()
+            if not normalized:
+                continue
+            key = normalized.lower()
+            if key in seen:
+                continue
+            seen.add(key)
+            merged.append(normalized)
+    return merged
+
+
+def resolve_tag_type(resource_path: Path, tags: Iterable[str]) -> str:
+    lowered = {tag.strip().lower() for tag in tags if tag.strip()}
+    if "gherkin" in lowered or "bdd" in lowered:
+        return "Gherkin"
+    if "basic" in lowered:
+        return "Basic"
+    path_parts = {part.lower() for part in resource_path.parts}
+    if "common" in path_parts:
+        return "Basic"
+    if "modules" in path_parts:
+        return "Module"
+    return "Keyword"
 
 
 def normalize_vector(vector: list[float]) -> list[float]:
@@ -273,34 +303,43 @@ def parse_robot_keywords(resource_path: Path) -> list[KeywordEntry]:
     in_keywords_section = False
     current_keyword_name = ""
     current_documentation = ""
-    current_arguments = ""
+    current_argument_tokens: list[str] = []
+    current_tags: list[str] = []
 
     def flush_keyword() -> None:
         nonlocal current_keyword_name
         nonlocal current_documentation
-        nonlocal current_arguments
+        nonlocal current_argument_tokens
+        nonlocal current_tags
 
         if not current_keyword_name:
             return
 
+        tag_type = resolve_tag_type(resource_path, current_tags)
+        embedded_arguments = extract_embedded_argument_tokens(current_keyword_name)
+        merged_arguments = merge_argument_tokens(embedded_arguments, current_argument_tokens)
+        arguments_text = " ".join(merged_arguments).strip()
+
         module_name = resource_path.parent.name
         normalized_keyword_text = normalize_text(
-            f"{current_keyword_name} {current_documentation} {current_arguments}",
+            f"{current_keyword_name} {current_documentation} {arguments_text}",
             remove_stops=True,
         )
         entries.append(
             KeywordEntry(
                 keyword_name=current_keyword_name,
+                tag_type=tag_type,
                 module=module_name,
                 source_file=str(resource_path),
                 documentation=current_documentation,
-                arguments=current_arguments,
+                arguments=arguments_text,
                 normalized_text=normalized_keyword_text,
             )
         )
         current_keyword_name = ""
         current_documentation = ""
-        current_arguments = ""
+        current_argument_tokens = []
+        current_tags = []
 
     for raw_line in lines:
         line = raw_line.rstrip("\n")
@@ -331,8 +370,13 @@ def parse_robot_keywords(resource_path: Path) -> list[KeywordEntry]:
             current_documentation = stripped.replace("[Documentation]", "", 1).strip()
             continue
         if stripped.startswith("[Arguments]"):
-            current_arguments = stripped.replace("[Arguments]", "", 1).strip()
+            argument_line = stripped.replace("[Arguments]", "", 1).strip()
+            current_argument_tokens.extend(parse_argument_tokens(argument_line))
             continue
+        if stripped.startswith("[Tags]"):
+            raw_tags = stripped.replace("[Tags]", "", 1).strip()
+            split_tags = [tag.strip() for tag in re.split(r"\s{2,}", raw_tags) if tag.strip()]
+            current_tags.extend(split_tags)
 
     flush_keyword()
     return entries
@@ -546,6 +590,7 @@ def save_keyword_catalog(catalog: list[KeywordEntry], output_path: Path) -> None
         writer.writerow(
             [
                 "KEYWORD_NAME",
+                "TAG_TYPE",
                 "MODULE",
                 "SOURCE_FILE",
                 "DOCUMENTATION",
@@ -557,6 +602,7 @@ def save_keyword_catalog(catalog: list[KeywordEntry], output_path: Path) -> None
             writer.writerow(
                 [
                     entry.keyword_name,
+                    entry.tag_type,
                     entry.module,
                     entry.source_file,
                     entry.documentation,
@@ -564,6 +610,10 @@ def save_keyword_catalog(catalog: list[KeywordEntry], output_path: Path) -> None
                     entry.normalized_text,
                 ]
             )
+
+
+def filter_catalog_to_executable(catalog: list[KeywordEntry]) -> list[KeywordEntry]:
+    return [entry for entry in catalog if entry.tag_type.lower() != "gherkin"]
 
 
 def map_requirements(
@@ -637,6 +687,7 @@ def map_requirements(
                     lexical_score = current_lexical
                     break
             row[f"MATCH_{rank}_KEYWORD"] = keyword.keyword_name
+            row[f"MATCH_{rank}_TAG"] = keyword.tag_type
             row[f"MATCH_{rank}_MODULE"] = keyword.module
             row[f"MATCH_{rank}_SOURCE"] = keyword.source_file
             row[f"MATCH_{rank}_SEMANTIC"] = f"{semantic_score:.4f}"
@@ -673,6 +724,7 @@ def write_mapping_csv(rows: list[dict], output_path: Path, top_k: int) -> None:
         headers.extend(
             [
                 f"MATCH_{rank}_KEYWORD",
+                f"MATCH_{rank}_TAG",
                 f"MATCH_{rank}_MODULE",
                 f"MATCH_{rank}_SOURCE",
                 f"MATCH_{rank}_SEMANTIC",
@@ -733,7 +785,6 @@ def write_summary_markdown(
         f"- user_story: {type_counter.get('user_story', 0)}",
         f"- functional_requirement: {type_counter.get('functional_requirement', 0)}",
         f"- bug_report: {type_counter.get('bug_report', 0)}",
-        f"- gherkin: {type_counter.get('gherkin', 0)}",
         f"- general_requirement: {type_counter.get('general_requirement', 0)}",
         "",
         "## Notes",
@@ -893,7 +944,9 @@ def main() -> int:
     if not catalog:
         raise SystemExit("No keywords found under the resource root.")
 
-    scoped_catalog = catalog
+    scoped_catalog = filter_catalog_to_executable(catalog)
+    if not scoped_catalog:
+        raise SystemExit("No executable keywords found under the resource root.")
 
     model, embedding_backend = build_embedding_model(
         backend=args.embedding_backend,

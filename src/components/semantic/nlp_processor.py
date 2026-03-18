@@ -2,166 +2,35 @@
 """NLP preprocessing for free-form requirements.
 
 This module converts human-written requirement text into structured actions
-for semantic keyword mapping. It is tuned to the current Robot Framework
-resource library (no TAGS and no duplicated wrapper keywords).
+for semantic keyword mapping. (requirement-preprocessing)
+
+text -> phrase_map -> synonyms -> action extraction
 """
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 import re
 from typing import Any, Dict, List
 
 
 TEXT_SPACES = re.compile(r"\s+")
 LIST_PREFIX = re.compile(r"^\s*(?:[-*•]|\d+[.)])\s+")
-GHERKIN_STEP = re.compile(r"^\s*(given|when|then|and|but)\s+", re.IGNORECASE)
-USER_STORY = re.compile(r"\bas a\b.+?\bi want\b\s+(?P<want>.+?)(?:\s+so that\b|$)", re.IGNORECASE)
-
-
-STEM_MAP = {
-    "clicking": "click", "clicks": "click", "clicked": "click",
-    "pressing": "press", "presses": "press", "pressed": "press",
-    "navigating": "navigate","redirected to":"navigate",
-    "checking": "check", "checks": "check", "checked": "check",
-    "waiting": "wait", "waits": "wait", "waited": "wait",
-    "selecting": "select", "selects": "select", "selected": "select",
-    "entering": "enter", "enters": "enter", "entered": "enter",
-    "scrolling": "scroll", "scrolls": "scroll", "scrolled": "scroll",
-    "logging": "log", "logged": "log","logs": "log", "log into": "log",
-}
-
-
-DEFAULT_PHRASE_MAP = {
-    "welcome page": "welcomepage", "landing page": "welcomepage", "landing": "welcomepage",
-    "login page": "sign in", "log in page": "sign in","signin page": "sign in",
-    "sign in page": "sign in", "sign-in page": "sign in",
-    "signup page": "sign up", "sign up page": "sign up",
-    "sign-up page": "sign up", "register page": "sign up",
-    "main learning page": "main page", "main layout": "main page",
-    "dashboard": "main page",
-    "leaderboard": "ranking",
-    "leaderboard page": "ranking",
-    "sound page": "pronunciation",
-    "sounds page": "pronunciation",
-    "speaking page": "speak",
-    "review page": "review",
-    "notifications": "inbox",
-    "error popup": "notification",
-    "error message": "notification",
-    "message box": "messagebox",
-    "text box": "textbox",
-    "text field": "textbox",
-    "text input": "textbox",
-    "input field": "textbox",
-    "check box": "checkbox",
-    "nav bar": "nav",
-    "top bar": "topbar",
-    "right bar": "rightbar",
-    "side bar": "sidebar",
-    "secion": "section",
-}
-
-
-DEFAULT_PAGE_ALIASES = {
-    "welcomepage": "Welcome Page", "landing": "Welcome Page", "landing page": "Welcome Page",
-    "sign in": "Sign In", "signin": "Sign In", "log in": "Sign In",
-    "login": "Sign In", "sign up": "Sign Up",
-    "signup": "Sign Up", "register": "Sign Up",
-    "main page": "Main Page",
-    "main learning page": "Main Page",
-    "main layout": "Main Page",
-    "home": "Main Page",
-    "dashboard": "Main Page",
-    "challenge": "Challenge",
-    "challenge page": "Challenge",
-    "ranking": "Ranking",
-    "leaderboard": "Ranking",
-    "pronunciation": "Pronunciation",
-    "sounds": "Pronunciation",
-    "speak": "Speak",
-    "speaking": "Speak",
-    "review": "Review",
-    "inbox": "Inbox",
-    "notifications": "Inbox",
-    "achievements": "Achievements",
-    "badges": "Achievements",
-    "about": "About Us",
-    "about us": "About Us",
-    "profile": "Profile",
-    "user profile": "Profile",
-    "learn": "Learn",
-    "learning": "Learn",
-}
-
-
-SYNONYMS = {
-    "click": ["click", "press", "tap", "select", "hit"],
-    "input": ["input", "type", "enter", "fill", "write"],
-    "verify": ["verify", "check", "assert", "validate", "confirm", "ensure", "expect"],
-    "navigate": ["redirected to","navigate", "go", "open", "visit", "browse", "access", "reach"],
-    "wait": ["wait", "pause", "delay", "sleep"],
-    "close": ["close", "quit", "exit", "terminate", "end"],
-    "submit": ["submit", "send", "post", "confirm"],
-    "scroll": ["scroll", "swipe", "drag"],
-    "search": ["search", "find", "locate", "query", "lookup", "look for"],
-    "login": ["login", "signin", "sign in", "log in", "authenticate", "logon"],
-    "logout": ["logout", "signout", "sign out", "log out", "logoff"],
-    "select": ["select", "choose", "pick", "trigger"],
-}
-
-
-ELEMENT_TYPE_HINTS = {
-    "button": ["button", "cta", "submit", "save", "start"],
-    "link": ["link"],
-    "tab": ["tab"],
-    "list": ["list", "table", "grid"],
-    "section": ["section", "panel", "card"],
-    "modal": ["modal", "dialog", "popup"],
-    "notification": ["notification", "toast", "alert"],
-    "messagebox": ["message", "error", "warning"],
-    "textbox": ["textbox", "input", "field"],
-    "checkbox": ["checkbox", "toggle", "switch"],
-}
-
-
-VISIBILITY_KEYWORDS = {
-    "button": "Button Should Be Visible",
-    "link": "Link Should Be Visible",
-    "tab": "Tab Should Be Visible",
-    "list": "List Should Be Visible",
-    "section": "Section Should Be Visible",
-    "notification": "Notification Should Be Visible",
-    "messagebox": "Messagebox Should Be Visible",
-    "modal": "Modal Should Be Visible",
-    "textbox": "Textbox Should Be Visible",
-    "checkbox": "Checkbox Should Be Visible",
-}
-
-NEG_VISIBILITY_KEYWORDS = {
-    "notification": "Notification Should Not Be Visible",
-    "messagebox": "Messagebox Should Not Be Visible",
-    "modal": "Modal Should Not Be Visible",
-}
-
-CLICK_KEYWORDS = {
-    "button": "Click Button",
-    "link": "Click Link",
-    "tab": "Click Tab",
-    "list": "Click List Item",
-}
-
-INPUT_KEYWORD = "Fill Textbox"
-NAVIGATE_KEYWORD = "Navigate To Page"
-BROWSER_OPEN_KEYWORD = "Open Browser Session"
-BROWSER_CLOSE_KEYWORD = "Close Browser Session"
-
-TITLE_OVERRIDES = {
-    "xp": "XP",
-    "ui": "UI",
-    "api": "API",
-    "jwt": "JWT",
-    "cta": "CTA",
+BUILTIN_PHRASE_MAP = {
+    "page": ["tab", "screen", "view"],
+    "home page": ["home tab"],
+    "challenge page": ["challenge tab"],
+    "ranking page": ["leaderboard tab"],
+    "sign in": ["signin", "sign-in", "login", "log in"],
+    "sign up": ["signup", "sign-up", "register"],
+    "button": ["cta", "action button", "call to action"],
+    "textbox": ["input", "field", "text field"],
+    "list": ["table", "grid", "collection"],
+    "email": ["account", "email"],
+    "password": ["password", "pwd", "passcode", "pass"],
+    "notification": ["error popup", "error message", "failure message"],
+    "issue": ["bug", "defect"],
+    "section": ["section", "datagrid", "secion"],
 }
 
 
@@ -173,7 +42,6 @@ class RequirementAction:
     action_text: str
     target: str = ""
     value: str = ""
-    keyword_hints: List[str] = field(default_factory=list)
 
 
 @dataclass
@@ -190,51 +58,51 @@ class ProcessedRequirement:
 class RequirementNLPProcessor:
     """Extracts requirement type and action candidates from free text."""
 
-    ACTION_PATTERNS = {
-        "navigate": [
-            r"\b(?:go to|navigate to|open|visit|browse|access|reach)\b\s+(?:the\s+)?(?P<target>.+)$",
-            r"\bis on\b\s+(?:the\s+)?(?P<target>.+?)\s+(?:page|screen|view)\b",
-        ],
-        "click": [
-            r"\b(?:click|press|tap|select|choose|pick|trigger)\b\s+(?:on\s+)?(?:the\s+)?(?P<target>.+)$",
-        ],
-        "input": [
-            r"\b(?:enter|type|input)\b\s+[\"'](?P<value>.+?)[\"']\s+(?:into|in|to)\s+(?:the\s+)?(?P<target>.+)$",
-            r"\bfill\b\s+(?:in\s+)?(?:the\s+)?(?P<target>.+?)\s+with\s+[\"'](?P<value>.+?)[\"']",
-            r"\bset\b\s+(?:the\s+)?(?P<target>.+?)\s+to\s+(?P<value>.+)$",
-        ],
-        "verify": [
-            r"\b(?:verify|check|ensure|confirm|expect|assert)\b\s+(?:that\s+)?(?P<target>.+)$",
-            r"\b(?:should|must)\b\s+(?:be\s+)?(?P<target>.+)$",
-        ],
-        "submit": [
-            r"\bsubmit\b(?:\s+the\s+)?(?P<target>.+)?$",
-        ],
-        "scroll": [
-            r"\b(?:scroll|swipe|drag)\b\s+(?:to\s+)?(?:the\s+)?(?P<target>.+)?$",
-        ],
-        "wait": [
-            r"\b(?:wait|pause|delay|sleep)\b(?:\s+for\s+)?(?P<target>.+)?$",
-        ],
-        "search": [
-            r"\b(?:search|find|look for|lookup)\b\s+(?:for\s+)?(?P<value>.+)$",
-        ],
+    DEFAULT_PHRASE_MAP = BUILTIN_PHRASE_MAP
+
+    SYNONYMS = {
+        "click": ["click", "press", "tap", "select", "hit","clicks", "presses", "taps", "selects", "hits"],
+        "input": ["input", "type", "enter", "fill", "write", "inputs", "types", "enters", "fills", "writes"],
+        "verify": ["verify", "check", "assert", "validate", "confirm", "ensure", "expects", "verifies", "checks", "asserts", "validates", "confirms", "ensures"],
+        "navigate": ["navigates", "go","goes", "open", "visit", "browse", "access", "reach", "move to", "head to", "jump to", "opens", "visits", "browses", "accesses", "reaches", "moves to", "heads to", "jumps to"],
+        "wait": ["wait", "pause", "delay", "sleep", "waits", "pauses", "delays", "sleeps"],
+        "close": ["close", "quit", "exit", "terminate", "end", "closes", "quits", "exits", "terminates", "ends"],
+        "submit": ["submit", "send", "post", "confirm", "submits", "sends", "posts", "confirms"],
+        "scroll": ["scroll", "swipe", "drag", "scrolls", "swipes", "drags","scrolling"],
+        "search": ["search", "find", "locate", "query", "lookup", "look for", "seek", "explore", "look up"],
+        "login": ["login", "signin", "authenticate", "logon", "sign in", "log in", "sign on", "log on"],
+        "logout": ["logout", "signout", "logoff", "sign off", "log off", "sign out", "logs out", "signs out",  "sign offs"],
+        "select": ["selects", "chooses","choose", "pick", "picks", "triggers", "trigger"],
+
     }
 
-    def __init__(
-        self,
-        phrase_map: Dict[str, Any] | None = None,
-        page_aliases: Dict[str, str] | None = None,
-    ) -> None:
-        resolved_phrase_map = dict(DEFAULT_PHRASE_MAP)
+    ACTION_PATTERNS = {
+        "authenticate": [
+            r"\b(sign in|log in|login|authenticate)\b.+\b(email|account|username)\b.+\b(password|pass)\b",
+        ],
+        "navigate": [
+            r"\b(go to|navigate to|open|visit)\s+(?:the\s+)?(.+)$",
+        ],
+        "click": [
+            r"\b(click|press|select|tap)\s+(?:on\s+)?(?:the\s+)?(.+)$",
+        ],
+        "input": [
+            r"\b(fill|enter|type|input|set)\b.+",
+        ],
+        "verify": [
+            r"\b(should|must|verify|check|confirm|ensure|expect)\b.+",
+        ],
+        'search': [
+            r"\b(search|find|look for)\b.+",
+            ]
+    }
+
+    def __init__(self, phrase_map: Dict[str, Any] | None = None) -> None:
+        resolved_phrase_map = dict(self.DEFAULT_PHRASE_MAP)
         if phrase_map:
             resolved_phrase_map.update(phrase_map)
         self.phrase_map = self._normalize_phrase_map(resolved_phrase_map)
         self.synonym_map = self._build_synonym_map()
-        resolved_page_aliases = dict(DEFAULT_PAGE_ALIASES)
-        if page_aliases:
-            resolved_page_aliases.update(page_aliases)
-        self.page_aliases = {key.lower(): value for key, value in resolved_page_aliases.items()}
 
     def _normalize_phrase_map(self, raw_phrase_map: Dict[str, Any]) -> Dict[str, str]:
         normalized: Dict[str, str] = {}
@@ -249,6 +117,7 @@ class RequirementNLPProcessor:
                     normalized[canonical] = target_text
                 continue
 
+            # Support canonical -> [synonym, ...] style phrase maps.
             if isinstance(target, (list, tuple, set)):
                 normalized[canonical] = canonical
                 for raw_variant in target:
@@ -267,18 +136,15 @@ class RequirementNLPProcessor:
         """Convert requirement text to a normalized, action-augmented mapping text."""
         original = str(text or "").strip()
         normalized = self._normalize_text(original)
-        requirement_type = self._detect_requirement_type(original, normalized)
-        actions = self._extract_actions(original)
+        requirement_type = self._detect_requirement_type(normalized)
+        actions = self._extract_actions(normalized)
 
-        action_fragments: list[str] = []
-        for action in actions:
-            if action.action_text:
-                action_fragments.append(action.action_text)
-            action_fragments.extend(action.keyword_hints)
-        mapping_text = original
+        # Keep original wording for traceability and append extracted actions for stronger matching.
+        action_fragments = [action.action_text for action in actions]
         if action_fragments:
-            deduped = list(dict.fromkeys(action_fragments))
-            mapping_text = f"{original} ; extracted actions: " + " ; ".join(deduped)
+            mapping_text = f"{original} ; extracted actions: " + " ; ".join(action_fragments)
+        else:
+            mapping_text = original
 
         return ProcessedRequirement(
             requirement_type=requirement_type,
@@ -294,16 +160,11 @@ class RequirementNLPProcessor:
         cleaned = self._apply_phrase_map(cleaned)
         cleaned = self._apply_synonym_map(cleaned)
         cleaned = TEXT_SPACES.sub(" ", cleaned).strip()
-        cleaned = self._apply_stem_map(cleaned)
         return cleaned
-
-    def _apply_stem_map(self, text: str) -> str:
-        tokens = [STEM_MAP.get(token, token) for token in text.split()]
-        return " ".join(tokens)
 
     def _build_synonym_map(self) -> Dict[str, str]:
         synonym_map: Dict[str, str] = {}
-        for canonical, variants in SYNONYMS.items():
+        for canonical, variants in self.SYNONYMS.items():
             canonical_key = canonical.lower().strip()
             if not canonical_key:
                 continue
@@ -334,37 +195,32 @@ class RequirementNLPProcessor:
             mapped = re.sub(pattern, target, mapped)
         return mapped
 
-    def _detect_requirement_type(self, original_text: str, normalized_text: str) -> str:
-        if self._looks_like_gherkin(original_text):
-            return "gherkin"
-        if USER_STORY.search(original_text):
+    def _detect_requirement_type(self, normalized_text: str) -> str:
+        # User Story patterns
+        if re.search(r"\bas a\b.+\bi want\b", normalized_text):
             return "user_story"
+        # Bug report patterns
         if re.search(r"\b(bug|defect|issue|error|fails|failure|unexpected)\b", normalized_text):
             return "bug_report"
+        # Functional requirement patterns
         if re.search(r"\b(shall|must|should|system should|the system)\b", normalized_text):
             return "functional_requirement"
         return "general_requirement"
 
-    def _looks_like_gherkin(self, text: str) -> bool:
-        if re.search(r"^\s*scenario:", text, re.IGNORECASE | re.MULTILINE):
-            return True
-        for line in text.splitlines():
-            if GHERKIN_STEP.match(line):
-                return True
-        return False
-
-    def _extract_actions(self, text: str) -> List[RequirementAction]:
+    def _extract_actions(self, normalized_text: str) -> List[RequirementAction]:
         actions: List[RequirementAction] = []
 
-        clauses = self._split_into_clauses(text)
+        # Split requirement into smaller clauses to capture chained actions.
+        clauses = re.split(r"[.;]|(?:\band then\b)|(?:\bthen\b)|(?:\bafter\b)|(?:\bwhen\b)", normalized_text)
         for raw_clause in clauses:
             clause = raw_clause.strip()
-            if len(clause) < 3:
+            if len(clause) < 4:
                 continue
             extracted = self._extract_action_from_clause(clause)
             if extracted:
                 actions.append(extracted)
 
+        # De-duplicate by action text while preserving order.
         seen = set()
         unique_actions: List[RequirementAction] = []
         for action in actions:
@@ -375,253 +231,217 @@ class RequirementNLPProcessor:
             unique_actions.append(action)
         return unique_actions
 
-    def _split_into_clauses(self, text: str) -> List[str]:
-        if self._looks_like_gherkin(text):
-            clauses: List[str] = []
-            for line in text.splitlines():
-                match = GHERKIN_STEP.match(line)
-                if not match:
-                    continue
-                clause = GHERKIN_STEP.sub("", line).strip()
-                if clause:
-                    clauses.append(clause)
-            return clauses
-
-        user_story_match = USER_STORY.search(text)
-        if user_story_match:
-            want_clause = user_story_match.group("want").strip()
-            if want_clause:
-                return [want_clause]
-
-        normalized_text = self._normalize_text(text)
-        return [
-            clause.strip()
-            for clause in re.split(
-                r"[.;]|(?:\band then\b)|(?:\bthen\b)|(?:\bafter\b)|(?:\bwhen\b)",
-                normalized_text,
-            )
-            if clause.strip()
-        ]
-
     def _extract_action_from_clause(self, clause: str) -> RequirementAction | None:
-        raw_clause = clause.strip()
-        normalized_clause = self._normalize_text(raw_clause)
-        login_related = re.search(r"\b(sign in|log in|login|logging in|signing in)\b", normalized_clause)
-
-        if re.search(r"\b(sign in|log in|login)\b.+\b(email|account|username)\b.+\b(password|pass)\b", normalized_clause):
+        # Special high-value pattern: explicit login credentials
+        login_match = re.search(
+            r"\b(sign in|log in|login)\b.+(?:email|account|username).+(?:password)\b",
+            clause,
+        )
+        if login_match:
             return RequirementAction(
                 action_type="authenticate",
-                action_text="Sign In With Credentials ${Email} ${Password}",
-                target="Sign In",
-                keyword_hints=["Go To Sign In Page", "Sign In Page Should Be Ready"],
-            )
-        if login_related:
-            if not re.search(r"\b(go to|goto|navigate)\b", normalized_clause):
-                return RequirementAction(
-                    action_type="authenticate",
-                    action_text="Sign In With Credentials ${Email} ${Password}",
-                    target="Sign In",
-                    keyword_hints=["Go To Sign In Page", "Sign In Page Should Be Ready"],
-                )
-
-        if re.search(r"\b(open|launch|start)\b.+\b(browser|firefox|chrome|chromium|edge|webkit)\b", raw_clause, re.IGNORECASE):
-            browser_type = "firefox" if "firefox" in raw_clause.lower() else "${BROWSER}"
-            return RequirementAction(
-                action_type="navigate",
-                action_text=f"{BROWSER_OPEN_KEYWORD} {browser_type}",
-                target=browser_type,
-            )
-
-        if re.search(r"\b(close|quit|exit)\b.+\b(browser|firefox|chrome|chromium|edge|webkit)\b", raw_clause, re.IGNORECASE):
-            return RequirementAction(
-                action_type="close",
-                action_text=BROWSER_CLOSE_KEYWORD,
-            )
-
-        page_target = self._find_page_target(normalized_clause)
-        if page_target and re.search(r"\bis on\b|\bon\b.+\bpage\b|\bpage\b", normalized_clause):
-            return RequirementAction(
-                action_type="verify",
-                action_text=f"Validate Page Is Opened {page_target}",
-                target=page_target,
-                keyword_hints=[f"{NAVIGATE_KEYWORD} {page_target}"],
+                action_text=(
+                    "fill textbox '${NAME}' with value '${VALUE}' for email and password ; "
+                    "click button '${NAME}'"
+                ),
+                target="sign in",
             )
 
         for action_type, patterns in self.ACTION_PATTERNS.items():
             for pattern in patterns:
-                match = re.search(pattern, normalized_clause)
+                match = re.search(pattern, clause)
                 if not match:
                     continue
-
                 if action_type == "navigate":
-                    target_text = match.groupdict().get("target", "").strip()
-                    page_name = self._resolve_page_name(target_text, normalized_clause)
-                    target = page_name or self._title_case(target_text)
-                    action_text = f"{NAVIGATE_KEYWORD} {target}" if target else f"{NAVIGATE_KEYWORD} ${'{PAGE}'}"
-                    hints = [f"Validate Page Is Opened {target}"] if target else []
-                    return RequirementAction(
-                        action_type=action_type,
-                        action_text=action_text,
-                        target=target,
-                        keyword_hints=hints,
-                    )
-
+                    target = (match.group(2) if len(match.groups()) >= 2 else "").strip(" '\"")
+                    target = re.sub(r"\b(page|tab|screen)\b", "", target).strip()
+                    target = re.sub(r"^the\s+", "", target).strip()
+                    # Browser start intent is common in requirements and should map to browser-open keyword.
+                    if re.search(r"\b(browser|firefox|chrome|chromium|webkit|edge)\b", target):
+                        browser_type = "firefox" if "firefox" in target else "${BROWSER}"
+                        action_text = f"open browser '{browser_type}' session"
+                        return RequirementAction(action_type="navigate", action_text=action_text, target=target)
+                    action_text = f"navigate to page '{target}'" if target else "navigate to page '${PAGE}'"
+                    return RequirementAction(action_type=action_type, action_text=action_text, target=target)
                 if action_type == "click":
-                    raw_target = match.groupdict().get("target", "").strip()
-                    target = self._normalize_target(raw_target)
-                    element_type = self._detect_element_type(raw_clause)
-                    keyword = CLICK_KEYWORDS.get(element_type, CLICK_KEYWORDS["button"])
-                    action_text = f"{keyword} {target}" if target else f"{keyword} ${'{Button}'}"
-                    return RequirementAction(
-                        action_type=action_type,
-                        action_text=action_text,
-                        target=target,
-                    )
-
+                    target = (match.group(2) if len(match.groups()) >= 2 else "").strip(" '\"")
+                    element_type = "button"
+                    if re.search(r"\blink\b", clause):
+                        element_type = "link"
+                    elif re.search(r"\btab\b", clause):
+                        element_type = "tab"
+                    elif re.search(r"\blist item\b|\blist\b", clause):
+                        element_type = "list item"
+                    elif re.search(r"\btext\b", clause):
+                        element_type = "text"
+                    target = re.sub(r"\b(button|link|tab|item|menu|list|text)\b", "", target).strip()
+                    target = re.sub(r"^the\s+", "", target).strip()
+                    index_value = self._extract_index_value(clause)
+                    keyword_base = self._format_click_keyword(element_type, target, index_value)
+                    action_text = keyword_base
+                    return RequirementAction(action_type=action_type, action_text=action_text, target=target)
                 if action_type == "input":
-                    target_text = match.groupdict().get("target", "").strip()
-                    value_text = match.groupdict().get("value", "").strip()
-                    target = self._normalize_target(target_text)
-                    value = value_text.strip("'\"")
-                    action_text = (
-                        f"{INPUT_KEYWORD} {target} {value}"
-                        if target
-                        else f"{INPUT_KEYWORD} ${'{Textbox}'} ${'{Value}'}"
-                    )
                     return RequirementAction(
                         action_type=action_type,
-                        action_text=action_text,
-                        target=target,
-                        value=value,
+                        action_text="fill textbox '${NAME}' with value '${VALUE}'",
                     )
-
                 if action_type == "verify":
-                    element_type = self._detect_element_type(raw_clause)
-                    negative = bool(re.search(r"\bnot\b|\bno\b", normalized_clause)) and bool(
-                        re.search(r"\bvisible\b|\bshown\b|\bdisplayed\b", normalized_clause)
-                    )
-                    page_name = self._resolve_page_name(match.groupdict().get("target", ""), normalized_clause)
-                    if page_name:
+                    minimum_count = self._extract_minimum_count(clause)
+                    if minimum_count is not None and re.search(r"\blist\b", clause):
                         return RequirementAction(
                             action_type=action_type,
-                            action_text=f"Validate Page Is Opened {page_name}",
-                            target=page_name,
+                            action_text=f"list item '${{NAME}}' count should be at least '{minimum_count}'",
+                            target="${NAME}",
+                            value=str(minimum_count),
                         )
-                    target = self._extract_quoted_or_target(raw_clause, match.groupdict().get("target", ""))
-                    target = self._normalize_target(target)
-                    if negative and element_type in NEG_VISIBILITY_KEYWORDS:
-                        keyword = NEG_VISIBILITY_KEYWORDS[element_type]
-                        action_text = f"{keyword} {target}" if target else f"{keyword} ${'{Name}'}"
+                    if re.search(r"\bcontain(s)?\b", clause):
+                        if re.search(r"\btextbox\b|\bfield\b", clause):
+                            return RequirementAction(
+                                action_type=action_type,
+                                action_text="textbox '${NAME}' value should contain '${EXPECTED_VALUE}'",
+                                target="${NAME}",
+                                value="${EXPECTED_VALUE}",
+                            )
+                        if "notification" in clause:
+                            return RequirementAction(
+                                action_type=action_type,
+                                action_text="notification '${NAME}' should contain text '${EXPECTED_TEXT}'",
+                                target="${NAME}",
+                                value="${EXPECTED_TEXT}",
+                            )
+                        if "messagebox" in clause or "message box" in clause or "modal" in clause:
+                            return RequirementAction(
+                                action_type=action_type,
+                                action_text="messagebox '${NAME}' should contain text '${EXPECTED_TEXT}'",
+                                target="${NAME}",
+                                value="${EXPECTED_TEXT}",
+                            )
+                        if "section" in clause:
+                            return RequirementAction(
+                                action_type=action_type,
+                                action_text="section '${NAME}' should contain text '${EXPECTED_TEXT}'",
+                                target="${NAME}",
+                                value="${EXPECTED_TEXT}",
+                            )
+                        if "link" in clause:
+                            return RequirementAction(
+                                action_type=action_type,
+                                action_text="link '${NAME}' should contain text '${EXPECTED_TEXT}'",
+                                target="${NAME}",
+                                value="${EXPECTED_TEXT}",
+                            )
+                        if "text" in clause:
+                            return RequirementAction(
+                                action_type=action_type,
+                                action_text="text '${NAME}' should contain text '${EXPECTED_TEXT}'",
+                                target="${NAME}",
+                                value="${EXPECTED_TEXT}",
+                            )
+                    quoted = re.search(r"['\"]([^'\"]+)['\"]", clause)
+                    if "checkbox" in clause:
+                        checkbox_name = quoted.group(1) if quoted else "${NAME}"
                         return RequirementAction(
                             action_type=action_type,
-                            action_text=action_text,
-                            target=target,
+                            action_text=f"checkbox '{checkbox_name}' should be visible",
+                            target=checkbox_name,
                         )
-                    keyword = VISIBILITY_KEYWORDS.get(element_type)
-                    if keyword:
-                        action_text = f"{keyword} {target}" if target else f"{keyword} ${'{Name}'}"
+                    if "notification" in clause:
+                        note_name = quoted.group(1) if quoted else "${NAME}"
                         return RequirementAction(
                             action_type=action_type,
-                            action_text=action_text,
-                            target=target,
+                            action_text=f"notification '{note_name}' should be visible",
+                            target=note_name,
+                        )
+                    if "messagebox" in clause or "message box" in clause or "modal" in clause:
+                        message_name = quoted.group(1) if quoted else "${NAME}"
+                        return RequirementAction(
+                            action_type=action_type,
+                            action_text=f"messagebox '{message_name}' should be visible",
+                            target=message_name,
+                        )
+                    if "section" in clause:
+                        section_name = quoted.group(1) if quoted else "${NAME}"
+                        return RequirementAction(
+                            action_type=action_type,
+                            action_text=f"section '{section_name}' should be visible",
+                            target=section_name,
+                        )
+                    if "link" in clause:
+                        link_name = quoted.group(1) if quoted else "${NAME}"
+                        return RequirementAction(
+                            action_type=action_type,
+                            action_text=f"link '{link_name}' should be visible",
+                            target=link_name,
+                        )
+                    if "text" in clause:
+                        text_name = quoted.group(1) if quoted else "${NAME}"
+                        return RequirementAction(
+                            action_type=action_type,
+                            action_text=f"text '{text_name}' should be visible",
+                            target=text_name,
+                        )
+                    if "button" in clause:
+                        button_name = quoted.group(1) if quoted else "${NAME}"
+                        return RequirementAction(
+                            action_type=action_type,
+                            action_text=f"button '{button_name}' should be visible",
+                            target=button_name,
+                        )
+                    if "list" in clause:
+                        list_name = quoted.group(1) if quoted else "${NAME}"
+                        return RequirementAction(
+                            action_type=action_type,
+                            action_text=f"list '{list_name}' should be visible",
+                            target=list_name,
+                        )
+                    if "page" in clause:
+                        state = "ready" if "ready" in clause else "opened"
+                        if state == "ready":
+                            return RequirementAction(
+                                action_type=action_type,
+                                action_text="validate page '${PAGE}' is opened",
+                            )
+                        return RequirementAction(
+                            action_type=action_type,
+                            action_text="validate page '${PAGE}' is opened",
                         )
                     return None
-
-                if action_type == "submit":
-                    target = self._normalize_target(match.groupdict().get("target", "") or "Submit")
-                    action_text = f"Click Button {target}"
-                    return RequirementAction(
-                        action_type="click",
-                        action_text=action_text,
-                        target=target,
-                    )
-
-                if action_type == "scroll":
-                    target = self._normalize_target(match.groupdict().get("target", ""))
-                    if "section" in normalized_clause or self._detect_element_type(raw_clause) == "section":
-                        action_text = f"Scroll To Section {target}" if target else f"Scroll To Section ${'{Section}'}"
-                    else:
-                        action_text = f"Scroll Into Element {target}" if target else "Scroll Into Element ${Element}"
-                    return RequirementAction(
-                        action_type=action_type,
-                        action_text=action_text,
-                        target=target,
-                    )
-
-                if action_type == "wait":
-                    return RequirementAction(
-                        action_type=action_type,
-                        action_text="Wait For Load State",
-                    )
-
-                if action_type == "search":
-                    value = match.groupdict().get("value", "").strip("'\"")
-                    action_text = f"{INPUT_KEYWORD} Search {value}" if value else f"{INPUT_KEYWORD} Search ${'{Value}'}"
-                    return RequirementAction(
-                        action_type="input",
-                        action_text=action_text,
-                        target="Search",
-                        value=value,
-                        keyword_hints=["Click Button Search"],
-                    )
-
-        if re.search(r"\b(sign out|log out|logout)\b", normalized_clause):
-            return RequirementAction(
-                action_type="click",
-                action_text="Click Button Logout",
-                target="Logout",
-                keyword_hints=["Cancel Logout From Main Menu", "Confirm Logout From Main Menu"],
-            )
-
+                return RequirementAction(action_type=action_type, action_text=clause)
         return None
 
-    def _find_page_target(self, normalized_clause: str) -> str:
-        for alias in sorted(self.page_aliases, key=len, reverse=True):
-            if alias and alias in normalized_clause:
-                return self.page_aliases[alias]
-        return ""
+    def _extract_index_value(self, clause: str) -> int | None:
+        lower_clause = clause.lower()
+        if "first" in lower_clause:
+            return 0
+        if "second" in lower_clause:
+            return 1
+        if "third" in lower_clause:
+            return 2
+        if "fourth" in lower_clause:
+            return 3
+        match = re.search(r"\bindex\s*(\d+)\b", lower_clause)
+        if match:
+            return max(int(match.group(1)), 0)
+        return None
 
-    def _resolve_page_name(self, raw_target: str, normalized_clause: str) -> str:
-        normalized_target = self._normalize_text(raw_target)
-        if normalized_target in self.page_aliases:
-            return self.page_aliases[normalized_target]
-        clause_target = self._find_page_target(normalized_clause)
-        if clause_target:
-            return clause_target
-        return self._title_case(normalized_target) if normalized_target else ""
+    def _format_click_keyword(self, element_type: str, target: str, index_value: int | None) -> str:
+        name_token = target or "${NAME}"
+        if element_type == "link":
+            return f"click link '{name_token}'"
+        if element_type == "tab":
+            return f"click tab '{name_token}'"
+        if element_type == "list item":
+            if index_value is not None:
+                return f"click list item '{name_token}' at index '{index_value}'"
+            return f"click list item '{name_token}'"
+        if element_type == "text":
+            return f"click text '{name_token}'"
+        if index_value is not None:
+            return f"click button '{name_token}' at index '{index_value}'"
+        return f"click button '{name_token}'"
 
-    def _detect_element_type(self, clause: str) -> str:
-        clause_lower = clause.lower()
-        for element_type, hints in ELEMENT_TYPE_HINTS.items():
-            if any(hint in clause_lower for hint in hints):
-                return element_type
-        return "button"
-
-    def _extract_quoted_or_target(self, raw_clause: str, fallback: str) -> str:
-        quoted = re.search(r"[\"']([^\"']+)[\"']", raw_clause)
-        if quoted:
-            return quoted.group(1)
-        return fallback
-
-    def _normalize_target(self, raw_target: str) -> str:
-        if not raw_target:
-            return ""
-        cleaned = raw_target.strip().strip("'\"")
-        cleaned = re.sub(r"\b(button|link|tab|item|menu|page|screen|view|field|textbox|input)\b", "", cleaned, flags=re.IGNORECASE)
-        cleaned = re.sub(r"^the\s+", "", cleaned, flags=re.IGNORECASE).strip()
-        if not cleaned:
-            return ""
-        return self._title_case(cleaned)
-
-    def _title_case(self, text: str) -> str:
-        words = []
-        for raw_word in text.split():
-            word = raw_word.strip()
-            if not word:
-                continue
-            lower = word.lower()
-            if lower in TITLE_OVERRIDES:
-                words.append(TITLE_OVERRIDES[lower])
-            else:
-                words.append(lower.capitalize())
-        return " ".join(words)
+    def _extract_minimum_count(self, clause: str) -> int | None:
+        match = re.search(r"\bat least\s+(\d+)\b", clause)
+        if match:
+            return int(match.group(1))
+        return None
