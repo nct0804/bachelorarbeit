@@ -14,7 +14,9 @@ from __future__ import annotations
 
 import argparse
 import csv
+import hashlib
 import json
+import math
 import re
 import shutil
 import sys
@@ -33,35 +35,42 @@ from src.components.semantic.nlp_processor import RequirementNLPProcessor
 
 
 TEXT_SPLIT_PATTERN = re.compile(r"[^a-z0-9]+")
+PLACEHOLDER_PATTERN = re.compile(r"[$@&]\{([^}]+)\}")
+QUOTED_TEXT_PATTERN = re.compile(r"['\"][^'\"]+['\"]")
 MULTI_SPACE_PATTERN = re.compile(r"\s+")
 FEATURE_STEP_PATTERN = re.compile(r"^\s*(Given|When|Then|And|But)\s+(.+?)\s*$", re.IGNORECASE)
 QUOTED_VALUE_PATTERN = re.compile(r"'([^']+)'|\"([^\"]+)\"")
 EMAIL_PATTERN = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")
 NUMBER_PATTERN = re.compile(r"\b\d+\b")
-DEFAULT_STOP_WORDS = {
+OPTIONAL_STOPS = {
+    "as",
     "the",
     "a",
     "an",
-    "to",
     "is",
     "are",
     "be",
+    "should",
+    "can",
     "on",
-    "in",
+    "to",
+    "of",
+    "for",
     "with",
+    "using",
     "and",
     "or",
-    "for",
-    "of",
-    "from",
-    "that",
-    "this",
-    "then",
-    "when",
-    "given",
-    "should",
-    "must",
+    "my",
     "user",
+    "want",
+    "wants",
+    "perform",
+    "please",
+    "can",
+    "could",
+    "would",
+    "must",
+    "need",
 }
 LEGACY_GHERKIN_TOKENS = {"gherkin", "bdd"}
 MAINLIB_DEFAULT_LIBRARIES = {"Collections", "OperatingSystem", "String", "Browser"}
@@ -74,6 +83,31 @@ DEFAULT_REQUIREMENT_TEXT_FIELD_CANDIDATES = [
     "story",
     "user_story",
 ]
+DEFAULT_PHRASE_MAP: dict[str, str] = {}
+ACTIVE_PHRASE_MAP: dict[str, str] = dict(DEFAULT_PHRASE_MAP)
+DEFAULT_IGNORE_QUOTED_TEXT = True
+
+# Element types for scoring boost
+ELEMENT_TYPES = [
+    "button",
+    "textbox",
+    "text",
+    "checkbox",
+    "link",
+    "section",
+    "list",
+    "notification",
+    "page",
+]
+
+# Disambiguation pairs: when source contains key, penalize matches containing values
+DISAMBIGUATION_PENALTIES = {
+    "sign in": ["sign up", "signup", "register"],
+    "sign up": ["sign in", "signin", "login"],
+    "textbox": ["text"],  # Prevent textbox matching text-only keywords
+    "should be visible": ["toggle", "click", "set", "fill"],  # Verification vs action
+    "should be opened": ["go to", "navigate", "open"],  # Verification vs navigation
+}
 
 
 @dataclass
@@ -93,6 +127,7 @@ class KeywordEntry:
     documentation: str
     tags: list[str]
     arguments: list[ArgSpec]
+    embedded_arguments: list[ArgSpec]
     normalized_text: str
 
 
@@ -168,31 +203,193 @@ class StepExecutionPlan:
     suggested_libraries: list[str]
 
 
-def normalize_text(text: str, remove_stops: bool = True) -> str:
-    cleaned = str(text or "").lower()
-    cleaned = TEXT_SPLIT_PATTERN.sub(" ", cleaned)
-    cleaned = MULTI_SPACE_PATTERN.sub(" ", cleaned).strip()
+def load_default_phrase_map() -> dict[str, str]:
+    raw_phrase_map = getattr(RequirementNLPProcessor, "DEFAULT_PHRASE_MAP", None)
+    if not isinstance(raw_phrase_map, dict):
+        return dict(DEFAULT_PHRASE_MAP)
+    normalized: dict[str, str] = {}
+    for source, target in raw_phrase_map.items():
+        source_text = str(source).strip().lower()
+        if not source_text:
+            continue
+        if isinstance(target, (list, tuple, set)):
+            normalized[source_text] = source_text
+            for variant in target:
+                variant_text = str(variant).strip().lower()
+                if variant_text:
+                    normalized[variant_text] = source_text
+            continue
+        target_text = str(target).strip().lower()
+        if target_text:
+            normalized[source_text] = target_text
+    return normalized
+
+
+def set_active_phrase_map(phrase_map: dict[str, str]) -> None:
+    global ACTIVE_PHRASE_MAP
+    ACTIVE_PHRASE_MAP = dict(phrase_map or {})
+
+
+set_active_phrase_map(load_default_phrase_map())
+
+
+def apply_phrase_map(text: str) -> str:
+    mapped_text = text
+    ordered_pairs = sorted(ACTIVE_PHRASE_MAP.items(), key=lambda item: len(item[0]), reverse=True)
+    for source, target in ordered_pairs:
+        if not source.strip():
+            continue
+        pattern = r"\b" + re.escape(source.strip().lower()) + r"\b"
+        mapped_text = re.sub(pattern, target.strip().lower(), mapped_text)
+    return mapped_text
+
+
+def normalize_text(
+    text: str,
+    remove_stops: bool = True,
+    ignore_quoted_text: bool | None = None,
+) -> str:
+    text_value = str(text or "")
+    if ignore_quoted_text is None:
+        ignore_quoted_text = DEFAULT_IGNORE_QUOTED_TEXT
+    if ignore_quoted_text:
+        text_value = QUOTED_TEXT_PATTERN.sub(" ", text_value)
+    text_value = PLACEHOLDER_PATTERN.sub(r" \1 ", text_value)
+    text_value = text_value.lower()
+    text_value = apply_phrase_map(text_value)
+    text_value = TEXT_SPLIT_PATTERN.sub(" ", text_value)
+    text_value = MULTI_SPACE_PATTERN.sub(" ", text_value).strip()
     if not remove_stops:
-        return cleaned
-    filtered = [token for token in cleaned.split() if token and token not in DEFAULT_STOP_WORDS]
+        return text_value
+    filtered = [token for token in text_value.split() if token not in OPTIONAL_STOPS]
     return " ".join(filtered)
 
 
-def tokenize(text: str) -> list[str]:
-    return [token for token in normalize_text(text, remove_stops=True).split(" ") if token]
+def tokenize(text: str, ignore_quoted_text: bool | None = None) -> list[str]:
+    if ignore_quoted_text is None:
+        ignore_quoted_text = DEFAULT_IGNORE_QUOTED_TEXT
+    cleaned = normalize_text(text, remove_stops=True, ignore_quoted_text=ignore_quoted_text)
+    return [token for token in cleaned.split(" ") if token]
 
 
-def lexical_similarity(source: str, target: str) -> float:
-    source_clean = normalize_text(source, remove_stops=True)
-    target_clean = normalize_text(target, remove_stops=True)
+def lexical_similarity(
+    source: str,
+    target: str,
+    ignore_quoted_text_source: bool | None = None,
+    ignore_quoted_text_target: bool | None = None,
+) -> float:
+    if ignore_quoted_text_source is None:
+        ignore_quoted_text_source = DEFAULT_IGNORE_QUOTED_TEXT
+    if ignore_quoted_text_target is None:
+        ignore_quoted_text_target = DEFAULT_IGNORE_QUOTED_TEXT
+    source_clean = normalize_text(
+        source,
+        remove_stops=True,
+        ignore_quoted_text=ignore_quoted_text_source,
+    )
+    target_clean = normalize_text(
+        target,
+        remove_stops=True,
+        ignore_quoted_text=ignore_quoted_text_target,
+    )
     if not source_clean or not target_clean:
         return 0.0
-    seq_score = SequenceMatcher(None, source_clean, target_clean).ratio()
+    sequence_score = SequenceMatcher(None, source_clean, target_clean).ratio()
     source_tokens = set(source_clean.split())
     target_tokens = set(target_clean.split())
+    intersection = source_tokens.intersection(target_tokens)
     union = source_tokens.union(target_tokens)
-    jaccard = (len(source_tokens.intersection(target_tokens)) / len(union)) if union else 0.0
-    return (0.65 * seq_score) + (0.35 * jaccard)
+    jaccard_score = (len(intersection) / len(union)) if union else 0.0
+    return (0.6 * sequence_score) + (0.4 * jaccard_score)
+
+
+def calculate_element_type_boost(source: str, target: str) -> float:
+    """Calculate boost when source and target share exact element type."""
+    source_lower = source.lower()
+    target_lower = target.lower()
+
+    boost = 0.0
+    for element_type in ELEMENT_TYPES:
+        if element_type in source_lower and element_type in target_lower:
+            boost += 0.10
+
+    return min(boost, 0.15)
+
+
+def calculate_disambiguation_penalty(source: str, target: str) -> float:
+    """Calculate penalty when source and target have confusing similar terms."""
+    source_lower = source.lower()
+    target_lower = target.lower()
+
+    penalty = 0.0
+    for key, confused_terms in DISAMBIGUATION_PENALTIES.items():
+        if key in source_lower:
+            for confused in confused_terms:
+                if confused in target_lower and key not in target_lower:
+                    penalty += 0.15
+
+    return min(penalty, 0.25)
+
+
+def normalize_vector(vector: list[float]) -> list[float]:
+    norm = math.sqrt(sum(value * value for value in vector))
+    if norm == 0:
+        return vector
+    return [value / norm for value in vector]
+
+
+def dot_product(vector_a: list[float], vector_b: list[float]) -> float:
+    return sum(a * b for a, b in zip(vector_a, vector_b))
+
+
+class LocalEmbeddingModel:
+    """Deterministic local embedding model with hashing + IDF weighting."""
+
+    def __init__(self, dimension: int = 384) -> None:
+        if dimension <= 0:
+            raise ValueError("Embedding dimension must be positive.")
+        self.dimension = dimension
+        self.idf_by_token: dict[str, float] = {}
+        self.default_idf = 1.0
+
+    def fit(self, texts: Iterable[str]) -> None:
+        text_list = list(texts)
+        if not text_list:
+            return
+        doc_count = len(text_list)
+        token_document_frequency: Counter[str] = Counter()
+        for text in text_list:
+            tokens = set(tokenize(text, ignore_quoted_text=False))
+            for token in tokens:
+                token_document_frequency[token] += 1
+
+        self.idf_by_token = {}
+        for token, frequency in token_document_frequency.items():
+            self.idf_by_token[token] = math.log((1 + doc_count) / (1 + frequency)) + 1.0
+        self.default_idf = math.log(1 + doc_count) + 1.0
+
+    def encode_many(self, texts: Iterable[str]) -> list[list[float]]:
+        return [self.encode(text) for text in texts]
+
+    def encode(self, text: str) -> list[float]:
+        vector = [0.0] * self.dimension
+        token_counts = Counter(tokenize(text, ignore_quoted_text=False))
+        if not token_counts:
+            return vector
+
+        for token, count in token_counts.items():
+            index_hash = hashlib.blake2b(token.encode("utf-8"), digest_size=8).digest()
+            sign_hash = hashlib.blake2b(
+                f"sign::{token}".encode("utf-8"),
+                digest_size=8,
+            ).digest()
+
+            index = int.from_bytes(index_hash, "big") % self.dimension
+            sign = -1.0 if int.from_bytes(sign_hash, "big") % 2 else 1.0
+            idf = self.idf_by_token.get(token, self.default_idf)
+            vector[index] += sign * float(count) * idf
+
+        return normalize_vector(vector)
 
 
 def parse_arg_specs(argument_line: str) -> list[ArgSpec]:
@@ -205,6 +402,15 @@ def parse_arg_specs(argument_line: str) -> list[ArgSpec]:
         else:
             specs.append(ArgSpec(name=token.strip(), default_value=None))
     return specs
+
+
+def parse_embedded_arguments(keyword_name: str) -> list[ArgSpec]:
+    embedded_specs: list[ArgSpec] = []
+    for match in PLACEHOLDER_PATTERN.finditer(keyword_name):
+        placeholder = match.group(0)
+        if placeholder:
+            embedded_specs.append(ArgSpec(name=placeholder, default_value=None))
+    return embedded_specs
 
 
 def parse_robot_keywords(resource_path: Path) -> list[KeywordEntry]:
@@ -240,9 +446,11 @@ def parse_robot_keywords(resource_path: Path) -> list[KeywordEntry]:
             documentation=current_doc,
             tags=current_tags,
             arguments=list(current_args),
+            embedded_arguments=parse_embedded_arguments(current_keyword_name),
             normalized_text=normalize_text(
                 f"{current_keyword_name} {current_doc} {' '.join(arg.name for arg in current_args)}",
                 remove_stops=True,
+                ignore_quoted_text=False,
             ),
         )
         entries.append(entry)
@@ -532,27 +740,27 @@ def recommend_libraries(step_text: str) -> list[str]:
 
 def pick_rule_keyword(intent: str) -> str | None:
     rule_map = {
-        "open_browser": "Open Browser Session",
+        "open_browser": "Open Browser '${BROWSER}' Session",
         "close_browser": "Close Browser Session",
-        "navigate_page": "Navigate To Page",
-        "validate_page": "Validate Page Is Opened",
+        "navigate_page": "Navigate To Page '${PAGE}'",
+        "validate_page": "'${PAGE}' Page Should Be Ready",
         "sign_in_credentials": "Sign In With Credentials",
         "sign_up": "Sign Up With Information",
-        "fill_textbox": "Fill Textbox",
-        "clear_textbox": "Clear Textbox",
-        "click_button": "Click Button",
-        "click_checkbox": "Set Checkbox",
-        "click_text": "Click Text",
-        "textbox_contains": "Textbox Value Should Contain",
-        "textbox_visible": "Textbox Should Be Visible",
-        "button_visible": "Button Should Be Visible",
-        "text_visible": "Text Should Be Visible",
-        "checkbox_visible": "Checkbox Should Be Visible",
-        "notification_contains": "Notification Should Contain Text",
-        "notification_visible": "Notification Should Be Visible",
-        "messagebox_visible": "Messagebox Should Be Visible",
-        "list_count": "List Item Count Should Be At Least",
-        "list_visible": "List Should Be Visible",
+        "fill_textbox": "Fill Textbox '${NAME}' With Value '${VALUE}'",
+        "clear_textbox": "Clear Textbox '${NAME}'",
+        "click_button": "Click Button '${NAME}'",
+        "click_checkbox": "Set Checkbox '${NAME}' To '${STATE}' State",
+        "click_text": "Click Text '${NAME}'",
+        "textbox_contains": "Textbox '${NAME}' Value Should Contain '${EXPECTED_VALUE}'",
+        "textbox_visible": "Textbox '${NAME}' Should Be Visible",
+        "button_visible": "Button '${NAME}' Should Be Visible",
+        "text_visible": "Text '${NAME}' Should Be Visible",
+        "checkbox_visible": "Checkbox '${NAME}' Should Be Visible",
+        "notification_contains": "Notification '${NAME}' Should Contain Text '${EXPECTED_TEXT}'",
+        "notification_visible": "Notification '${NAME}' Should Be Visible",
+        "messagebox_visible": "Messagebox '${NAME}' Should Be Visible",
+        "list_count": "List Item '${NAME}' Count Should Be At Least '${MIN_COUNT}'",
+        "list_visible": "List '${NAME}' Should Be Visible",
     }
     return rule_map.get(intent)
 
@@ -561,7 +769,7 @@ def argument_name_key(arg_name: str) -> str:
     raw = arg_name.strip()
     raw = raw.replace("${", "").replace("}", "")
     raw = raw.replace("@{", "").replace("&{", "")
-    return normalize_text(raw, remove_stops=False).replace(" ", "_").upper()
+    return normalize_text(raw, remove_stops=False, ignore_quoted_text=False).replace(" ", "_").upper()
 
 
 def infer_argument_value(arg_name: str, analysis: StepAnalysis, quote_cursor: int) -> tuple[str | None, int]:
@@ -620,17 +828,75 @@ def infer_argument_value(arg_name: str, analysis: StepAnalysis, quote_cursor: in
     return (next_quote(""), quote_cursor)
 
 
-def build_argument_values(keyword: KeywordEntry, analysis: StepAnalysis) -> list[str]:
+def build_embedded_argument_values(
+    keyword: KeywordEntry,
+    analysis: StepAnalysis,
+    quote_cursor: int,
+) -> tuple[list[str], int]:
     values: list[str] = []
-    quote_cursor = 0
+    defaults_by_name = {
+        arg.name: arg.default_value
+        for arg in keyword.arguments
+        if arg.default_value is not None
+    }
+    for arg in keyword.embedded_arguments:
+        value, quote_cursor = infer_argument_value(arg.name, analysis, quote_cursor)
+        if (value is None or value == "") and arg.name in defaults_by_name:
+            value = defaults_by_name[arg.name]
+        if value is None:
+            value = ""
+        values.append(value)
+    return values, quote_cursor
+
+
+def build_explicit_argument_values(
+    keyword: KeywordEntry,
+    analysis: StepAnalysis,
+    quote_cursor: int,
+    skip_names: set[str] | None = None,
+) -> tuple[list[str], int]:
+    values: list[str] = []
     for arg in keyword.arguments:
+        if skip_names and arg.name in skip_names:
+            continue
         value, quote_cursor = infer_argument_value(arg.name, analysis, quote_cursor)
         if (value is None or value == "") and arg.default_value is not None:
             continue
         if value is None:
             value = ""
         values.append(value)
-    return values
+    return values, quote_cursor
+
+
+def render_keyword_with_embedded_values(
+    keyword_name: str,
+    embedded_arguments: list[ArgSpec],
+    embedded_values: list[str],
+) -> str:
+    rendered = keyword_name
+    for arg, value in zip(embedded_arguments, embedded_values):
+        if not value:
+            continue
+        rendered = rendered.replace(arg.name, value)
+    return rendered
+
+
+def build_keyword_call(keyword: KeywordEntry, analysis: StepAnalysis) -> tuple[str, list[str]]:
+    quote_cursor = 0
+    embedded_values, quote_cursor = build_embedded_argument_values(keyword, analysis, quote_cursor)
+    embedded_names = {arg.name for arg in keyword.embedded_arguments}
+    explicit_values, _ = build_explicit_argument_values(
+        keyword,
+        analysis,
+        quote_cursor,
+        skip_names=embedded_names,
+    )
+    rendered_name = render_keyword_with_embedded_values(
+        keyword.keyword_name,
+        keyword.embedded_arguments,
+        embedded_values,
+    )
+    return rendered_name, explicit_values
 
 
 def sanitize_keyword_title(text: str) -> str:
@@ -713,6 +979,10 @@ class FeatureExecutionPipeline:
         requirements_path: Path | None = None,
         requirement_text_field: str | None = None,
         clean_output: bool = True,
+        ignore_quoted_text: bool = True,
+        semantic_weight: float = 0.85,
+        lexical_weight: float = 0.15,
+        embedding_dim: int = 384,
     ) -> None:
         self.features_root = features_root
         self.resource_root = resource_root
@@ -721,11 +991,27 @@ class FeatureExecutionPipeline:
         self.requirements_path = requirements_path
         self.requirement_text_field = requirement_text_field
         self.clean_output = clean_output
+        self.ignore_quoted_text = bool(ignore_quoted_text)
+        if semantic_weight < 0 or lexical_weight < 0:
+            raise ValueError("Similarity weights must be non-negative.")
+        total_weight = semantic_weight + lexical_weight
+        if total_weight <= 0:
+            raise ValueError("At least one of semantic_weight or lexical_weight must be > 0.")
+        self.semantic_weight = semantic_weight / total_weight
+        self.lexical_weight = lexical_weight / total_weight
+        self.embedding_dim = embedding_dim
 
-        self.nlp_processor = RequirementNLPProcessor()
+        set_active_phrase_map(load_default_phrase_map())
+        self.nlp_processor = RequirementNLPProcessor(
+            phrase_map=ACTIVE_PHRASE_MAP,
+            ignore_quoted_text=self.ignore_quoted_text,
+        )
         self.catalog: list[KeywordEntry] = []
         self.catalog_by_name: dict[str, KeywordEntry] = {}
         self.requirements_context: list[str] = []
+        self.embedding_model: LocalEmbeddingModel | None = None
+        self.keyword_vectors: list[list[float]] = []
+        self.keyword_texts: list[str] = []
 
     def run(self) -> dict:
         if not self.features_root.exists():
@@ -742,6 +1028,8 @@ class FeatureExecutionPipeline:
         self.catalog_by_name = {entry.keyword_name: entry for entry in self.catalog}
         if not self.catalog:
             raise SystemExit("No executable keywords found under resource root.")
+
+        self._prepare_similarity_models()
 
         if self.requirements_path is not None:
             self.requirements_context = load_requirements_dataset(
@@ -823,6 +1111,29 @@ class FeatureExecutionPipeline:
 
         return summary_payload
 
+    def _prepare_similarity_models(self) -> None:
+        if not self.catalog:
+            return
+
+        self.keyword_texts = [
+            entry.normalized_text
+            or normalize_text(
+                f"{entry.keyword_name} {entry.documentation} {' '.join(arg.name for arg in entry.arguments)}",
+                remove_stops=True,
+                ignore_quoted_text=False,
+            )
+            for entry in self.catalog
+        ]
+
+        if self.semantic_weight <= 0:
+            self.embedding_model = None
+            self.keyword_vectors = []
+            return
+
+        self.embedding_model = LocalEmbeddingModel(dimension=self.embedding_dim)
+        self.embedding_model.fit(self.keyword_texts)
+        self.keyword_vectors = self.embedding_model.encode_many(self.keyword_texts)
+
     def _analyze_feature(self, feature: FeatureDocument) -> tuple[list[list[StepExecutionPlan]], list[str]]:
         scenario_plans: list[list[StepExecutionPlan]] = []
         feature_libraries: list[str] = []
@@ -858,7 +1169,11 @@ class FeatureExecutionPipeline:
 
     def _analyze_step(self, step: FeatureStep) -> StepAnalysis:
         processed = self.nlp_processor.preprocess_requirement_text(step.text)
-        normalized_text = normalize_text(step.text, remove_stops=True)
+        normalized_text = normalize_text(
+            step.text,
+            remove_stops=True,
+            ignore_quoted_text=self.ignore_quoted_text,
+        )
         mapping_text = processed.mapping_text.strip() if processed.mapping_text.strip() else step.text
         if self.requirements_context:
             context_hint = self._pick_requirement_context(step.text)
@@ -881,7 +1196,12 @@ class FeatureExecutionPipeline:
         best_text = None
         best_score = 0.0
         for requirement_text in self.requirements_context:
-            score = lexical_similarity(step_text, requirement_text)
+            score = lexical_similarity(
+                step_text,
+                requirement_text,
+                ignore_quoted_text_source=self.ignore_quoted_text,
+                ignore_quoted_text_target=self.ignore_quoted_text,
+            )
             if score > best_score:
                 best_score = score
                 best_text = requirement_text
@@ -893,14 +1213,37 @@ class FeatureExecutionPipeline:
         rule_keyword_name = pick_rule_keyword(analysis.intent)
         if rule_keyword_name and rule_keyword_name in self.catalog_by_name:
             rule_keyword = self.catalog_by_name[rule_keyword_name]
-            rule_args = build_argument_values(rule_keyword, analysis)
-            return rule_keyword.keyword_name, rule_args, 0.98, "rule"
+            rendered_name, rule_args = build_keyword_call(rule_keyword, analysis)
+            return rendered_name, rule_args, 0.98, "rule"
+
+        requirement_vector: list[float] | None = None
+        if self.embedding_model is not None:
+            requirement_text = normalize_text(
+                analysis.mapping_text,
+                remove_stops=True,
+                ignore_quoted_text=self.ignore_quoted_text,
+            )
+            requirement_vector = self.embedding_model.encode(requirement_text)
 
         best_entry: KeywordEntry | None = None
         best_score = -1.0
 
-        for entry in self.catalog:
-            score = lexical_similarity(analysis.mapping_text, f"{entry.keyword_name} {entry.documentation}")
+        for index, entry in enumerate(self.catalog):
+            keyword_text = f"{entry.keyword_name} {entry.documentation} {' '.join(arg.name for arg in entry.arguments)}"
+            semantic_score = 0.0
+            if requirement_vector is not None and index < len(self.keyword_vectors):
+                semantic_score = dot_product(requirement_vector, self.keyword_vectors[index])
+            lexical_score = lexical_similarity(
+                analysis.mapping_text,
+                keyword_text,
+                ignore_quoted_text_source=self.ignore_quoted_text,
+                ignore_quoted_text_target=self.ignore_quoted_text,
+            )
+            element_boost = calculate_element_type_boost(analysis.mapping_text, keyword_text)
+            disambiguation_penalty = calculate_disambiguation_penalty(analysis.mapping_text, keyword_text)
+
+            base_score = (self.semantic_weight * semantic_score) + (self.lexical_weight * lexical_score)
+            score = max(0.0, base_score + element_boost - disambiguation_penalty)
 
             if analysis.intent != "generic":
                 intent_tokens = set(tokenize(analysis.intent.replace("_", " ")))
@@ -914,8 +1257,8 @@ class FeatureExecutionPipeline:
                 best_entry = entry
 
         if best_entry is not None and best_score >= 0.24:
-            semantic_args = build_argument_values(best_entry, analysis)
-            return best_entry.keyword_name, semantic_args, round(min(best_score, 0.95), 4), "semantic"
+            rendered_name, semantic_args = build_keyword_call(best_entry, analysis)
+            return rendered_name, semantic_args, round(min(best_score, 0.95), 4), "semantic"
 
         return "No Operation", [], 0.0, "fallback"
 
@@ -1075,6 +1418,31 @@ def build_argument_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Keep existing output-root files and append/overwrite generated files.",
     )
+    parser.add_argument(
+        "--use-quoted-text",
+        dest="ignore_quoted_text",
+        action="store_false",
+        help="Include quoted values in step similarity scoring.",
+    )
+    parser.set_defaults(ignore_quoted_text=True)
+    parser.add_argument(
+        "--embedding-dim",
+        type=int,
+        default=384,
+        help="Vector dimension for local hashing embedding model.",
+    )
+    parser.add_argument(
+        "--semantic-weight",
+        type=float,
+        default=0.85,
+        help="Weight for embedding similarity in final score.",
+    )
+    parser.add_argument(
+        "--lexical-weight",
+        type=float,
+        default=0.15,
+        help="Weight for lexical similarity in final score.",
+    )
     return parser
 
 
@@ -1090,6 +1458,10 @@ def main() -> int:
         requirements_path=Path(args.requirements) if args.requirements else None,
         requirement_text_field=args.requirement_text_field,
         clean_output=not args.no_clean_output,
+        ignore_quoted_text=args.ignore_quoted_text,
+        semantic_weight=args.semantic_weight,
+        lexical_weight=args.lexical_weight,
+        embedding_dim=args.embedding_dim,
     )
     summary = pipeline.run()
 
