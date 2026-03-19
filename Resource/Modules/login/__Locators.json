@@ -25,7 +25,7 @@
     "Forgot Password": "[data-test=\"login-forgot-password\"]"
   },
   "notification": {
-    "Error": "[data-test=\"login-form\"]"
+    "Error": "[data-test=\"login-error\"]"
   },
   "list": {
     "primary": ""

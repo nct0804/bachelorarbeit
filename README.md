@@ -328,7 +328,6 @@ python3 src/components/semantic/semantic_mapper.py \
 ```
 
 Detailed guide: `docs/semantic-keyword-mapping.md`
-Example phrase-map customization: `scripts/requirements/phrase_map.json`
 NLP preprocessing (`src/components/semantic/nlp_processor.py`) is enabled by default for free-form requirement types.
 
 Single command pipeline (mapper + benchmark + readable report):

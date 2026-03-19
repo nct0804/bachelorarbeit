@@ -12,7 +12,9 @@ QASE_PULL = True
 QASE_PULL_CONFIG_PATH = "src/components/qase/qase.pull.json"
 QASE_CONFIG_PATH = "src/components/qase/qase.config.json"
 QASE_CONNECTOR_INSECURE = True
-QASE_PULL_OUTPUT_DIR = "robot-tests"
+QASE_FEATURE_OUTPUT_DIR = "Features"
+ROBOT_TEST_OUTPUT_DIR = "robot-tests"
+FEATURE_PIPELINE_ANALYSIS_DIR = "Results/feature-pipeline"
 
 
 def _read_json(path: str) -> dict:
@@ -64,7 +66,7 @@ def _pull_tests_from_qase():
     if not QASE_PULL:
         return
 
-    _cleanup_pull_output_dir(QASE_PULL_OUTPUT_DIR)
+    _cleanup_pull_output_dir(QASE_FEATURE_OUTPUT_DIR)
     cmd = [
         sys.executable,
         "src/components/qase/qaseconnector.py",
@@ -72,12 +74,31 @@ def _pull_tests_from_qase():
         QASE_CONFIG_PATH,
         "--pull-config",
         QASE_PULL_CONFIG_PATH,
-        "--g2rf-out",
-        QASE_PULL_OUTPUT_DIR,
+        "--feature-out",
+        QASE_FEATURE_OUTPUT_DIR,
     ]
     if QASE_CONNECTOR_INSECURE:
         cmd.append("--insecure")
 
+    result = subprocess.run(cmd, check=False)
+    if result.returncode != 0:
+        raise SystemExit(result.returncode)
+
+
+def _generate_robot_tests_from_features() -> None:
+    _cleanup_pull_output_dir(ROBOT_TEST_OUTPUT_DIR)
+    cmd = [
+        sys.executable,
+        "src/components/semantic/feature_pipeline.py",
+        "--features-root",
+        QASE_FEATURE_OUTPUT_DIR,
+        "--resource-root",
+        "Resource",
+        "--output-root",
+        ROBOT_TEST_OUTPUT_DIR,
+        "--analysis-dir",
+        FEATURE_PIPELINE_ANALYSIS_DIR,
+    ]
     result = subprocess.run(cmd, check=False)
     if result.returncode != 0:
         raise SystemExit(result.returncode)
@@ -88,8 +109,9 @@ def main():
     os.environ["QASE_CONFIG_PATH"] = QASE_CONFIG_PATH
     _configure_qase_reporting_env()
     _pull_tests_from_qase()
+    _generate_robot_tests_from_features()
     delete_results()
-    start_robot_tests()
+    # start_robot_tests()
 
 
 if __name__ == "__main__":

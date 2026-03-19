@@ -1,7 +1,7 @@
 # Semantic Keyword Mapping
 
 This project includes a requirement-to-keyword semantic mapper for Robot Framework.
-Mapping scope is intentionally constrained to `Gherkin` keywords only.
+The mapper can target **all keywords** or be constrained to **low-level Common keywords** when needed.
 
 ## Purpose
 
@@ -18,6 +18,8 @@ Supported file types:
 - `TXT` / `MD`: one requirement sentence per line (user stories, natural language, bug text)
 - `CSV`: structured or semi-structured rows
 - `JSON`: list of objects or plain string entries
+- `FEATURE`: Gherkin feature files (each step mapped as a requirement)
+- Folder of `.feature` files (recursive)
 
 Example free-form text:
 
@@ -64,7 +66,6 @@ Single-command pipeline (mapper + benchmark + readable report):
 The script uses:
 
 - `scripts/requirements/mixed_requirement_types.txt`
-- `scripts/requirements/phrase_map.json`
 - `Resource`
 - `Results/semantic-mapping`, `Results/semantic-evaluation`, `Results/semantic-readable-report`
 
@@ -81,18 +82,33 @@ python3 src/components/semantic/semantic_mapper.py \
   --output-dir Results/semantic-mapping
 ```
 
-Optional phrase mapping customization:
+Phrase normalization is built into `nlp_processor.py` and applied automatically by default.
+
+### Gherkin Step Mapping (Features)
+
+Map each Gherkin step to low-level keywords:
 
 ```bash
 python3 src/components/semantic/semantic_mapper.py \
-  --requirements scripts/requirements/mixed_requirement_types.txt \
-  --phrase-map-file scripts/requirements/phrase_map.json \
+  --requirements Features \
   --resource-root Resource \
-  --output-dir Results/semantic-mapping
+  --output-dir Results/semantic-mapping-gherkin-low \
+  --top-k 3 \
+  --keyword-scope common
 ```
 
-`phrase_map.json` is shared by both the mapper normalization and the NLP preprocessor.
-This keeps free-form wording normalization consistent across extraction and matching.
+### Keyword Scope
+
+- `--keyword-scope all`: default, includes everything under `Resource/`
+- `--keyword-scope common`: low-level keywords only (recommended for Gherkin steps)
+- `--keyword-scope modules`: module-level keywords only
+
+### Ignore Quoted Values (Arguments)
+
+Quoted values are often **arguments** rather than semantic signals (e.g. `"Sign In"` in `the "Sign In" button should be visible`).
+By default, quoted text is ignored for similarity scoring to avoid false matches.
+
+Use `--use-quoted-text` to include quoted values in similarity scoring when needed.
 
 Disable NLP preprocessing (if needed for ablation):
 
@@ -167,8 +183,9 @@ You can tune the embedding behavior directly in CLI:
 - `--embedding-dim` to change vector size
 - `--strong-threshold` and `--review-threshold` to tune confidence levels
 - `--top-k` to return more or fewer candidate keywords
-- `--phrase-map-file` to inject your own domain synonyms
 - `--disable-nlp-preprocess` to disable free-form NLP structuring
+- `--ignore-quoted-text` or `--use-quoted-text` to toggle quoted-value handling
+- `--keyword-scope` to limit the keyword catalog
 - `--semantic-weight` and `--lexical-weight` for hybrid ranking
 
 Recommended command for thesis experiments:
@@ -188,7 +205,7 @@ Example with stronger lexical influence:
 
 ```bash
 python3 src/components/semantic/semantic_mapper.py \
-  --requirements scripts/requirements/representative_requirements.csv \
+  --requirements scripts/requirements/mixed_requirement_types.txt \
   --resource-root Resource \
   --output-dir Results/semantic-mapping-hybrid-csv-70-30 \
   --embedding-backend auto \
@@ -213,7 +230,6 @@ NLP ablation benchmark (same configs, NLP preprocessing disabled):
 ```bash
 python3 src/components/semantic/semantic_evaluation.py \
   --requirements scripts/requirements/representative_requirements.csv \
-  --phrase-map-file scripts/requirements/phrase_map.json \
   --resource-root Resource \
   --output-root Results/semantic-evaluation-no-nlp \
   --disable-nlp-preprocess
@@ -224,7 +240,6 @@ With mixed requirement types (user stories + functional + bug reports):
 ```bash
 python3 src/components/semantic/semantic_evaluation.py \
   --requirements scripts/requirements/mixed_requirement_types.txt \
-  --phrase-map-file scripts/requirements/phrase_map.json \
   --resource-root Resource \
   --output-root Results/semantic-evaluation-mixed-types
 ```
@@ -233,6 +248,18 @@ Outputs:
 
 - `Results/semantic-evaluation/metrics.csv`
 - `Results/semantic-evaluation/metrics.md`
+
+## Quoted-Value Ablation (RQ3 Support)
+
+Run side-by-side mapping with and without quoted-value filtering:
+
+```bash
+./scripts/run_semantic_quoted_ablation.sh Features Resource Results/semantic-mapping-quoted-ablation common 3
+```
+
+Diff output:
+
+- `Results/semantic-mapping-quoted-ablation/diff.csv`
 - `Results/semantic-evaluation/metrics.json`
 - per-config run artifacts in `Results/semantic-evaluation/runs/`
 
@@ -285,3 +312,12 @@ The requirement-to-keyword mapping stage applies a hybrid similarity model to ra
  --runs-root /Users/ChiThien/Saveloads/HDA/PPundBA/Website-to-learn-German/Results/semantic-evaluation/runs \
  --output-dir /Users/ChiThien/Saveloads/HDA/PPundBA/Website-to-learn-German/Results/semantic-readable-report \
  --config local_hybrid_85_15
+
+python3 src/components/semantic/semantic_mapper.py \
+ --requirements /Users/ChiThien/Saveloads/HDA/PPundBA/Website-to-learn-German/Features/34_sign_in_form_fill_validation.feature \
+ --resource-root Resource \  
+ --output-dir Results/semantic-mapping-hybrid-csv-70-30 \
+ --embedding-backend auto \
+ --top-k 5 \
+ --semantic-weight 0.70 \
+ --lexical-weight 0.30

@@ -5,7 +5,6 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 VENV_PYTHON="$ROOT_DIR/.venv/bin/python"
 
 REQUIREMENTS="$ROOT_DIR/scripts/requirements/mixed_requirement_types.txt"
-PHRASE_MAP_FILE="$ROOT_DIR/scripts/requirements/phrase_map.json"
 RESOURCE_ROOT="$ROOT_DIR/Resource"
 OUTPUT_BASE="$ROOT_DIR/Results"
 
@@ -27,8 +26,6 @@ Usage:
 
 Options:
   --requirements PATH          Requirements file (default: scripts/requirements/mixed_requirement_types.txt)
-  --phrase-map-file PATH       Phrase map JSON file (default: scripts/requirements/phrase_map.json)
-  --no-phrase-map              Disable phrase map usage
   --resource-root PATH         Robot resource root (default: Resource)
   --output-base PATH           Output base directory (default: Results)
   --top-k N                    Top K matches (default: 3)
@@ -79,14 +76,6 @@ while [[ $# -gt 0 ]]; do
         --requirements)
             REQUIREMENTS="$(resolve_path "$2")"
             shift 2
-            ;;
-        --phrase-map-file)
-            PHRASE_MAP_FILE="$(resolve_path "$2")"
-            shift 2
-            ;;
-        --no-phrase-map)
-            PHRASE_MAP_FILE=""
-            shift
             ;;
         --resource-root)
             RESOURCE_ROOT="$(resolve_path "$2")"
@@ -150,11 +139,6 @@ if [[ ! -d "$RESOURCE_ROOT" ]]; then
     exit 2
 fi
 
-if [[ -n "$PHRASE_MAP_FILE" ]] && [[ ! -f "$PHRASE_MAP_FILE" ]]; then
-    echo "Phrase map file not found: $PHRASE_MAP_FILE" >&2
-    exit 2
-fi
-
 MAPPING_DIR="$OUTPUT_BASE/semantic-mapping"
 EVAL_DIR="$OUTPUT_BASE/semantic-evaluation"
 REPORT_DIR="$OUTPUT_BASE/semantic-readable-report"
@@ -188,11 +172,6 @@ EVAL_CMD=(
     --strong-threshold "$STRONG_THRESHOLD"
     --review-threshold "$REVIEW_THRESHOLD"
 )
-
-if [[ -n "$PHRASE_MAP_FILE" ]]; then
-    MAPPER_CMD+=(--phrase-map-file "$PHRASE_MAP_FILE")
-    EVAL_CMD+=(--phrase-map-file "$PHRASE_MAP_FILE")
-fi
 
 if [[ "$DISABLE_NLP_PREPROCESS" == "true" ]]; then
     MAPPER_CMD+=(--disable-nlp-preprocess)

@@ -1,0 +1,45 @@
+{
+    "meta": {
+        "page": "",
+        "version": 1
+    },
+    "page": [
+        "welcome",
+        "welcomepage",
+        "welcome page",
+        "landing",
+        "landing page",
+        "Welcome Page"
+    ],
+    "root": "[data-test=\"page-landing\"]",
+    "button": {
+        "logo": "[data-test=\"landing-logo\"]",
+        "Sign In": "[data-test=\"landing-cta-signin\"]",
+        "Sign Up": "[data-test=\"landing-cta-signup\"]",
+        "Features": "[data-test=\"landing-nav-features\"]",
+        "Reviews": "[data-test=\"landing-nav-reviews\"]",
+        "About": "[data-test=\"landing-nav-about\"]",
+        "Start Learning Now": "[data-test=\"hero-start-learning\"], [data-test=\"hero-start-learning-free\"]"
+
+    },
+    "link": {
+        "Sign In": "[data-test=\"landing-cta-signin\"]",
+        "Sign Up": "[data-test=\"landing-cta-signup\"]"
+    },
+    "textbox": {
+
+    },
+    "checkbox": {
+
+    },
+    "section": {
+        "Hero": "[data-test=\"landing-hero\"]",
+        "Features": "[data-test=\"landing-features\"]",
+        "Reviews": "[data-test=\"landing-testimonials\"]",
+        "About": "[data-test=\"landing-about\"]",
+        "Benefits": "[data-test=\"landing-benefits\"]",
+        "Course Features": "[data-test=\"landing-features\"]",
+        "About Us": "[data-test=\"landing-about\"]",
+        "What Our Students Say": "[data-test=\"landing-testimonials\"]"
+    }
+}

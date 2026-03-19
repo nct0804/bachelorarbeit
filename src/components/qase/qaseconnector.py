@@ -1,27 +1,20 @@
 #!/usr/bin/env python3
-"""Pull Qase TestOps suites/cases and run gherkin2robotframework.
+"""Pull Qase TestOps suites/cases as canonical `.feature` source files.
 
-Outputs:
-- gherkin2robotframework output folder (Robot Framework files)
-
-
-RUN: python3 /Users/ChiThien/Saveloads/HDA/PPundBA/Website-to-learn-german/src/components/qase/qaseconnector.py --insecure
+RUN:
+python3 src/components/qase/qaseconnector.py --insecure
 
 """
 
 from __future__ import annotations
 
 import argparse
-import importlib.util
 import json
 import os
-from pathlib import Path
 import re
 import shutil
-import subprocess
 import sys
 import ssl
-import tempfile
 import urllib.request
 
 DEFAULT_BASE_URL = "https://api.qase.io"
@@ -185,6 +178,17 @@ def _write_text(path: str, content: str) -> None:
         f.write(content)
 
 
+def _reset_dir(path: str) -> str:
+    abs_path = os.path.abspath(path)
+    unsafe_paths = {"/", os.path.expanduser("~")}
+    if abs_path in unsafe_paths:
+        raise ValueError(f"Refusing to delete unsafe path: {abs_path}")
+    if os.path.isdir(abs_path):
+        shutil.rmtree(abs_path)
+    os.makedirs(abs_path, exist_ok=True)
+    return abs_path
+
+
 def _normalize_steps(case: dict) -> list[dict]:
     steps = case.get("steps")
     if isinstance(steps, list):
@@ -288,7 +292,7 @@ def _resolve_suite_ids_by_name(suites: list[dict], wanted_names: set[str]) -> tu
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Pull Qase cases and run gherkin2robotframework.")
+    parser = argparse.ArgumentParser(description="Pull Qase cases and store source .feature files.")
     parser.add_argument("--config", default="qase.config.json", help="Path to qase.config.json")
     parser.add_argument("--base-url", default=os.getenv("QASE_BASE_URL", DEFAULT_BASE_URL))
     parser.add_argument(
@@ -299,7 +303,11 @@ def main() -> int:
         "--token",
         default=os.getenv("QASE_TOKEN") or os.getenv("QASE_TESTOPS_API_TOKEN"),
     )
-    parser.add_argument("--g2rf-out", default="robot-tests", help="Output folder for gherkin2robotframework.")
+    parser.add_argument(
+        "--feature-out",
+        default="Features",
+        help="Output folder for pulled Gherkin feature files.",
+    )
     parser.add_argument(
         "--pull-config",
         default=None,
@@ -389,25 +397,22 @@ def main() -> int:
     suite_map = {s.get("id"): s for s in suites if isinstance(s, dict)}
     cases_by_suite = _build_suite_outputs(cases)
 
-    feature_root = tempfile.mkdtemp(prefix="qase_features_")
+    feature_root = _reset_dir(args.feature_out)
 
     for suite_id, suite_cases in cases_by_suite.items():
-        suite_path_parts = _suite_path(suite_id, suite_map)
         suite_info = suite_map.get(suite_id, {}) if suite_id is not None else {}
         suite_title = suite_info.get("title") or suite_info.get("name") or "unsorted"
-        if not suite_path_parts:
-            suite_path_parts = ["unsorted"]
-
-        suite_slug = _safe_filename(suite_title, "suite")
-        feature_dir = os.path.join(feature_root, *suite_path_parts)
-        feature_file = os.path.join(feature_dir, f"{suite_slug}.feature")
-
-        feature_lines = []
-        feature_lines.append(f"Feature: {suite_title}\n\n")
-
         for case in suite_cases:
             case_id = _get_case_id(case)
             case_title = case.get("title") or case.get("name") or f"Case {case.get('id')}"
+            case_file_prefix = f"{case_id}_" if case_id is not None else ""
+            case_file_name = _safe_filename(f"{case_file_prefix}{case_title}", "case")
+            feature_file = os.path.join(feature_root, f"{case_file_name}.feature")
+
+            feature_lines = []
+            # Keep feature title unique per case for deterministic downstream conversion.
+            feature_lines.append(f"Feature: {_normalize_quotes(case_file_name)}\n\n")
+            feature_lines.append(f"  # Pulled from suite: {_normalize_quotes(suite_title)}\n")
             if case_id is not None:
                 feature_lines.append(f"@Q-{case_id}\n")
             feature_lines.append(f"Scenario: {_normalize_quotes(case_title)}\n")
@@ -441,63 +446,12 @@ def main() -> int:
                 feature_lines.append(f"  {step_line}\n")
             feature_lines.append("\n")
 
-        _write_text(feature_file, "".join(feature_lines))
+            _write_text(feature_file, "".join(feature_lines))
 
-    out_root = os.path.abspath(args.g2rf_out)
-    os.makedirs(out_root, exist_ok=True)
-
-    module_spec = importlib.util.find_spec("gherkin2robotframework")
-    if module_spec is not None:
-        cmd = [sys.executable, "-m", "gherkin2robotframework", feature_root, out_root]
-    else:
-        exe = shutil.which("gherkin2robotframework")
-        if not exe:
-            print("gherkin2robotframework is not available. Install it in the active venv.", file=sys.stderr)
-            return 3
-        cmd = [exe, feature_root, out_root]
-
-    result = subprocess.run(cmd, check=False)
-    if result.returncode != 0:
-        print("gherkin2robotframework failed.", file=sys.stderr)
-        return result.returncode
-
-    settings_block = "*** Settings ***\nResource            ../../Resource/MainLib.resource\n\n"
-    for resource_path in Path(out_root).rglob("*.resource"):
-        content = resource_path.read_text(encoding="utf-8")
-        if "Resource            ../../Resource/MainLib.resource" in content:
-            continue
-        if "*** Settings ***" in content:
-            parts = content.split("*** Settings ***", 1)
-            after = parts[1].lstrip("\n") if len(parts) > 1 else ""
-            content = parts[0] + settings_block + after
-        else:
-            content = settings_block + content
-        resource_path.write_text(content, encoding="utf-8")
-
-    # Prevent autogenerated failing step-definition stubs from shadowing real project keywords.
-    for robot_path in Path(out_root).rglob("*.robot"):
-        content = robot_path.read_text(encoding="utf-8")
-        lines = content.splitlines()
-        filtered_lines: list[str] = []
-        inserted_mainlib = False
-        rel_mainlib = os.path.relpath(Path("Resource/MainLib.resource"), robot_path.parent)
-        rel_mainlib = rel_mainlib.replace("\\", "/")
-        mainlib_line = f"Resource    {rel_mainlib}"
-
-        for line in lines:
-            if "_step_definitions.resource" in line:
-                continue
-            filtered_lines.append(line)
-            if line.strip() == "*** Settings ***":
-                filtered_lines.append(mainlib_line)
-                inserted_mainlib = True
-
-        if not inserted_mainlib:
-            filtered_lines = ["*** Settings ***", mainlib_line, ""] + filtered_lines
-
-        robot_path.write_text("\n".join(filtered_lines) + "\n", encoding="utf-8")
-
-    print(f"Generated {len(cases)} cases across {len(cases_by_suite)} suite folders.")
+    print(
+        f"Pulled {len(cases)} cases across {len(cases_by_suite)} suite groups "
+        f"into features='{feature_root}'."
+    )
     return 0
 
 

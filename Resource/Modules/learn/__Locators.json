@@ -30,7 +30,7 @@
     "link": {
     },
     "textbox": {
-        "Fill Blank Input": "[data-test=\"exercise-fill-blank-input\"]"
+        "Blank Input": "[data-test=\"exercise-fill-blank-input\"]"
     },
     "checkbox": {
     },
@@ -44,7 +44,7 @@
         "Progress": "[data-test=\"learn-exercise-progress-text\"]",
         "Header Bar": "[data-test=\"learn-header-bar\"]",
         "Hearts": "[data-test=\"learn-hearts\"]",
-        "Option": "[data-test^=\"exercise-option-\"]",
+        "Option": "[data-test=\"exercise-option-{index}\"]",
         "Lesson Summary": "[data-test=\"lesson-summary\"]",
         "Lesson Summary Stats": "[data-test=\"lesson-summary-stats\"]",
         "Lesson Summary Recap": "[data-test=\"lesson-summary-recap\"]"

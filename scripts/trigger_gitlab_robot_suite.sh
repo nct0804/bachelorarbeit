@@ -23,7 +23,7 @@ Optional environment variables:
 Usage:
   scripts/trigger_gitlab_robot_suite.sh --suite "Google Search"
   scripts/trigger_gitlab_robot_suite.sh --suite "Smoke Tests,Regression"
-  scripts/trigger_gitlab_robot_suite.sh --suite "Google Search" --branch develop
+  scripts/trigger_gitlab_robot_suite.sh --suite "Google Search" --branch development
 EOF
 }
 

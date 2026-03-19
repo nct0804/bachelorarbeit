@@ -27,7 +27,6 @@
         "Listening": "[data-test=\"challenge-category-listening\"]",
         "Numbers": "[data-test=\"challenge-category-numbers\"]",
         "Speaking": "[data-test=\"challenge-category-speaking\"]",
-        "Card Action": "[data-test^=\"challenge-card-action-\"]",
         "Refresh Quote": "[data-test=\"topbar-quote-refresh\"]",
         "Learn": "[data-test=\"rightbar-lesson-start\"]",
         "Start Challenge": "[data-test=\"rightbar-challenge-start\"]"
@@ -39,6 +38,14 @@
     "checkbox": {
     },
     "tab": {
+        "Home": "[data-test=\"main-nav-home\"]",
+        "Challenge": "[data-test=\"main-nav-challenge\"]",
+        "Ranking": "[data-test=\"main-nav-ranking\"]",
+        "Pronunciation": "[data-test=\"main-nav-pronunciation\"]",
+        "Speak": "[data-test=\"main-nav-speak\"]",
+        "Review": "[data-test=\"main-nav-review\"]",
+        "Inbox": "[data-test=\"main-nav-inbox\"]",
+        "Achievements": "[data-test=\"main-nav-achievements\"]"
     },
     "messagebox": {
     },

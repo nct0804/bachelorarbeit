@@ -5,26 +5,20 @@ Resource            common.resource
 
 
 *** Keywords ***
-List Should Be Visible
+Click List Item '${NAME}' At Index '${INDEX}'
+    [Documentation]    Click a list locator using an index. Supports both {index} placeholders and nth-based selection.
+
+    Click Category Element At Index    list    ${NAME}    ${INDEX}
+
+List '${NAME}' Should Be Visible
     [Documentation]    Assert that a list locator is visible.
-    [Tags]    basic
-    [Arguments]    ${NAME}
+
     Category Element Should Be Visible    list    ${NAME}
 
-List Item Count Should Be At Least
+List Item '${NAME}' Count Should Be At Least '${MIN_COUNT}'
     [Documentation]    Assert that list locator has at least expected item count.
-    [Tags]    basic
-    [Arguments]    ${NAME}    ${MIN_COUNT}=1
+    [Arguments]    ${MIN_COUNT}=1
+
     ${COUNT}=    Get Category Element Count    list    ${NAME}
     ${COUNT_OK}=    Evaluate    int($COUNT) >= int($MIN_COUNT)
     Should Be True    ${COUNT_OK}
-
-the '${List}' list should be visible
-    [Documentation]    Assert that the named list is visible.
-    [Tags]    gherkin
-    List Should Be Visible    ${List}
-
-the '${List}' list should have at least '${Count}' items
-    [Documentation]    Assert list has at least the expected number of items.
-    [Tags]    gherkin
-    List Item Count Should Be At Least    ${List}    ${Count}

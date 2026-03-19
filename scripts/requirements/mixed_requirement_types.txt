@@ -1,9 +1,0 @@
-As a user, I want to log in using "test@gmail.com" as my account and "password123" as my password.
-I want to sign in with my email and password so that I can access my learning dashboard.
-As a user, I want to perform login and navigate to challenge tab.
-As a user, I want to open the challenge tab after login.
-As a user, I want to open the sign up page from sign in text link.
-The system should display an error notification when login credentials are invalid.
-The system must show the Remember Me checkbox on the sign-in page.
-the confirmation message does not appear.
-Issue: ranking filter fails when selecting this week andBug report: after clicking logout, this month.

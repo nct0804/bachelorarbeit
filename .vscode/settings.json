@@ -14,5 +14,7 @@
     "[robotframework]": {
         "editor.defaultFormatter": "d-biehl.robotcode",
         "editor.codeLens": true
-    }
+    },
+    "diffEditor.codeLens": true,
+    "testing.alwaysRevealTestOnStateChange": true
 }

@@ -6,7 +6,7 @@ Library             OperatingSystem
 Library             String
 Library             Browser
 Resource            Common/__lib.resource
-Resource            Modules/Homepage/__lib.resource
+Resource            Modules/welcomepage/__lib.resource
 Resource            Modules/login/__lib.resource
 Resource            Modules/register/__lib.resource
 Resource            Modules/mainpage/__lib.resource
