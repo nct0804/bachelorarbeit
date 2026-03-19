@@ -28,7 +28,7 @@ variables:
   FEATURE_PIPELINE_REQUIREMENT_TEXT_FIELD: ""
   FEATURE_PIPELINE_NO_CLEAN_OUTPUT: "false"
   QASE_PULL_CONFIG: "src/components/qase/qase.pull.ci.json"
-  QASE_PULL_SUITE_NAMES: "Google Search"
+  QASE_PULL_SUITE_NAMES: "Human2"
   QASE_PULL_SUITE_IDS: ""
   QASE_PULL_CASE_IDS: ""
   QASE_MODE: "testops"
