@@ -635,9 +635,11 @@ def extract_entities(step_text: str) -> StepEntities:
         list_name = list_match.group(1) or list_match.group(2)
 
     value = None
-    if re.search(r"\b(enter|type|input)\w*\b", lowered) and len(quoted_values) >= 2:
+    # Remove quoted text before checking for action verbs to avoid matching words inside element names
+    lowered_no_quotes = QUOTED_TEXT_PATTERN.sub("", lowered)
+    if re.search(r"\b(enter|type|input)\w*\b", lowered_no_quotes) and len(quoted_values) >= 2:
         value = quoted_values[0]
-    elif re.search(r"\bfill\w*\b", lowered) and len(quoted_values) >= 2:
+    elif re.search(r"\bfill\w*\b", lowered_no_quotes) and len(quoted_values) >= 2:
         value = quoted_values[-1]
     else:
         value_match = re.search(r"(?:with|to)\s+(?:'([^']+)'|\"([^\"]+)\")", step_text, re.IGNORECASE)
