@@ -312,3 +312,12 @@ The requirement-to-keyword mapping stage applies a hybrid similarity model to ra
  --runs-root /Users/ChiThien/Saveloads/HDA/PPundBA/Website-to-learn-German/Results/semantic-evaluation/runs \
  --output-dir /Users/ChiThien/Saveloads/HDA/PPundBA/Website-to-learn-German/Results/semantic-readable-report \
  --config local_hybrid_85_15
+
+python3 src/components/semantic/semantic_mapper.py \
+ --requirements /Users/ChiThien/Saveloads/HDA/PPundBA/Website-to-learn-German/Features/34_sign_in_form_fill_validation.feature \
+ --resource-root Resource \  
+ --output-dir Results/semantic-mapping-hybrid-csv-70-30 \
+ --embedding-backend auto \
+ --top-k 5 \
+ --semantic-weight 0.70 \
+ --lexical-weight 0.30

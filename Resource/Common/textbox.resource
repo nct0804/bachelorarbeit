@@ -26,3 +26,10 @@ Textbox '${NAME}' Value Should Contain '${EXPECTED_VALUE}'
     ${SELECTOR}=    Get Locator In Category    textbox    ${NAME}
     ${VALUE}=    Get Property    css=${SELECTOR}    value
     Should Contain    ${VALUE}    ${EXPECTED_VALUE}
+
+Textbox '${NAME}' Should Be Empty
+    [Documentation]    validate that a textbox locator is empty.
+
+    ${SELECTOR}=    Get Locator In Category    textbox    ${NAME}
+    ${VALUE}=    Get Property    css=${SELECTOR}    value
+    Should Be Empty    ${VALUE}

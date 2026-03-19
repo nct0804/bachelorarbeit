@@ -15,5 +15,4 @@ Link '${NAME}' Should Be Visible
 
 Link '${NAME}' Should Contain Text '${EXPECTED_TEXT}'
     [Documentation]    Assert that a link locator contains expected text.
-
     Category Element Text Should Contain    link    ${NAME}    ${EXPECTED_TEXT}

@@ -13,13 +13,12 @@ Pronunciation Page Should Be Ready
 
 Select Pronunciation Group At Index
     [Documentation]    Select a pronunciation group by index.
-    [Arguments]    ${INDEX}=0
-
+    [Arguments]    ${INDEX}=01
     Click List Item 'Group' At Index '${INDEX}'
 
 Select Pronunciation Sound At Index
     [Documentation]    Select a pronunciation sound by index.
-    [Arguments]    ${INDEX}=0
+    [Arguments]    ${INDEX}=1
 
     Click List Item 'Sound' At Index '${INDEX}'
 

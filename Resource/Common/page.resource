@@ -18,7 +18,6 @@ Go To '${PAGE}' Page
 
 Open '${PAGE}' From '${FROM_PAGE}' Page
     [Documentation]    From a specified page, navigate to another page and validate it is opened.
-    [Arguments]    ${PAGE}    ${FROM_PAGE}
 
     Validate Page '${FROM_PAGE}' Is Opened
     Navigate To Page '${PAGE}'

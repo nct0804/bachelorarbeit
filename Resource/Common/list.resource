@@ -5,14 +5,8 @@ Resource            common.resource
 
 
 *** Keywords ***
-Click List Item '${NAME}'
-    [Documentation]    Click a list locator by logical name.
-
-    Click Category Element    list    ${NAME}
-
 Click List Item '${NAME}' At Index '${INDEX}'
-    [Documentation]    Click a list locator using an index for repeated selectors.
-    [Arguments]    ${INDEX}=0
+    [Documentation]    Click a list locator using an index. Supports both {index} placeholders and nth-based selection.
 
     Click Category Element At Index    list    ${NAME}    ${INDEX}
 

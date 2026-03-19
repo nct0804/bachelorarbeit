@@ -5,8 +5,8 @@ Resource            ../../Common/__lib.resource
 
 
 *** Variables ***
-${TEST_EMAIL}       ${EMPTY}
-${TEST_PASSWORD}    ${EMPTY}
+${TEST_EMAIL}       chithien.nguyen@germangains.com
+${TEST_PASSWORD}    password123
 
 
 *** Keywords ***
@@ -23,25 +23,14 @@ Sign In Page Validation
 Fill Sign In Form
     [Documentation]    Fill sign-in form fields with provided credentials.
     [Arguments]    ${EMAIL}    ${PASSWORD}
-
-    Go To 'Sign In' Page
     Fill Textbox 'Email Address' with Value '${EMAIL}'
     Fill Textbox 'Password' with Value '${PASSWORD}'
-
-Submit Sign In Form
-    [Documentation]    Submit the sign-in form.
-
-    Go To 'Sign In' Page
-    Click Button 'Sign In'
-    Wait For Load State    networkidle    timeout=15s
 
 Sign In With Credentials
     [Documentation]    Fill and submit sign-in form with provided credentials.
     [Arguments]    ${EMAIL}    ${PASSWORD}
-
-    Go To 'Sign In' Page
     Fill Sign In Form    ${EMAIL}    ${PASSWORD}
-    Submit Sign In Form
+    Click Button 'Sign In'
     ${ON_MAIN_PAGE}=    Run Keyword And Return Status    Validate Page 'Main Learning Page' Is Opened
     IF    not ${ON_MAIN_PAGE}
         Navigate To Page 'Main Learning Page'
@@ -50,8 +39,6 @@ Sign In With Credentials
 
 Sign In With Suite Credentials
     [Documentation]    Sign in using suite-level credential variables.
-
-    Go To 'Sign In' Page
     Should Not Be Empty    ${TEST_EMAIL}
     Should Not Be Empty    ${TEST_PASSWORD}
     Sign In With Credentials    ${TEST_EMAIL}    ${TEST_PASSWORD}

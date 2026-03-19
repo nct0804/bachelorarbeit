@@ -88,7 +88,7 @@ Reset Quick Practice
 
 Select Quick Practice Option At Index
     [Documentation]    Select a quick practice option by index.
-    [Arguments]    ${INDEX}=0
+    [Arguments]    ${INDEX}=1
 
     Click Button 'Quick Practice Option' At Index '${INDEX}'
 

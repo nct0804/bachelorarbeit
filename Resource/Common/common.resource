@@ -55,8 +55,9 @@ Open Browser '${BROWSER}' Session
 
     ${ENGINE}=    Resolve Browser '${BROWSER}' Type
     ${HEADLESS_BOOL}=    Evaluate    str($HEADLESS).lower() in ['true', '1', 'yes']
+
     New Browser    ${ENGINE}    headless=${HEADLESS_BOOL}    args=["--start-maximized"]
-    New Context    viewport={'width': 1920, 'height': 1080}
+    New Context    viewport=None
     New Page    ${BASE_URL}/
     Wait For Load State    domcontentloaded
 
@@ -92,11 +93,11 @@ Validate Page '${PAGE}' Is Opened
     Wait For Load State    domcontentloaded
     Validate Current Page Root
 
-Open Page '${PAGE}' From Main Navigation By Clicking '${BUTTON}' button
+Open Page '${PAGE}' From Main Navigation By Clicking '${BUTTON}' Button
     [Documentation]    Click a main navigation button and validate the target page is opened.
 
-    Click Button '${BUTTON}'  
-    Validate Page '${PAGE}' Is Opened    
+    Click Button '${BUTTON}'
+    Validate Page '${PAGE}' Is Opened
 
 Wait For Category Element State
     [Documentation]    Wait for a locator category element to reach target state.
@@ -131,12 +132,25 @@ Click Category Element
     Click    css=${SELECTOR}
 
 Click Category Element At Index
-    [Documentation]    Click indexed element for selector-based locator entries.
-    [Arguments]    ${CATEGORY}    ${NAME}    ${INDEX}=0
+    [Documentation]    Click indexed element. Supports both {index} placeholder and nth-based selection.
+    [Arguments]    ${CATEGORY}    ${NAME}    ${INDEX}=1
 
     ${SELECTOR}=    Get Locator In Category    ${CATEGORY}    ${NAME}
-    Wait For Elements State    css=${SELECTOR}    visible    timeout=15s
-    Click    css=${SELECTOR} >> nth=${INDEX}
+
+    # Check if selector contains {index} placeholder
+    ${HAS_PLACEHOLDER}=    Run Keyword And Return Status    Should Contain    ${SELECTOR}    {index}
+
+    IF    ${HAS_PLACEHOLDER}
+        # Replace {index} placeholder with actual index value
+        ${SELECTOR}=    Replace String    ${SELECTOR}    {index}    ${INDEX}
+        Log    Replaced {index} placeholder: ${SELECTOR}
+        Wait For Elements State    css=${SELECTOR}    visible    timeout=15s
+        Click    css=${SELECTOR}
+    ELSE
+        # Use nth-based selection for standard selectors
+        Wait For Elements State    css=${SELECTOR}    visible    timeout=15s
+        Click    css=${SELECTOR} >> nth=${INDEX}
+    END
 
 Fill Category Element
     [Documentation]    Fill text into a category element by name.

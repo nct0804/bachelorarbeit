@@ -9,9 +9,8 @@ Click Button '${NAME}'
     [Documentation]    Click a button locator by logical name.
     Click Category Element    button    ${NAME}
 
-Click Button '${NAME}' At Index
+Click Button '${NAME}' At Index '${INDEX}'
     [Documentation]    Click a button locator using an index for repeated selectors.
-    [Arguments]    ${INDEX}=0
     Click Category Element At Index    button    ${NAME}    ${INDEX}
 
 Button '${NAME}' Should Be Visible

@@ -27,7 +27,6 @@
         "Listening": "[data-test=\"challenge-category-listening\"]",
         "Numbers": "[data-test=\"challenge-category-numbers\"]",
         "Speaking": "[data-test=\"challenge-category-speaking\"]",
-        "Card Action": "[data-test^=\"challenge-card-action-\"]",
         "Refresh Quote": "[data-test=\"topbar-quote-refresh\"]",
         "Learn": "[data-test=\"rightbar-lesson-start\"]",
         "Start Challenge": "[data-test=\"rightbar-challenge-start\"]"

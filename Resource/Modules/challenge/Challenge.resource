@@ -12,8 +12,7 @@ Select Challenge Category
 
     Click Button '${CATEGORY}'
 
-Start Challenge Card At Index
+Start Challenge Card At '${INDEX}'
     [Documentation]    Start a challenge card by index.
-    [Arguments]    ${INDEX}=0
 
-    Click Button 'Card Action' At Index    ${INDEX}
+    Click Button 'Card Action' At Index '${INDEX}'

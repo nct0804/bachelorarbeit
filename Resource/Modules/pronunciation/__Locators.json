@@ -46,8 +46,8 @@
         "Error": "[data-test=\"pronunciation-error\"]"
     },
     "list": {
-        "Group": "[data-test^=\"pronunciation-group-\"]",
-        "Sound": "[data-test^=\"pronunciation-sound-\"]"
+        "Group": "[data-test=\"pronunciation-group-{index}\"]",
+        "Sound": "[data-test=\"pronunciation-sound-{index}\"]"
     },
     "modal": {
     }
