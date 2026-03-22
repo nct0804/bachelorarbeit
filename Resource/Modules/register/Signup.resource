@@ -5,11 +5,11 @@ Resource            ../../Common/__lib.resource
 
 
 *** Variables ***
-${TEST_FIRST_NAME}      ${EMPTY}
-${TEST_LAST_NAME}       ${EMPTY}
-${TEST_USERNAME}        ${EMPTY}
-${TEST_EMAIL}           ${EMPTY}
-${TEST_PASSWORD}        ${EMPTY}
+${FIRST_NAME}       Chi Thien
+${LAST_NAME}        Nguyen
+${USERNAME}         chithien.nguyen1
+${EMAIL}            chithien.nguyen1@germangains.com
+${PASSWORD}         password123
 
 
 *** Keywords ***
@@ -48,21 +48,6 @@ Sign Up With Information
 
     Fill Registration Form    ${FIRST_NAME}    ${LAST_NAME}    ${USERNAME}    ${EMAIL}    ${PASSWORD}
     Submit Registration Form
-
-Sign Up With Suite Information
-    [Documentation]    Fill and submit sign-up form using suite-level variables.
-
-    Should Not Be Empty    ${TEST_FIRST_NAME}
-    Should Not Be Empty    ${TEST_LAST_NAME}
-    Should Not Be Empty    ${TEST_USERNAME}
-    Should Not Be Empty    ${TEST_EMAIL}
-    Should Not Be Empty    ${TEST_PASSWORD}
-    Sign Up With Information
-    ...    ${TEST_FIRST_NAME}
-    ...    ${TEST_LAST_NAME}
-    ...    ${TEST_USERNAME}
-    ...    ${TEST_EMAIL}
-    ...    ${TEST_PASSWORD}
 
 Registration Error Should Be Visible
     [Documentation]    Assert registration error message box is visible.
