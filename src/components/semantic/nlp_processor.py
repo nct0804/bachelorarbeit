@@ -49,7 +49,7 @@ class RequirementNLPProcessor:
     "signup page": "sign up", "sign up page": "sign up",
     "sign-up page": "sign up", "register page": "sign up",
     "main learning page": "main page", "main layout": "main page",
-    "dashboard": "main page",
+    "dashboard": "page",
     "leaderboard": "ranking",
     "leaderboard page": "ranking",
     "sound page": "pronunciation",
