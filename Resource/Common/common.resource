@@ -51,7 +51,7 @@ Resolve Page '${PAGE}' Route
 
 Open Browser '${BROWSER}' Session
     [Documentation]    Open browser session and navigate to base URL.
-    [Arguments]    ${BROWSER}=chromium
+    [Arguments]    ${BROWSER}=firefox
 
     ${ENGINE}=    Resolve Browser '${BROWSER}' Type
     ${HEADLESS_BOOL}=    Evaluate    str($HEADLESS).lower() in ['true', '1', 'yes']

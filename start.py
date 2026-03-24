@@ -4,7 +4,7 @@ import sys
 import json
 import shutil
 
-from src.components.robot_component import delete_results, start_robot_tests
+from src.components.robot_component import delete_results, delete_testcase, start_robot_tests
 
 
 QASE_REPORT = False
@@ -107,11 +107,12 @@ def _generate_robot_tests_from_features() -> None:
 def main():
     os.environ["QASE_REPORT"] = "true" if QASE_REPORT else "false"
     os.environ["QASE_CONFIG_PATH"] = QASE_CONFIG_PATH
-    _configure_qase_reporting_env()
-    _pull_tests_from_qase()
+    #_configure_qase_reporting_env()
+    delete_testcase()   
+    # _pull_tests_from_qase()
     _generate_robot_tests_from_features()
-    delete_results()
-    # start_robot_tests()
+    #delete_results()
+    #start_robot_tests()
 
 
 if __name__ == "__main__":

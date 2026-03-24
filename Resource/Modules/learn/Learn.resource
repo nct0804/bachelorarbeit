@@ -27,11 +27,3 @@ Try Learn Again
     [Documentation]    Retry the current learn exercise.
 
     Click Button 'Try Again'
-
-Exit Learn Session
-    [Documentation]    Exit the learn session and return to the main page.
-
-    Click Button 'Exit'
-    Messagebox 'Exit Modal' Should Be Visible
-    Click Button 'Back to Home'
-    Validate Page 'Main Page' Is Opened
