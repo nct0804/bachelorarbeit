@@ -32,9 +32,7 @@ Ensure Locator Map Is Loaded
     [Documentation]    Ensure locators are loaded before locator-based interactions.
 
     ${HAS_MAP}=    Run Keyword And Return Status    Should Not Be Equal    ${LOC}    ${NONE}
-    IF    not ${HAS_MAP}
-        Fail    No locator map loaded. Call "the user is on the '<Page>' page" first.
-    END
+    IF    not ${HAS_MAP}    Fail    call Page Validate.
 
 Get Locator File For Page
     [Documentation]    Find locator file whose aliases include the requested page name.

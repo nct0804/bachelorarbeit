@@ -23,9 +23,9 @@ Close Main Menu
     ${check}=    Run Keyword And Return    Validate Category Elements If Present    list    More Panel
     IF    ${check}    Click Button    Menu Toggle
 
-Open '${PAGE}' From Main Menu
+Open Page From Main Menu
     [Documentation]    Open the specified page from the main menu.
-
+    [Arguments]    ${PAGE}
     Open Main Menu
     Click Button    ${PAGE}
     Validate Page Is Opened    ${PAGE}
