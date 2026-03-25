@@ -385,6 +385,19 @@ class RequirementNLPProcessor:
                             target="${NAME}",
                             value=str(minimum_count),
                         )
+                    checkbox_state_match = re.search(
+                        r"\b(?:state|status)\b.*\b(checked|unchecked|check|uncheck|true|false|on|off)\b",
+                        clause,
+                    )
+                    if "checkbox" in clause and checkbox_state_match:
+                        state_value = checkbox_state_match.group(1)
+                        element_name = get_original_name(0)
+                        return RequirementAction(
+                            action_type=action_type,
+                            action_text=f"checkbox '{element_name}' state should be '{state_value}'",
+                            target=element_name,
+                            value=state_value,
+                        )
                     if re.search(r"\bcontain(s)?\b", clause):
                         if re.search(r"\btextbox\b|\bfield\b", clause):
                             return RequirementAction(
@@ -517,7 +530,7 @@ class RequirementNLPProcessor:
     def _format_click_keyword(self, element_type: str, target: str, index_value: int | None) -> str:
         name_token = target or "${NAME}"
         if element_type == "checkbox":
-            return f"set checkbox '{name_token}' to checked state"
+            return f"click checkbox '{name_token}'"
         if element_type == "link":
             return f"click link '{name_token}'"
         if element_type == "tab":

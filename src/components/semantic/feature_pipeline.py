@@ -171,6 +171,7 @@ class StepEntities:
     button: str | None
     text_name: str | None
     checkbox: str | None
+    checkbox_state: str | None
     notification: str | None
     list_name: str | None
     value: str | None
@@ -624,6 +625,11 @@ def extract_entities(step_text: str) -> StepEntities:
     if checkbox_match:
         checkbox = checkbox_match.group(1) or checkbox_match.group(2)
 
+    checkbox_state = None
+    state_match = re.search(r"\b(checked|unchecked|check|uncheck|true|false|on|off)\b", lowered)
+    if state_match:
+        checkbox_state = state_match.group(1)
+
     notification = None
     notification_match = re.search(r"(?:'([^']+)'|\"([^\"]+)\")\s+notification", step_text, re.IGNORECASE)
     if notification_match:
@@ -663,6 +669,7 @@ def extract_entities(step_text: str) -> StepEntities:
         button=button,
         text_name=text_name,
         checkbox=checkbox,
+        checkbox_state=checkbox_state,
         notification=notification,
         list_name=list_name,
         value=value,
@@ -693,6 +700,10 @@ def detect_intent(step_text: str) -> str:
         return "click_button"
     if re.search(r"\bclick\w*\b.+\bcheckbox\b", lowered):
         return "click_checkbox"
+    if re.search(r"\bcheckbox\b.+\b(state|status)\b.+\b(checked|unchecked|check|uncheck|true|false|on|off)\b", lowered):
+        return "checkbox_state_assert"
+    if re.search(r"\bverify\w*\b.+\bcheckbox\b.+\b(state|status)\b", lowered):
+        return "checkbox_state_assert"
     if re.search(r"\bclick\w*\b.+\b(text|link)\b", lowered):
         return "click_text"
     if re.search(r"\bclick\w*\b", lowered):
@@ -740,31 +751,31 @@ def recommend_libraries(step_text: str) -> list[str]:
     return list(dict.fromkeys(libraries))
 
 
-def pick_rule_keyword(intent: str) -> str | None:
+def pick_rule_keywords(intent: str) -> list[str]:
+    # Use concrete project keyword names so rule mapping stays deterministic.
     rule_map = {
-        "open_browser": "Open Browser '${BROWSER}' Session",
-        "close_browser": "Close Browser Session",
-        "navigate_page": "Navigate To Page '${PAGE}'",
-        "validate_page": "'${PAGE}' Page Should Be Ready",
-        "sign_in_credentials": "Sign In With Credentials",
-        "sign_up": "Sign Up With Information",
-        "fill_textbox": "Fill Textbox '${NAME}' With Value '${VALUE}'",
-        "clear_textbox": "Clear Textbox '${NAME}'",
-        "click_button": "Click Button '${NAME}'",
-        "click_checkbox": "Set Checkbox '${NAME}' To '${STATE}' State",
-        "click_text": "Click Text '${NAME}'",
-        "textbox_contains": "Textbox '${NAME}' Value Should Contain '${EXPECTED_VALUE}'",
-        "textbox_visible": "Textbox '${NAME}' Should Be Visible",
-        "button_visible": "Button '${NAME}' Should Be Visible",
-        "text_visible": "Text '${NAME}' Should Be Visible",
-        "checkbox_visible": "Checkbox '${NAME}' Should Be Visible",
-        "notification_contains": "Notification '${NAME}' Should Contain Text '${EXPECTED_TEXT}'",
-        "notification_visible": "Notification '${NAME}' Should Be Visible",
-        "messagebox_visible": "Messagebox '${NAME}' Should Be Visible",
-        "list_count": "List Item '${NAME}' Count Should Be At Least '${MIN_COUNT}'",
-        "list_visible": "List '${NAME}' Should Be Visible",
+        "open_browser": ["Open Browser Session"],
+        "close_browser": ["Close Browser Session"],
+        "navigate_page": ["Navigate To Page"],
+        "validate_page": ["Page Should Be Ready"],
+        "fill_textbox": ["Fill Textbox With Value", "Fill Textbox"],
+        "clear_textbox": ["Clear Textbox"],
+        "click_button": ["Click Button"],
+        "click_checkbox": ["Click Checkbox", "Set Checkbox To State"],
+        "click_text": ["Click Text"],
+        "textbox_contains": ["Textbox Contain Value"],
+        "textbox_visible": ["Textbox Should Be Visible"],
+        "button_visible": ["Button Should Be Visible"],
+        "text_visible": ["Text Should Be Visible"],
+        "checkbox_visible": ["Checkbox Should Be Visible"],
+        "checkbox_state_assert": ["Checkbox State Should Be", "Verify If The Checkbox Status Is State"],
+        "notification_contains": ["Notification Should Contain Text"],
+        "notification_visible": ["Notification Should Be Visible"],
+        "messagebox_visible": ["Messagebox Should Be Visible"],
+        "list_count": ["List Item Count Should Be At Least"],
+        "list_visible": ["List Should Be Visible"],
     }
-    return rule_map.get(intent)
+    return rule_map.get(intent, [])
 
 
 def argument_name_key(arg_name: str) -> str:
@@ -826,6 +837,10 @@ def infer_argument_value(arg_name: str, analysis: StepAnalysis, quote_cursor: in
         return (entities.numbers[0] if entities.numbers else "1", quote_cursor)
     if key in {"STATUS"}:
         return (next_quote("successful"), quote_cursor)
+    if key in {"STATE", "EXPECTED_STATE", "TARGET_STATE"}:
+        if entities.checkbox_state:
+            return (entities.checkbox_state, quote_cursor)
+        return (next_quote("checked"), quote_cursor)
 
     return (next_quote(""), quote_cursor)
 
@@ -1212,11 +1227,11 @@ class FeatureExecutionPipeline:
         return best_text
 
     def _map_step_to_keyword(self, analysis: StepAnalysis) -> tuple[str, list[str], float, str]:
-        rule_keyword_name = pick_rule_keyword(analysis.intent)
-        if rule_keyword_name and rule_keyword_name in self.catalog_by_name:
-            rule_keyword = self.catalog_by_name[rule_keyword_name]
-            rendered_name, rule_args = build_keyword_call(rule_keyword, analysis)
-            return rendered_name, rule_args, 0.98, "rule"
+        for rule_keyword_name in pick_rule_keywords(analysis.intent):
+            if rule_keyword_name in self.catalog_by_name:
+                rule_keyword = self.catalog_by_name[rule_keyword_name]
+                rendered_name, rule_args = build_keyword_call(rule_keyword, analysis)
+                return rendered_name, rule_args, 0.98, "rule"
 
         requirement_vector: list[float] | None = None
         if self.embedding_model is not None:
