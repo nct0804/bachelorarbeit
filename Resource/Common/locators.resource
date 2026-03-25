@@ -13,9 +13,9 @@ ${LOCATOR_FILE}     ${EMPTY}
 
 
 *** Keywords ***
-Normalize Page '${PAGE}' Name
-    [Documentation]    Normalize a page name value for case-insensitive matching. 
-
+Normalize Page Name
+    [Documentation]    Normalize a page name value for case-insensitive matching.
+    [Arguments]    ${PAGE}
     ${TEXT}=    Convert To String    ${PAGE}
     ${TEXT}=    Strip String    ${TEXT}
     ${TEXT}=    Convert To Lowercase    ${TEXT}
@@ -36,12 +36,12 @@ Ensure Locator Map Is Loaded
         Fail    No locator map loaded. Call "the user is on the '<Page>' page" first.
     END
 
-Get Locator File For Page '${PAGE}'
+Get Locator File For Page
     [Documentation]    Find locator file whose aliases include the requested page name.
-
+    [Arguments]    ${PAGE}
     ${MODULES_DIR}=    Set Variable    ${CURDIR}/../Modules
     @{DIRS}=    List Directories In Directory    ${MODULES_DIR}
-    ${PAGE_KEY}=    Normalize Page '${PAGE}' Name 
+    ${PAGE_KEY}=    Normalize Page Name    ${PAGE}
     FOR    ${DIR}    IN    @{DIRS}
         ${FILE}=    Set Variable    ${MODULES_DIR}/${DIR}/__Locators.json
         ${EXISTS}=    Run Keyword And Return Status    File Should Exist    ${FILE}
@@ -56,7 +56,7 @@ Get Locator File For Page '${PAGE}'
                 ${ALIAS_LIST}=    Evaluate    [$ALIASES]
             END
             FOR    ${ALIAS}    IN    @{ALIAS_LIST}
-                ${ALIAS_KEY}=    Normalize Page '${ALIAS}' Name
+                ${ALIAS_KEY}=    Normalize Page Name    ${ALIAS}
                 IF    '${ALIAS_KEY}' == '${PAGE_KEY}'    RETURN    ${FILE}
             END
         END
@@ -68,7 +68,7 @@ Load Locators
     [Arguments]    ${PAGE}
 
     Clear Locators
-    ${FILE}=    Get Locator File For Page '${PAGE}'
+    ${FILE}=    Get Locator File For Page    ${PAGE}
     ${RAW}=    Get File    ${FILE}
     ${DATA}=    Evaluate    json.loads($RAW)    json
     Set Suite Variable    ${LOC}    ${DATA}

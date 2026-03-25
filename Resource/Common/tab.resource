@@ -5,12 +5,12 @@ Resource            common.resource
 
 
 *** Keywords ***
-Click Tab '${NAME}'
+Click Tab
     [Documentation]    Click a tab locator by logical name.
-
+    [Arguments]    ${NAME}
     Click Category Element    tab    ${NAME}
 
-Tab '${NAME}' Should Be Visible
+Tab Should Be Visible
     [Documentation]    Assert that a tab locator is visible.
-
+    [Arguments]    ${NAME}
     Category Element Should Be Visible    tab    ${NAME}

@@ -9,7 +9,7 @@ Resource            ../../MainLib.resource
 Welcome Page Validation
     [Documentation]    Validate core welcome page sections are visible.
 
-    Validate Page 'Welcome Page' Is Opened
+    Validate Page Is Opened    Welcome Page
     Validate Category Elements If Present    section
     ...    Hero
     ...    Features

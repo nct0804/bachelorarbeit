@@ -5,8 +5,9 @@ Resource            common.resource
 
 
 *** Keywords ***
-Set Checkbox '${NAME}' To '${STATE}' State
+Set Checkbox To State
     [Documentation]    Set checkbox to target state (checked/unchecked). Only clicks if state needs to change.
+    [Arguments]    ${NAME}    ${STATE}
 
     ${SELECTOR}=    Get Locator In Category    checkbox    ${NAME}
 
@@ -31,19 +32,19 @@ Set Checkbox '${NAME}' To '${STATE}' State
         Log    Checkbox '${NAME}' is already unchecked, no action needed
     END
 
-Checkbox '${NAME}' Should Be Visible
+Checkbox Should Be Visible
     [Documentation]    Assert that a checkbox locator is visible.
-
+    [Arguments]    ${NAME}
     Category Element Should Be Visible    checkbox    ${NAME}
 
-Click Checkbox '${NAME}'
+Click Checkbox
     [Documentation]    Click a checkbox locator by logical name.
-
+    [Arguments]    ${NAME}
     Click Category Element    checkbox    ${NAME}
 
-Verify If The Checkbox '${NAME}' Status Is '${TARGET_STATE}' State
+Verify If The Checkbox Status Is State
     [Documentation]    Check the checkbox if it is in the target state (checked/unchecked).
-
+    [Arguments]    ${NAME}    ${TARGET_STATE}
     ${SELECTOR}=    Get Locator In Category    checkbox    ${NAME}
 
     # Get current state from aria-checked attribute
@@ -65,3 +66,16 @@ Verify If The Checkbox '${NAME}' Status Is '${TARGET_STATE}' State
     ELSE
         Log    Checkbox '${NAME}' is already in expected state: unchecked
     END
+
+Checkbox State Should Be
+    [Documentation]    Assert checkbox state equals expected value (checked/unchecked).
+    [Arguments]    ${NAME}    ${EXPECTED_STATE}
+
+    ${SELECTOR}=    Get Locator In Category    checkbox    ${NAME}
+    ${ARIA_CHECKED}=    Get Attribute    css=${SELECTOR}    aria-checked
+    ${IS_CHECKED}=    Evaluate    '${ARIA_CHECKED}' == 'true'
+
+    ${EXPECTED_NORMALIZED}=    Convert To Lower Case    ${EXPECTED_STATE}
+    ${EXPECTED_BOOL}=    Evaluate    '${EXPECTED_NORMALIZED}' in ['checked', 'check', 'true', 'on']
+
+    Should Be Equal    ${IS_CHECKED}    ${EXPECTED_BOOL}

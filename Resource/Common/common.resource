@@ -29,34 +29,21 @@ ${HEADLESS}         False
 
 
 *** Keywords ***
-Resolve Browser '${BROWSER}' Type
-    [Documentation]    Map friendly browser names to Browser library engines.
-
-    ${TYPE}=    Normalize Page '${BROWSER}' Name
-    IF    '${TYPE}' == 'chrome' or '${TYPE}' == 'chromium' or '${TYPE}' == 'edge'
-        RETURN    chromium
-    END
-    IF    '${TYPE}' == 'firefox'    RETURN    firefox
-    IF    '${TYPE}' == 'webkit'    RETURN    webkit
-    Fail    Unsupported browser type: ${BROWSER}
-
-Resolve Page '${PAGE}' Route
+Resolve Page Route
     [Documentation]    Resolve a page route path from the PAGE_ROUTES mapping using normalized page name.
-
-    ${PAGE_KEY}=    Normalize Page '${PAGE}' Name
+    [Arguments]    ${PAGE}
+    ${PAGE_KEY}=    Normalize Page Name    ${PAGE}
     ${HAS_ROUTE}=    Run Keyword And Return Status    Dictionary Should Contain Key    ${PAGE_ROUTES}    ${PAGE_KEY}
     IF    not ${HAS_ROUTE}    Fail    No route mapping found for page: ${PAGE}
     ${ROUTE}=    Get From Dictionary    ${PAGE_ROUTES}    ${PAGE_KEY}
     RETURN    ${ROUTE}
 
-Open Browser '${BROWSER}' Session
+Open Browser Session
     [Documentation]    Open browser session and navigate to base URL.
-    [Arguments]    ${BROWSER}=chromium
-
-    ${ENGINE}=    Resolve Browser '${BROWSER}' Type
+    [Arguments]    ${BROWSER}=firefox
     ${HEADLESS_BOOL}=    Evaluate    str($HEADLESS).lower() in ['true', '1', 'yes']
 
-    New Browser    ${ENGINE}    headless=${HEADLESS_BOOL}    args=["--start-maximized"]
+    New Browser    ${BROWSER}    headless=${HEADLESS_BOOL}    args=["--start-maximized"]
     New Context    viewport=None
     New Page    ${BASE_URL}/
     Wait For Load State    domcontentloaded
@@ -66,17 +53,17 @@ Close Browser Session
 
     Run Keyword And Ignore Error    Close Browser
 
-Go To Relative Path '${PATH}'
+Go To Relative Path
     [Documentation]    Navigate to an application route relative to base URL.
-
+    [Arguments]    ${PATH}
     Go To    ${BASE_URL}${PATH}
     Wait For Load State    networkidle    timeout=20s
 
-Navigate To Page '${PAGE}'
+Navigate To Page
     [Documentation]    Navigate to a page by alias and load matching locator map.
-
-    ${PATH}=    Resolve Page '${PAGE}' Route
-    Go To Relative Path '${PATH}'
+    [Arguments]    ${PAGE}
+    ${PATH}=    Resolve Page Route    ${PAGE}
+    Go To Relative Path    ${PATH}
     Load Locators    ${PAGE}
     Validate Current Page Root
 
@@ -86,9 +73,9 @@ Validate Current Page Root
     ${ROOT}=    Get Locator    root
     Wait For Elements State    css=${ROOT}    visible    timeout=20s
 
-Validate Page '${PAGE}' Is Opened
+Validate Page Is Opened
     [Documentation]    Load locators for page alias and validate root visibility.
-
+    [Arguments]    ${PAGE}
     Load Locators    ${PAGE}
     Wait For Load State    domcontentloaded
     Validate Current Page Root
@@ -96,8 +83,8 @@ Validate Page '${PAGE}' Is Opened
 Open Page '${PAGE}' From Main Navigation By Clicking '${BUTTON}' Button
     [Documentation]    Click a main navigation button and validate the target page is opened.
 
-    Click Button '${BUTTON}'
-    Validate Page '${PAGE}' Is Opened
+    Click Button    ${BUTTON}
+    Validate Page Is Opened    ${PAGE}
 
 Wait For Category Element State
     [Documentation]    Wait for a locator category element to reach target state.
@@ -210,9 +197,9 @@ Validate Current Page Categories
         END
     END
 
-Scroll Into Element '${NAME}'
+Scroll Into Element
     [Documentation]    Scroll to a category element by name.
-
+    [Arguments]    ${NAME}
     ${SELECTOR}=    Get Locator In Category    section    ${NAME}
     Wait For Elements State    css=${SELECTOR} >> nth=0    visible    timeout=15s
     Scroll To Element    css=${SELECTOR} >> nth=0

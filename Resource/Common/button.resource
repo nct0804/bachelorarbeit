@@ -5,14 +5,17 @@ Resource            common.resource
 
 
 *** Keywords ***
-Click Button '${NAME}'
+Click Button
     [Documentation]    Click a button locator by logical name.
+    [Arguments]    ${NAME}
     Click Category Element    button    ${NAME}
 
-Click Button '${NAME}' At Index '${INDEX}'
+Click Button At Index
     [Documentation]    Click a button locator using an index for repeated selectors.
+    [Arguments]    ${NAME}    ${INDEX}
     Click Category Element At Index    button    ${NAME}    ${INDEX}
 
-Button '${NAME}' Should Be Visible
+Button Should Be Visible
     [Documentation]    Assert that a button locator is visible.
+    [Arguments]    ${NAME}
     Category Element Should Be Visible    button    ${NAME}

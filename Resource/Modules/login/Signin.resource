@@ -13,28 +13,29 @@ ${TEST_PASSWORD}    password123
 Sign In Page Validation
     [Documentation]    Validate sign-in form fields and actions are visible.
 
-    Validate Page 'Sign In' Is Opened
-    Textbox 'Email Address' Should Be Visible
-    Textbox 'Password' Should Be Visible
-    Button 'Sign In' Should Be Visible
+    Validate Page Is Opened    Sign In
+    Textbox Should Be Visible    Email Address
+    Textbox Should Be Visible    Password
+    Button Should Be Visible    Sign In
     Validate Category Elements If Present    button    Sign Up
     Validate Category Elements If Present    checkbox    Remember Me
 
 Fill Sign In Form
     [Documentation]    Fill sign-in form fields with provided credentials.
     [Arguments]    ${EMAIL}    ${PASSWORD}
-    Fill Textbox 'Email Address' with Value '${EMAIL}'
-    Fill Textbox 'Password' with Value '${PASSWORD}'
+    Fill Textbox With Value    Email Address    ${EMAIL}
+    Fill Textbox With Value    Password    ${PASSWORD}
+    Click Button    Sign In
 
 Sign In With Credentials
     [Documentation]    Fill and submit sign-in form with provided credentials.
     [Arguments]    ${EMAIL}    ${PASSWORD}
     Fill Sign In Form    ${EMAIL}    ${PASSWORD}
-    Click Button 'Sign In'
-    ${ON_MAIN_PAGE}=    Run Keyword And Return Status    Validate Page 'Main Learning Page' Is Opened
+    Click Button    Sign In
+    ${ON_MAIN_PAGE}=    Run Keyword And Return Status    Validate Page Is Opened    Main Learning Page
     IF    not ${ON_MAIN_PAGE}
-        Navigate To Page 'Main Learning Page'
-        Validate Page 'Main Learning Page' Is Opened
+        Navigate To Page    Main Learning Page
+        Validate Page Is Opened    Main Learning Page
     END
 
 Sign In With Suite Credentials

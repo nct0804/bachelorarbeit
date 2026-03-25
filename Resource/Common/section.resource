@@ -5,17 +5,18 @@ Resource            common.resource
 
 
 *** Keywords ***
-Section '${NAME}' Should Be Visible
+Section Should Be Visible
     [Documentation]    Assert that a section locator is visible.
-
+    [Arguments]    ${NAME}
     Category Element Should Be Visible    section    ${NAME}
 
-Section '${NAME}' Should Contain Text '${EXPECTED_TEXT}'
+Section Should Contain Text
     [Documentation]    Assert that a section locator contains expected text.
+    [Arguments]    ${NAME}    ${EXPECTED_TEXT}
 
     Category Element Text Should Contain    section    ${NAME}    ${EXPECTED_TEXT}
 
-Scroll To Section '${NAME}'
+Scroll To Section
     [Documentation]    Scroll to a section locator by name.
-
-    Scroll Into Element '${NAME}'
+    [Arguments]    ${NAME}
+    Scroll Into Element    ${NAME}

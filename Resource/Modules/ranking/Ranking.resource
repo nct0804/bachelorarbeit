@@ -8,6 +8,6 @@ Resource            ../../Common/__lib.resource
 Ranking Page Validation
     [Documentation]    Validate ranking content panels are visible.
 
-    Validate Page 'Ranking' Is Opened
+    Validate Page Is Opened    Ranking
     Validate Category Elements If Present    list    Card    List
     Validate Category Elements If Present    tab    Tabs

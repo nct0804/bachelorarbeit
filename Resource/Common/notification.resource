@@ -5,17 +5,19 @@ Resource            common.resource
 
 
 *** Keywords ***
-Notification '${NAME}' Should Be Visible
+Notification Should Be Visible
     [Documentation]    Assert that a notification locator is visible.
-
+    [Arguments]    ${NAME}
     Category Element Should Be Visible    notification    ${NAME}
 
-Notification '${NAME}' Should Not Be Visible
+Notification Should Not Be Visible
     [Documentation]    Assert that a notification locator is not visible.
+    [Arguments]    ${NAME}
 
     Category Element Should Not Be Visible    notification    ${NAME}
 
-Notification '${NAME}' Should Contain Text '${EXPECTED_TEXT}'
+Notification Should Contain Text
     [Documentation]    Assert notification text contains expected content.
+    [Arguments]    ${NAME}    ${EXPECTED_TEXT}
 
     Category Element Text Should Contain    notification    ${NAME}    ${EXPECTED_TEXT}
