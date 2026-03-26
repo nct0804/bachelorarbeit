@@ -10,6 +10,13 @@ ${TEST_PASSWORD}    password123
 
 
 *** Keywords ***
+Navigate To Sign In Page
+    [Documentation]    Navigate to the Sign In page from the Welcome Page.
+
+    Go To Page    Welcome Page
+    Click Button    Sign In
+    Validate Page Is Opened    Sign In
+
 Sign In Page Validation
     [Documentation]    Validate sign-in form fields and actions are visible.
 
@@ -44,7 +51,11 @@ Sign In With Suite Credentials
     Should Not Be Empty    ${TEST_PASSWORD}
     Sign In With Credentials    ${TEST_EMAIL}    ${TEST_PASSWORD}
 
-Sign In Error Should Contain '${EXPECTED_TEXT}'
+Sign In Error Should Contain Text
     [Documentation]    Assert sign-in notification area contains expected error text.
-
+    [Arguments]    ${EXPECTED_TEXT}
     Category Element Text Should Contain    notification    Error    ${EXPECTED_TEXT}
+
+Error Message Should Be Visible
+    [Documentation]    Assert that the error message box is visible.
+    Messagebox Should Be Visible    Error
