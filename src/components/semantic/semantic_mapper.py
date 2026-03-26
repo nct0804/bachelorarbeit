@@ -343,6 +343,14 @@ def parse_robot_keywords(resource_path: Path) -> list[KeywordEntry]:
 
         tag_type = "Unknown"
         lowered = {tag.lower() for tag in current_tags}
+        
+        if "technical" in lowered:
+            current_keyword_name = ""
+            current_documentation = ""
+            current_arguments = ""
+            current_tags = []
+            return
+            
         if "gherkin" in lowered:
             tag_type = "Gherkin"
         elif "basic" in lowered:
