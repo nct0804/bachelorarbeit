@@ -8,7 +8,8 @@
   "button": {
     "Create Account": "[data-test=\"register-submit\"]",
     "Google": "[data-test=\"register-google-button\"]",
-    "Facebook": "[data-test=\"register-facebook-button\"]"
+    "Facebook": "[data-test=\"register-facebook-button\"]",
+    "Sign Up": "[data-test=\"register-submit\"]"
   },
   "link": {
     "Sign In": "[data-test=\"register-login-link\"]"

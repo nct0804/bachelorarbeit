@@ -28,7 +28,12 @@ Sign Up Page Validation
 
 Fill Registration Form
     [Documentation]    Fill the registration form fields with provided values.
-    [Arguments]    ${FIRST_NAME}    ${LAST_NAME}    ${USERNAME}    ${EMAIL}    ${PASSWORD}
+    [Arguments]
+    ...    ${FIRST_NAME}= Chi Thien
+    ...    ${LAST_NAME}= Nguyen
+    ...    ${USERNAME}= nct0804
+    ...    ${EMAIL}= test@gmail.com
+    ...    ${PASSWORD}= testest
 
     Fill Textbox With Value    First Name    ${FIRST_NAME}
     Fill Textbox With Value    Last Name    ${LAST_NAME}
@@ -36,18 +41,21 @@ Fill Registration Form
     Fill Textbox With Value    Email Address    ${EMAIL}
     Fill Textbox With Value    Password    ${PASSWORD}
 
-Submit Registration Form
-    [Documentation]    Submit the registration form using create account action.
-
+Submit Registration
+    [Documentation]    Submit the registration form using creat
+    [Arguments]
+    ...    ${FIRST_NAME}= Chi Thien
+    ...    ${LAST_NAME}= Nguyen
+    ...    ${USERNAME}= nct0804
+    ...    ${EMAIL}= test@gmail.com
+    ...    ${PASSWORD}= testest
+    Fill Registration Form
     Click Button    Create Account
     Wait For Load State    networkidle    timeout=15s
 
-Sign Up With Information
+Create New Account
     [Documentation]    Fill and submit registration form with provided values.
-    [Arguments]    ${FIRST_NAME}    ${LAST_NAME}    ${USERNAME}    ${EMAIL}    ${PASSWORD}
-
-    Fill Registration Form    ${FIRST_NAME}    ${LAST_NAME}    ${USERNAME}    ${EMAIL}    ${PASSWORD}
-    Submit Registration Form
+    Submit Registration
 
 Registration Error Should Be Visible
     [Documentation]    Assert registration error message box is visible.
