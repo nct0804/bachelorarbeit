@@ -49,7 +49,7 @@
     "list": {
         "Group": "[data-test^=\"pronunciation-group\"]",
         "Sound": "[data-test^=\"pronunciation-sound\"]",
-        "Example": "[data-test=\"pronunciation-sound-{index}\"]"
+        "German Vowels": "[data-test=\"pronunciation-sound-{index}\"]"
     },
     "modal": {
     }

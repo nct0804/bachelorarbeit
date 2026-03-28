@@ -25,7 +25,9 @@
         "Learn": "[data-test=\"rightbar-lesson-start\"]",
         "Start Challenge": "[data-test=\"rightbar-challenge-start\"]",
         "Refresh Quote": "[data-test=\"topbar-quote-refresh\"]",
-        "New Quote": "[data-test=\"topbar-quote-refresh\"]"
+        "New Quote": "[data-test=\"topbar-quote-refresh\"]",
+        "Profile Icon": "[data-test=\"play-phrase-button\"]",
+        "New Phrase": "[data-test=\"new-phrase-button\"]"
     },
     "link": {
     },
