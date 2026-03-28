@@ -12,10 +12,12 @@
         "Home": "[data-test=\"main-nav-home\"]",
         "Challenge": "[data-test=\"main-nav-challenge\"]",
         "Ranking": "[data-test=\"main-nav-ranking\"]",
+        "Logout Confirm": "[data-test=\"main-logout-confirm\"]",
         "Pronunciation": "[data-test=\"main-nav-pronunciation\"]",
         "Speak": "[data-test=\"main-nav-speak\"]",
         "Review": "[data-test=\"main-nav-review\"]",
         "Inbox": "[data-test=\"main-nav-inbox\"]",
+        "Dark Mode Toggle": "[data-test=\"dark-mode-toggle-pulse\"]",
         "Achievements": "[data-test=\"main-nav-achievements\"]",
         "Menu Toggle": "[data-test=\"main-menu-toggle\"]",
         "Profile": "[data-test=\"main-menu-profile\"]",
@@ -44,7 +46,8 @@
         "Achievements": "[data-test=\"main-nav-achievements\"]"
     },
     "messagebox": {
-        "Quote Text": "[data-test=\"topbar-quote-text\"]"
+        "Quote Text": "[data-test=\"topbar-quote-text\"]",
+        "Logout Message": "[data-test=\"main-logout-modal-message\"]"
     },
     "list": {
         "Quote Text": "[data-test=\"topbar-quote-text\"]"

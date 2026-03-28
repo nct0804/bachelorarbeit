@@ -115,7 +115,7 @@
   
   },
   "section": {
-        "Quote": "[data-test=\"topbar-quote-text\"]",
+        "Quote Text": "[data-test=\"topbar-quote-text\"]",
         "Word of the Day": "[data-test=\"home-word-of-day\"]",
         "Focus Timer": "[data-test=\"home-focus-timer\"]",
         "Daily Goal": "[data-test=\"home-daily-goal\"]"

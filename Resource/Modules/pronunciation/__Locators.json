@@ -17,6 +17,7 @@
         "Review": "[data-test=\"main-nav-review\"]",
         "Inbox": "[data-test=\"main-nav-inbox\"]",
         "Achievements": "[data-test=\"main-nav-achievements\"]",
+        "Logout Confirm": "[data-test=\"main-logout-confirm\"]",
         "Menu Toggle": "[data-test=\"main-menu-toggle\"]",
         "New Quote": "[data-test=\"topbar-quote-refresh\"]",
         "Profile": "[data-test=\"main-menu-profile\"]",
@@ -44,6 +45,7 @@
     },
     "messagebox": {
         "Loading": "[data-test=\"pronunciation-loading\"]",
+        "Logout Message": "[data-test=\"main-logout-modal-message\"]",
         "Error": "[data-test=\"pronunciation-error\"]"
     },
     "list": {

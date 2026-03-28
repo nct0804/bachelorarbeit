@@ -18,8 +18,10 @@
         "Inbox": "[data-test=\"main-nav-inbox\"]",
         "Achievements": "[data-test=\"main-nav-achievements\"]",
         "Menu Toggle": "[data-test=\"main-menu-toggle\"]",
+        "Logout Confirm": "[data-test=\"main-logout-confirm\"]",
         "Profile": "[data-test=\"main-menu-profile\"]",
         "About": "[data-test=\"main-menu-about\"]",
+        "Dark Mode Toggle": "[data-test=\"dark-mode-toggle-pulse\"]",
         "Logout": "[data-test=\"main-menu-logout\"]",
         "Retry": "[data-test=\"profile-retry\"]",
         "Learn": "[data-test=\"rightbar-lesson-start\"]",
@@ -48,6 +50,7 @@
     "messagebox": {
         "Loading": "[data-test=\"profile-loading\"]",
         "Error": "[data-test=\"profile-error\"]",
+        "Logout Message": "[data-test=\"main-logout-modal-message\"]",
         "Empty": "[data-test=\"profile-empty\"]"
     },
     "list": {

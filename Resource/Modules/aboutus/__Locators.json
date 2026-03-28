@@ -17,6 +17,7 @@
         "Speak": "[data-test=\"main-nav-speak\"]",
         "Review": "[data-test=\"main-nav-review\"]",
         "Inbox": "[data-test=\"main-nav-inbox\"]",
+        "Logout Confirm": "[data-test=\"main-logout-confirm\"]",
         "Achievements": "[data-test=\"main-nav-achievements\"]",
         "New Quote": "[data-test=\"topbar-quote-refresh\"]",
         "Menu Toggle": "[data-test=\"main-menu-toggle\"]",
@@ -45,7 +46,8 @@
         "Achievements": "[data-test=\"main-nav-achievements\"]"
     },
     "messagebox": {
-        "Quote Text": "[data-test=\"topbar-quote-text\"]"
+        "Quote Text": "[data-test=\"topbar-quote-text\"]",
+        "Logout Message": "[data-test=\"main-logout-modal-message\"]"
     },
     "list": {
         "Quote Text": "[data-test=\"topbar-quote-text\"]"
