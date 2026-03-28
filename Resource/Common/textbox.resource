@@ -40,3 +40,8 @@ Textbox Should Be Empty
     ${SELECTOR}=    Get Locator In Category    textbox    ${TEXTBOX}
     ${VALUE}=    Get Property    css=${SELECTOR}    value
     Should Be Empty    ${VALUE}
+
+Set Value In The Textbox
+    [Documentation]    Gherkin wrapper for filling a textbox with a value.
+    [Arguments]    ${VALUE}    ${TEXTBOX}
+    Fill Textbox With Value    ${TEXTBOX}    ${VALUE}

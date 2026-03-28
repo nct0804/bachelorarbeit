@@ -202,3 +202,8 @@ Scroll Into Element
     ${SELECTOR}=    Get Locator In Category    section    ${NAME}
     Wait For Elements State    css=${SELECTOR} >> nth=0    visible    timeout=15s
     Scroll To Element    css=${SELECTOR} >> nth=0
+
+Wait for Second
+    [Documentation]    Wait for a specified number of seconds.
+    [Arguments]    ${SECONDS}
+    Sleep    ${SECONDS}s
