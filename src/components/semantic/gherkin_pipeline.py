@@ -130,7 +130,6 @@ class KeywordEntry:
     embedded_arguments: list[ArgSpec]
     normalized_text: str
 
-
 @dataclass
 class FeatureStep:
     """Single parsed feature step."""
@@ -167,6 +166,7 @@ class StepEntities:
     numbers: list[str]
     browser: str | None
     page: str | None
+    section: str | None
     textbox: str | None
     button: str | None
     text_name: str | None
@@ -422,6 +422,8 @@ def parse_robot_keywords(resource_path: Path) -> list[KeywordEntry]:
     current_doc = ""
     current_tags: list[str] = []
     current_args: list[ArgSpec] = []
+    current_arg_lines: list[str] = []
+    collecting_arguments = False
     entries: list[KeywordEntry] = []
 
     def flush_keyword() -> None:
@@ -429,6 +431,8 @@ def parse_robot_keywords(resource_path: Path) -> list[KeywordEntry]:
         nonlocal current_doc
         nonlocal current_tags
         nonlocal current_args
+        nonlocal current_arg_lines
+        nonlocal collecting_arguments
 
         if not current_keyword_name:
             return
@@ -459,6 +463,8 @@ def parse_robot_keywords(resource_path: Path) -> list[KeywordEntry]:
         current_doc = ""
         current_tags = []
         current_args = []
+        current_arg_lines = []
+        collecting_arguments = False
 
     for raw_line in lines:
         line = raw_line.rstrip("\n")
@@ -481,6 +487,15 @@ def parse_robot_keywords(resource_path: Path) -> list[KeywordEntry]:
         if not current_keyword_name:
             continue
 
+        if collecting_arguments and stripped.startswith("..."):
+            continuation_args = stripped[3:].strip()
+            if continuation_args:
+                current_arg_lines.append(continuation_args)
+                current_args = parse_arg_specs("    ".join(current_arg_lines))
+            continue
+
+        collecting_arguments = False
+
         if stripped.startswith("[Documentation]"):
             current_doc = stripped.replace("[Documentation]", "", 1).strip()
             continue
@@ -491,7 +506,9 @@ def parse_robot_keywords(resource_path: Path) -> list[KeywordEntry]:
             continue
         if stripped.startswith("[Arguments]"):
             raw_args = stripped.replace("[Arguments]", "", 1).strip()
-            current_args = parse_arg_specs(raw_args)
+            current_arg_lines = [raw_args] if raw_args else []
+            current_args = parse_arg_specs("    ".join(current_arg_lines))
+            collecting_arguments = True
             continue
 
     flush_keyword()
@@ -505,7 +522,6 @@ def build_keyword_catalog(resource_root: Path) -> list[KeywordEntry]:
             continue
         catalog.extend(parse_robot_keywords(resource_file))
     return catalog
-
 
 def parse_feature_file(feature_file: Path) -> FeatureDocument:
     lines = feature_file.read_text(encoding="utf-8").splitlines()
@@ -578,6 +594,32 @@ def load_feature_documents(features_root: Path) -> list[FeatureDocument]:
     return documents
 
 
+def extract_named_entity(step_text: str, entity_names: str | Iterable[str]) -> str | None:
+    names = [entity_names] if isinstance(entity_names, str) else list(entity_names)
+    if not names:
+        return None
+
+    for entity_name in names:
+        escaped_name = re.escape(entity_name)
+        before_pattern = re.compile(
+            rf"(?:'([^']+)'|\"([^\"]+)\")\s+{escaped_name}\b",
+            re.IGNORECASE,
+        )
+        before_match = before_pattern.search(step_text)
+        if before_match:
+            return before_match.group(1) or before_match.group(2)
+
+        after_pattern = re.compile(
+            rf"\b{escaped_name}\b\s+(?:named\s+)?(?:'([^']+)'|\"([^\"]+)\")",
+            re.IGNORECASE,
+        )
+        after_match = after_pattern.search(step_text)
+        if after_match:
+            return after_match.group(1) or after_match.group(2)
+
+    return None
+
+
 def extract_entities(step_text: str) -> StepEntities:
     quoted_values = [left or right for left, right in QUOTED_VALUE_PATTERN.findall(step_text)]
     emails = EMAIL_PATTERN.findall(step_text)
@@ -605,45 +647,26 @@ def extract_entities(step_text: str) -> StepEntities:
     if page is None and "page should be opened" in lowered and quoted_values:
         page = quoted_values[0]
 
-    textbox = None
-    textbox_match = re.search(r"(?:'([^']+)'|\"([^\"]+)\")\s+textbox", step_text, re.IGNORECASE)
-    if textbox_match:
-        textbox = textbox_match.group(1) or textbox_match.group(2)
-
-    button = None
-    button_match = re.search(r"(?:'([^']+)'|\"([^\"]+)\")\s+button", step_text, re.IGNORECASE)
-    if button_match:
-        button = button_match.group(1) or button_match.group(2)
-
-    text_name = None
-    text_match = re.search(r"(?:'([^']+)'|\"([^\"]+)\")\s+text", step_text, re.IGNORECASE)
-    if text_match:
-        text_name = text_match.group(1) or text_match.group(2)
-
-    checkbox = None
-    checkbox_match = re.search(r"(?:'([^']+)'|\"([^\"]+)\")\s+checkbox", step_text, re.IGNORECASE)
-    if checkbox_match:
-        checkbox = checkbox_match.group(1) or checkbox_match.group(2)
+    textbox = extract_named_entity(step_text, ["textbox", "field", "input"])
+    section = extract_named_entity(step_text, "section")
+    button = extract_named_entity(step_text, "button")
+    text_name = extract_named_entity(step_text, ["text", "link"])
+    checkbox = extract_named_entity(step_text, "checkbox")
 
     checkbox_state = None
     state_match = re.search(r"\b(checked|unchecked|check|uncheck|true|false|on|off)\b", lowered)
     if state_match:
         checkbox_state = state_match.group(1)
 
-    notification = None
-    notification_match = re.search(r"(?:'([^']+)'|\"([^\"]+)\")\s+notification", step_text, re.IGNORECASE)
-    if notification_match:
-        notification = notification_match.group(1) or notification_match.group(2)
-
-    list_name = None
-    list_match = re.search(r"(?:'([^']+)'|\"([^\"]+)\")\s+list", step_text, re.IGNORECASE)
-    if list_match:
-        list_name = list_match.group(1) or list_match.group(2)
+    notification = extract_named_entity(step_text, "notification")
+    list_name = extract_named_entity(step_text, "list")
 
     value = None
     # Remove quoted text before checking for action verbs to avoid matching words inside element names
     lowered_no_quotes = QUOTED_TEXT_PATTERN.sub("", lowered)
-    if re.search(r"\b(enter|type|input)\w*\b", lowered_no_quotes) and len(quoted_values) >= 2:
+    if re.search(r"\bset(?:s)?\s+text\b", lowered_no_quotes) and quoted_values:
+        value = quoted_values[0]
+    elif re.search(r"\b(enter|type|input)\w*\b", lowered_no_quotes) and len(quoted_values) >= 2:
         value = quoted_values[0]
     elif re.search(r"\bfill\w*\b", lowered_no_quotes) and len(quoted_values) >= 2:
         value = quoted_values[-1]
@@ -665,6 +688,7 @@ def extract_entities(step_text: str) -> StepEntities:
         numbers=numbers,
         browser=browser,
         page=page.strip() if isinstance(page, str) and page.strip() else None,
+        section=section,
         textbox=textbox,
         button=button,
         text_name=text_name,
@@ -682,6 +706,11 @@ def detect_intent(step_text: str) -> str:
 
     if re.search(r"signs? in.+email.+password", lowered):
         return "sign_in_credentials"
+    if re.search(
+        r"\bsection\b.+\b(updated?|changed?)\b.+\b(clicking|triggering)\b.+\bbutton\b",
+        lowered,
+    ):
+        return "section_update_after_click"
     if re.search(r"\b(open|start|launch)\w*\b.+\bbrowser\b", lowered):
         return "open_browser"
     if re.search(r"\bclose\b.+\bbrowser\b", lowered):
@@ -696,6 +725,8 @@ def detect_intent(step_text: str) -> str:
         return "fill_textbox"
     if re.search(r"\bclear\w*\b.+\btextbox\b", lowered):
         return "clear_textbox"
+    if re.search(r"\b(trigger|press|tap)\w*\b.+\bbutton\b", lowered):
+        return "click_button"
     if re.search(r"\bclick\w*\b.+\bbutton\b", lowered):
         return "click_button"
     if re.search(r"\bclick\w*\b.+\bcheckbox\b", lowered):
@@ -758,6 +789,7 @@ def pick_rule_keywords(intent: str) -> list[str]:
         "close_browser": ["Close Browser Session"],
         "navigate_page": ["Navigate To Page"],
         "validate_page": ["Page Should Be Ready"],
+        "section_update_after_click": ["The section should be updated after clicking the button"],
         "fill_textbox": ["Fill Textbox With Value", "Fill Textbox"],
         "clear_textbox": ["Clear Textbox"],
         "click_button": ["Click Button"],
@@ -817,9 +849,11 @@ def infer_argument_value(arg_name: str, analysis: StepAnalysis, quote_cursor: in
         return (next_quote("Last"), quote_cursor)
     if key in {"USERNAME", "USER_NAME"}:
         return (next_quote("robot.user"), quote_cursor)
+    if key in {"SECTION", "SECTION_NAME"}:
+        return (entities.section or next_quote("section"), quote_cursor)
     if key in {"TEXTBOX", "FIELD", "INPUT", "NAME"}:
         return (entities.textbox or entities.button or entities.text_name or entities.checkbox or entities.notification or entities.list_name or next_quote("primary"), quote_cursor)
-    if key in {"BUTTON"}:
+    if key in {"BUTTON", "BUTTON_NAME"}:
         return (entities.button or next_quote("primary"), quote_cursor)
     if key in {"TEXT"}:
         return (entities.expected_text or entities.text_name or next_quote(""), quote_cursor)
