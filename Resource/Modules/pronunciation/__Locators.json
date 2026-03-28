@@ -18,6 +18,7 @@
         "Inbox": "[data-test=\"main-nav-inbox\"]",
         "Achievements": "[data-test=\"main-nav-achievements\"]",
         "Menu Toggle": "[data-test=\"main-menu-toggle\"]",
+        "New Quote": "[data-test=\"topbar-quote-refresh\"]",
         "Profile": "[data-test=\"main-menu-profile\"]",
         "About": "[data-test=\"main-menu-about\"]",
         "Logout": "[data-test=\"main-menu-logout\"]",

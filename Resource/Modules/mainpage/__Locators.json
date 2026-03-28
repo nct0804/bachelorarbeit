@@ -12,6 +12,7 @@
     ],
     "root": "[data-test=\"page-main-layout\"]",
     "button": {
+        "Quote Text": "[data-test=\"topbar-quote-text\"]",
         "Home": "[data-test=\"main-nav-home\"]",
         "Challenge": "[data-test=\"main-nav-challenge\"]",
         "Ranking": "[data-test=\"main-nav-ranking\"]",
@@ -27,14 +28,15 @@
         "Logout Confirm": "[data-test=\"main-logout-confirm\"]",
         "Continue": "[data-test=\"main-logout-continue\"]",
         "Refresh Quote": "[data-test=\"topbar-quote-refresh\"]",
+        "New Quote": "[data-test=\"topbar-quote-refresh\"]",
         "Learn": "[data-test=\"rightbar-lesson-start\"]",
         "Start Challenge": "[data-test=\"rightbar-challenge-start\"]",
         "Quick Practice Next": "[data-test=\"quick-practice-next\"]",
         "Quick Practice Reset": "[data-test=\"quick-practice-reset\"]",
         "Quick Practice Option": "[data-test^=\"quick-practice-option-\"]",
-        "Edit": "[data-test=\"daily-goal-edit-button\"]",
+        "Daily Goal Edit": "[data-test=\"daily-goal-edit-button\"]",
         "Save Goal": "[data-test=\"daily-goal-save-button\"]",
-        "Shuffle": "[data-test=\"word-of-day-shuffle-button\"]",
+        "Word Of The Day Shuffle": "[data-test=\"word-of-day-shuffle-button\"]",
         "Hear it": "[data-test=\"word-of-day-speak-button\"]",
         "Save": "[data-test=\"word-of-day-favorite-button\"]",
         "Play Pause": "[data-test=\"focus-timer-play-pause-button\"]",
@@ -55,7 +57,9 @@
     },
     "textbox": {
         "Daily Goal Target": "[data-test=\"daily-goal-target-input\"]",
-        "Daily Goal Option": "[data-test=\"daily-goal-type-select\"]"
+        "Daily Goal Option": "[data-test=\"daily-goal-type-select\"]",
+        "Daily Goal Input": "[data-test=\"daily-goal-target-input\"]",
+        "Daily Goal Type": "[data-test=\"daily-goal-type-select\"]"
 
     },
     "checkbox": {
@@ -73,7 +77,8 @@
     "messagebox": {
         "Main Tooltip": "[data-test=\"main-tooltip\"]",
         "Topbar Tooltip": "[data-test=\"topbar-tooltip\"]",
-        "Logout Message": "[data-test=\"main-logout-modal-message\"]"
+        "Logout Message": "[data-test=\"main-logout-modal-message\"]",
+        "Quote Text": "[data-test=\"topbar-quote-text\"]"
     },
     "list": {
         "Nav": "[data-test=\"main-nav\"]",
@@ -104,5 +109,15 @@
     },
     "modal": {
         "Logout Confirmation": "[data-test=\"main-logout-modal\"]"
+    },
+     "notification": { 
+        "Quote Text": "[data-test=\"topbar-quote-text\"]"
+  
+  },
+  "section": {
+        "Quote": "[data-test=\"topbar-quote-text\"]",
+        "Word of the Day": "[data-test=\"home-word-of-day\"]",
+        "Focus Timer": "[data-test=\"home-focus-timer\"]",
+        "Daily Goal": "[data-test=\"home-daily-goal\"]"
     }
 }

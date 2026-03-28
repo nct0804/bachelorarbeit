@@ -17,6 +17,7 @@
         "Review": "[data-test=\"main-nav-review\"]",
         "Inbox": "[data-test=\"main-nav-inbox\"]",
         "Achievements": "[data-test=\"main-nav-achievements\"]",
+        "New Quote": "[data-test=\"topbar-quote-refresh\"]",
         "Menu Toggle": "[data-test=\"main-menu-toggle\"]",
         "Profile": "[data-test=\"main-menu-profile\"]",
         "About": "[data-test=\"main-menu-about\"]",

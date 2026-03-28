@@ -24,7 +24,8 @@
         "Retry": "[data-test=\"profile-retry\"]",
         "Learn": "[data-test=\"rightbar-lesson-start\"]",
         "Start Challenge": "[data-test=\"rightbar-challenge-start\"]",
-        "Refresh Quote": "[data-test=\"topbar-quote-refresh\"]"
+        "Refresh Quote": "[data-test=\"topbar-quote-refresh\"]",
+        "New Quote": "[data-test=\"topbar-quote-refresh\"]"
     },
     "link": {
     },
@@ -55,8 +56,14 @@
         "Stat Level": "[data-test=\"profile-stat-level\"]",
         "Activity": "[data-test=\"profile-activity\"]",
         "Achievements": "[data-test=\"profile-achievements\"]",
-        "Favorites": "[data-test=\"profile-favorites\"]"
+        "Saved Words": "[data-test=\"profile-favorites\"]",
+        "Quote Text": "[data-test=\"topbar-quote-text\"]"
     },
-    "modal": {
-    }
+    "section": {
+        "Saved Words": "[data-test=\"profile-favorites\"]"
+    },
+     "notification": { 
+        "Quote Text": "[data-test=\"topbar-quote-text\"]"
+  
+  }
 }

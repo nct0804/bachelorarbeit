@@ -18,6 +18,7 @@
         "Review": "[data-test=\"main-nav-review\"]",
         "Inbox": "[data-test=\"main-nav-inbox\"]",
         "Achievements": "[data-test=\"main-nav-achievements\"]",
+        "New Quote": "[data-test=\"topbar-quote-refresh\"]",
         "Menu Toggle": "[data-test=\"main-menu-toggle\"]",
         "Profile": "[data-test=\"main-menu-profile\"]",
         "About": "[data-test=\"main-menu-about\"]",
@@ -27,6 +28,7 @@
         "Start Challenge": "[data-test=\"rightbar-challenge-start\"]"
     },
     "link": {
+        "Quote Text": "[data-test=\"topbar-quote-text\"]"
     },
     "textbox": {
     },
@@ -43,8 +45,10 @@
         "Achievements": "[data-test=\"main-nav-achievements\"]"
     },
     "messagebox": {
+        "Quote Text": "[data-test=\"topbar-quote-text\"]"
     },
     "list": {
+        "Quote Text": "[data-test=\"topbar-quote-text\"]"
     },
     "modal": {
     }

@@ -28,10 +28,12 @@
         "Numbers": "[data-test=\"challenge-category-numbers\"]",
         "Speaking": "[data-test=\"challenge-category-speaking\"]",
         "Refresh Quote": "[data-test=\"topbar-quote-refresh\"]",
+        "New Quote": "[data-test=\"topbar-quote-refresh\"]",
         "Learn": "[data-test=\"rightbar-lesson-start\"]",
         "Start Challenge": "[data-test=\"rightbar-challenge-start\"]"
     },
     "link": {
+        "Quote Text": "[data-test=\"topbar-quote-text\"]"
     },
     "textbox": {
     },
@@ -48,9 +50,15 @@
         "Achievements": "[data-test=\"main-nav-achievements\"]"
     },
     "messagebox": {
+        "Quote Text": "[data-test=\"topbar-quote-text\"]"
     },
     "list": {
+        "Quote Text": "[data-test=\"topbar-quote-text\"]"
     },
     "modal": {
-    }
+    },
+     "notification": { 
+        "Quote Text": "[data-test=\"topbar-quote-text\"]"
+  
+  }
 }
