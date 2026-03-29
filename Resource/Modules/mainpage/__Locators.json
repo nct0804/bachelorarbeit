@@ -46,6 +46,7 @@
         "25 min": "[data-test=\"focus-timer-duration-25-button\"]",
         "Start": "[data-test=\"course-card-action-1\"]",
         "Dark Mode Toggle": "[data-test=\"dark-mode-toggle-pulse\"]",
+        "Light Mode Toggle": "[data-test=\"light-mode-toggle-pulse\"]",
         "Profile Icon": "[data-test=\"topbar-profile-link\"]",
         "Lesson 1": "[data-test=\"lesson-step-2-button\"]",
         "Lesson 1 Start": "[data-test=\"lesson-step-2-bubble-action\"]",
@@ -116,7 +117,7 @@
   },
   "section": {
         "Quote Text": "[data-test=\"topbar-quote-text\"]",
-        "Word of the Day": "[data-test=\"home-word-of-day\"]",
+        "Word Of The Day": "[data-test=\"home-word-of-day\"]",
         "Focus Timer": "[data-test=\"home-focus-timer\"]",
         "Daily Goal": "[data-test=\"home-daily-goal\"]"
     }

@@ -32,10 +32,12 @@ Fill Sign In Form
     [Arguments]    ${EMAIL}    ${PASSWORD}
     Fill Textbox With Value    Email Address    ${EMAIL}
     Fill Textbox With Value    Password    ${PASSWORD}
+    Click Button    Sign In
 
 Sign In With Credentials
     [Documentation]    Fill and submit sign-in form with provided credentials.
-    Fill Sign In Form    ${EMAIL}    ${PASSWORD}
+    Fill Textbox With Value    Email Address    ${EMAIL}
+    Fill Textbox With Value    Password    ${PASSWORD}
     Click Button    Sign In
     ${ON_MAIN_PAGE}=    Run Keyword And Return Status    Validate Page Is Opened    Main Learning Page
     IF    not ${ON_MAIN_PAGE}    Validate Page Is Opened    Main Learning Page

@@ -15,6 +15,7 @@ Profile Page Validation
     ...    Activity
     ...    Achievements
     ...    Favorites
+    ...    Saved Words
 
 Profile Stats Should Be Visible
     [Documentation]    Validate profile stat cards are visible.

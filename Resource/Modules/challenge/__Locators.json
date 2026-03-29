@@ -21,6 +21,7 @@
         "Logout Confirm": "[data-test=\"main-logout-confirm\"]",
         "Profile": "[data-test=\"main-menu-profile\"]",
         "Dark Mode Toggle": "[data-test=\"dark-mode-toggle-pulse\"]",
+        "Light Mode Toggle": "[data-test=\"light-mode-toggle-pulse\"]",
         "About": "[data-test=\"main-menu-about\"]",
         "Logout": "[data-test=\"main-menu-logout\"]",
         "All": "[data-test=\"challenge-category-all\"]",

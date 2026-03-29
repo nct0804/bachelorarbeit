@@ -18,6 +18,7 @@
         "Review": "[data-test=\"main-nav-review\"]",
         "Inbox": "[data-test=\"main-nav-inbox\"]",
         "Dark Mode Toggle": "[data-test=\"dark-mode-toggle-pulse\"]",
+        "Light Mode Toggle": "[data-test=\"light-mode-toggle-pulse\"]",
         "Achievements": "[data-test=\"main-nav-achievements\"]",
         "Menu Toggle": "[data-test=\"main-menu-toggle\"]",
         "Profile": "[data-test=\"main-menu-profile\"]",
