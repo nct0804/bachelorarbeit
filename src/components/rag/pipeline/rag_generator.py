@@ -167,7 +167,7 @@ if __name__ == "__main__":
         try:
             output_steps = generate_robot_test(req_text, common_catalog, model, nlp, client, args.top_k)
             test_name = f"Test Case {idx}: Auto-Generated"
-            robot_code += f"{test_name}\n    [Documentation]    {req_text}\n    [Setup]    Open Browser Session\n"
+            robot_code = robot_code + f"{test_name}\n    [Documentation]    {req_text}\n    [Setup]    Open Browser Session\n"
             
             step_lines = output_steps.splitlines()
             for i, raw_step in enumerate(step_lines, 1):
@@ -176,17 +176,17 @@ if __name__ == "__main__":
                 # We extract the first word logic to make a nice name
                 keyword_alias = f"{idx:02d}_{i:02d}: RAG Generative Step" 
                 
-                robot_code += f"    {keyword_alias}\n"
-                resource_code += f"{keyword_alias}\n    [Documentation]    Execute source step\n    {step}\n\n"
+                robot_code=robot_code + f"    {keyword_alias}\n"
+                resource_code= resource_code + f"{keyword_alias}\n    [Documentation]    Execute source step\n    {step}\n\n"
                 
-            robot_code += "    [Teardown]    Close Browser Session\n\n"
+            robot_code = robot_code + "    [Teardown]    Close Browser Session\n\n"
             
         except Exception as e:
             # Convert exception to string to avoid any f-string formatting issues
             error_msg = str(e)
             print(f"   ! Error generating for requirement {idx}: {error_msg}")
             # Use string format to avoid f-string issues with curly braces in error messages
-            robot_code += "Test Case {}: Auto-Generated\n    [Documentation]    {}\n    Log    GENERATION FAILED: {}\n\n".format(idx, req_text, error_msg)
+            robot_code = robot_code + "Test Case {}: Auto-Generated\n    [Documentation]    {}\n    Log    GENERATION FAILED: {}\n\n".format(idx, req_text, error_msg)
             
     if args.output:
         out_path = Path(args.output)

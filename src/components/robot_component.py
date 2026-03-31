@@ -48,3 +48,12 @@ def delete_results():
     for f in files:
         if os.path.isfile(f):
             os.remove(f)
+
+def delete_robot_tests():
+    """
+    Function to delete previous robot test results.
+    """
+    files = glob('robot-tests/*')
+    for f in files:
+        if os.path.isfile(f):
+            os.remove(f)

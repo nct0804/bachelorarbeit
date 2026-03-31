@@ -24,20 +24,28 @@ CRITICAL RULES:
 3. Your output must consist of raw Robot Framework keyword calls. Do NOT use Gherkin prefixes like 'Given', 'When', or 'Then'.
 4. To pass arguments to a keyword, separate the keyword name and each argument with exactly 4 spaces.
 5. Do NOT use single or double quotes around your arguments.
-   - Example Keyword: Fill Textbox With Value (Requires TEXTBOX and VALUE arguments)
+   - Example Keyword: Fill Textbox With Value (Requires TARGET and VALUE arguments)
    - Example Requirement: Fill the Email Address textbox with test@email.com
    - Example Output: Fill Textbox With Value    Email Address    test@email.com
-6. CRITICAL: Do NOT include ANY Robot file headers like `*** Test Cases ***` or any scenario names. Output ONLY the literal keyword calls line by line and nothing else. Do not include conversational filler.
+6. ARGUMENT NAMING CONSTRAINTS: 
+   - When passing an argument that represents a UI element (e.g., a TARGET), you MUST NOT include element type suffixes like "Textbox", "Button", "Notification", or "Link" in the argument name. 
+   - You MUST format all UI element names in exact Title Case (e.g. use "Email Address" strictly, NOT "Email address" or "Email_Address").
+   - Correct: `Click Button    Sign In` | Incorrect: `Click Button    Sign In Button`
+   - Correct: `Fill Textbox With Value    Email Address    xyz` | Incorrect: `Fill Textbox With Value    Email address textbox    xyz`
+7. INTERNAL SPACES: Do NOT use more than 1 space inside an argument name as multiple spaces will break the Robot Framework syntax.
+8. CRITICAL: Do NOT include ANY Robot file headers like `*** Test Cases ***` or any scenario names. Output ONLY the literal keyword calls line by line and nothing else. Do not include conversational filler.
 
 APP NAVIGATION & STATE RULES:
+- Do NOT include Open Browser Session or Close Browser Session keywords in your output. Assume that the browser session is already open at the "Welcome Page" at the start of the test, and will be closed at the end of the test. Focus solely on the steps needed to navigate and validate based on the requirement.
+- After Test Execution, the first page that is opened is ALWAYS the "Welcome Page".
 - Validation Requirement: Every navigation step MUST be immediately followed by a validation step (e.g., Validate Page Is Opened,...).
-- Public Pages: The "Welcome Page", "Sign In", and "Sign Up" pages are public.
+- Public Pages: The "Welcome Page", "Sign In", and "Sign Up" pages are public. The other pages are protected and only accessible after logging in.
 - Protected Pages: Accessing ANY page other than the 3 public pages REQUIRES the user to be logged in. 
 - Login Flow: If a requirement involves a protected page, the test steps MUST first navigate to the "Sign In" page, perform login actions, and validate landing on the "Main Page".
 - Login Data: When performing login actions, ALWAYS use "chithien.nguyen@germangains.com" as the email and "password123" as the password if the requirement does not specify otherwise.
-- Post-Login Navigation: From the "Main Page", the user can navigate to any other protected page.
-- Logout Flow: The 3 public pages cannot be accessed while logged in. The user must explicitly log out to reach them again.
-Protected Pages are: "Main Page", "Challenge Page", "Profile Page", "Profile", "Achievements"..., those pages are only accessible after logging in and cannot be accessed from the Welcome Page without logging in.
+- Post-Login Navigation: After logging in, the user can navigate to any other protected page.
+- Logout Flow: The 3 public pages cannot be accessed while logged in. The user must explicitly sign out to reach them again.
+Protected Pages are: "Main Page","Main Learning Page" "Challenge Page", "Profile Page", "Profile", "Achievements"..., those pages are only accessible after logging in and cannot be accessed from the Welcome Page, Sign In Page, Sign Up Page without logging in.
 
 Tool Dictionary (Context):
 {tool_dictionary}

@@ -329,14 +329,16 @@ def parse_robot_keywords(resource_path: Path) -> list[KeywordEntry]:
     in_keywords_section = False
     current_keyword_name = ""
     current_documentation = ""
-    current_arguments = ""
+    current_argument_lines: list[str] = []
     current_tags: list[str] = []
+    collecting_arguments = False
 
     def flush_keyword() -> None:
         nonlocal current_keyword_name
         nonlocal current_documentation
-        nonlocal current_arguments
+        nonlocal current_argument_lines
         nonlocal current_tags
+        nonlocal collecting_arguments
 
         if not current_keyword_name:
             return
@@ -347,8 +349,9 @@ def parse_robot_keywords(resource_path: Path) -> list[KeywordEntry]:
         if "technical" in lowered:
             current_keyword_name = ""
             current_documentation = ""
-            current_arguments = ""
+            current_argument_lines = []
             current_tags = []
+            collecting_arguments = False
             return
             
         if "gherkin" in lowered:
@@ -357,6 +360,7 @@ def parse_robot_keywords(resource_path: Path) -> list[KeywordEntry]:
             tag_type = "Basic"
 
         module_name = resource_path.parent.name
+        current_arguments = "    ".join(current_argument_lines).strip()
         normalized_keyword_text = normalize_text(
             f"{current_keyword_name} {current_documentation} {current_arguments}",
             remove_stops=True,
@@ -374,8 +378,9 @@ def parse_robot_keywords(resource_path: Path) -> list[KeywordEntry]:
         )
         current_keyword_name = ""
         current_documentation = ""
-        current_arguments = ""
+        current_argument_lines = []
         current_tags = []
+        collecting_arguments = False
 
     for raw_line in lines:
         line = raw_line.rstrip("\n")
@@ -402,11 +407,21 @@ def parse_robot_keywords(resource_path: Path) -> list[KeywordEntry]:
         if not current_keyword_name:
             continue
 
+        if collecting_arguments and stripped.startswith("..."):
+            continuation_args = stripped[3:].strip()
+            if continuation_args:
+                current_argument_lines.append(continuation_args)
+            continue
+
+        collecting_arguments = False
+
         if stripped.startswith("[Documentation]"):
             current_documentation = stripped.replace("[Documentation]", "", 1).strip()
             continue
         if stripped.startswith("[Arguments]"):
-            current_arguments = stripped.replace("[Arguments]", "", 1).strip()
+            raw_arguments = stripped.replace("[Arguments]", "", 1).strip()
+            current_argument_lines = [raw_arguments] if raw_arguments else []
+            collecting_arguments = True
             continue
         if stripped.startswith("[Tags]"):
             raw_tags = stripped.replace("[Tags]", "", 1).strip()
