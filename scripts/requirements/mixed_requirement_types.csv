@@ -1,8 +1,19 @@
-As a user, I want to log in using 'test@gmail.com' as my account and 'password123' as my password.
-I want to sign in with my email and password so that I can access my learning dashboard.
-As a user, I want to perform login and navigate to challenge tab.
-After successfully logging in, I want to be redirected to the main learning page.
 As a user, I want to open the sign up page from sign in text link.
-The system should display an 'Error' notification when login credentials are invalid.
-The system must show the 'Remember Me' checkbox on the sign in page.
-If the user enters invalid credentials while logging in, the system shall display an error message.
+As a user, I want to log in using 'chithien.nguyen@germangains.com' as my account and 'password123' as my password.
+I want to sign in with my email and password so that I can access my main learning page.
+
+The system shall display an error message shows "Invalid credentials" when the user enters invalid credentials while logging in.
+The system should display an Error 'Invalid credentials' notification when login credentials are invalid.
+
+As a new user, I want to access the "Sign Up" page from the "Welcome" page so that I can create a new account.
+As a new user, I want to access the Sign Up page from the welcome page so that I can create a new account.
+
+As a new user, I want to navigate to the Sign Up page from the welcome page, create an account "Test@gmail.com" as my email and "test123" as my password, and then use the new credentials to log in and access the main learning page.
+As a new user, I want to navigate to the Sign Up page, create an account and then then use the new credentials to log in and access the main learning page.
+
+As a user, on the welcome page, I want the page to scroll down to the "Course Features" section when I click the "Features" button, so that I can understand the key features of the course.
+As a user, on the welcome page, I want the page to scroll down to the Course Features section when I click the Features button, so that I can understand the key features of the course.
+As a tester, I want to open the sign in page from the welcome page, then back to the welcome page by clicking the logo, so that I can verify the navigation flow between these pages.
+
+The system must show the 'Remember Me' checkbox is active on the sign in page.
+As a tester, I want page to scroll down following sections when I click the corresponding buttons Features Reviews About on the welcome page, so that I can verify the navigation flow between these sections.
