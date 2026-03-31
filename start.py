@@ -4,7 +4,7 @@ import sys
 import json
 import shutil
 
-from src.components.robot_component import delete_results, start_robot_tests
+from src.components.robot_component import delete_results, delete_robot_tests, start_robot_tests
 
 
 QASE_REPORT = False
@@ -14,7 +14,7 @@ QASE_CONFIG_PATH = "src/components/qase/qase.config.json"
 QASE_CONNECTOR_INSECURE = True
 QASE_FEATURE_OUTPUT_DIR = "Features"
 ROBOT_TEST_OUTPUT_DIR = "robot-tests"
-FEATURE_PIPELINE_ANALYSIS_DIR = "Results/feature-pipeline"
+GHERKIN_PIPELINE_ANALYSIS_DIR = "Results/gherkin_pipeline"
 
 
 def _read_json(path: str) -> dict:
@@ -89,7 +89,7 @@ def _generate_robot_tests_from_features() -> None:
     _cleanup_pull_output_dir(ROBOT_TEST_OUTPUT_DIR)
     cmd = [
         sys.executable,
-        "src/components/semantic/feature_pipeline.py",
+        "src/components/semantic/gherkin_pipeline.py",
         "--features-root",
         QASE_FEATURE_OUTPUT_DIR,
         "--resource-root",
@@ -97,7 +97,7 @@ def _generate_robot_tests_from_features() -> None:
         "--output-root",
         ROBOT_TEST_OUTPUT_DIR,
         "--analysis-dir",
-        FEATURE_PIPELINE_ANALYSIS_DIR,
+        GHERKIN_PIPELINE_ANALYSIS_DIR,
     ]
     result = subprocess.run(cmd, check=False)
     if result.returncode != 0:
@@ -107,11 +107,12 @@ def _generate_robot_tests_from_features() -> None:
 def main():
     os.environ["QASE_REPORT"] = "true" if QASE_REPORT else "false"
     os.environ["QASE_CONFIG_PATH"] = QASE_CONFIG_PATH
-    _configure_qase_reporting_env()
-    _pull_tests_from_qase()
+    #_configure_qase_reporting_env()
+    #_pull_tests_from_qase()
+    delete_robot_tests()
     _generate_robot_tests_from_features()
     delete_results()
-    # start_robot_tests()
+    start_robot_tests()
 
 
 if __name__ == "__main__":

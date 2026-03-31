@@ -17,7 +17,7 @@ List Should Be Visible
 
 List Item Count Should Be At Least Items
     [Documentation]    Assert that list locator has at least expected item count.
-    [Arguments]    ${NAME}    ${MIN_COUNT}=0
+    [Arguments]    ${NAME}    ${MIN_COUNT}=1
 
     ${COUNT}=    Get Category Element Count    list    ${NAME}
     Log To Console    List '${NAME}' has ${COUNT} items (expected at least ${MIN_COUNT})
