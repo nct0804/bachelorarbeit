@@ -22,7 +22,8 @@
     "Last Name": "[data-test=\"register-last-name\"]",
     "Username": "[data-test=\"register-username\"]",
     "Email Address": "[data-test=\"register-email\"]",
-    "Password": "[data-test=\"register-password\"]"
+    "Password": "[data-test=\"register-password\"]",
+    "Confirm Password": "[data-test=\"register-confirm-password\"]"
   },
   "checkbox": {
     "primary": ""
