@@ -37,7 +37,11 @@
   "list": {
     "primary": ""
   },
-  "modal": {
-    "primary": ""
+  "messagebox": {
+      "Error": "[data-test=\"login-error\"]",
+    "Invalid credentials": "[data-test=\"login-error\"]",
+    "Error Message": "[data-test=\"login-error\"]",
+    "Invalid credentials Message": "[data-test=\"login-error\"]",
+    "Invalid credentials notification": "[data-test=\"login-error\"]"
   }
 }

@@ -43,5 +43,5 @@ Textbox Should Be Empty
 
 Set Value In The Textbox
     [Documentation]    Gherkin wrapper for filling a textbox with a value.
-    [Arguments]    ${VALUE}    ${TEXTBOX}
+    [Arguments]    ${TEXTBOX}    ${VALUE}
     Fill Textbox With Value    ${TEXTBOX}    ${VALUE}
