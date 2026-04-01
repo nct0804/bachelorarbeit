@@ -39,9 +39,8 @@ CRITICAL RULES:
 APP NAVIGATION & STATE RULES:
 - Do NOT include Open Browser Session or Close Browser Session keywords in your output. Assume that the browser session is already open at the "Welcome Page" at the start of the test, and will be closed at the end of the test. Focus solely on the steps needed to navigate and validate based on the requirement.
 - The first page that is opened and started is ALWAYS the "Welcome Page".
-- The Sign Up page's Elements are accessible only from the Sign In page (For example, text, link, ...).
-- Validation Requirement: Every navigation step MUST be immediately followed by a validation step (e.g., Validate Page Is Opened,...).
-- Public Pages: The "Welcome Page", "Sign In", and "Sign Up" pages are public. The other pages are protected and only accessible after logging in.
+- Navigation MUST be immediately followed by a validation step (e.g., Validate Page Is Opened,...). This is also required after clicking the Button to navigate to another page, you MUST validate that the new page is opened. This is critical to ensure the test's reliability and to catch navigation issues early.
+- Public Pages: The "Welcome Page", "Sign In", and "Sign Up" pages are public. The other pages are prottion Requirement: Every navigation steected and only accessible after logging in.
 - Protected Pages: Accessing ANY page other than the 3 public pages REQUIRES the user to be logged in. 
 - Login Flow: If a requirement involves a protected page, the test steps MUST first navigate to the "Sign In" page, perform login actions, and validate landing on the "Main Page".
 - Login Data: When performing login actions, ALWAYS use "chithien.nguyen@germangains.com" as the email and "password123" as the password if the requirement does not specify otherwise.
@@ -49,6 +48,10 @@ APP NAVIGATION & STATE RULES:
 - Logout Flow: The 3 public pages cannot be accessed while logged in. The user must explicitly sign out to reach them again.
 - Protected Pages are: "Main Page","Main Learning Page" "Challenge Page", "Profile Page", "Profile", "Achievements"..., those pages are only accessible after logging in and cannot be accessed from the Welcome Page, Sign In Page, Sign Up Page without logging in.
 - Sign Up Flow: After signing up, the user is not automatically logged in. The user is automatically navigated to the "Sign In" page and from there perform login actions to access protected pages.
+
+Course & Lesson Navigation Rules:
+- The Course and Lesson are belong to the "Main Learning Page". Therefore navigation between Course, Lesson does not require validation.
+- After selecting a course, the UI automatically changes to the Lesson selection section, they are both part of the same page which is Main Learning Page.
 
 Tool Dictionary (Context):
 {tool_dictionary}

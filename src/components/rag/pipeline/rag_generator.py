@@ -6,7 +6,6 @@ import sys
 import os
 from pathlib import Path
 
-# Add project root to sys.path to allow importing components
 project_root = Path(__file__).resolve().parent.parent.parent.parent.parent
 sys.path.append(str(project_root))
 
@@ -101,16 +100,13 @@ def generate_robot_test(requirement_text: str, full_catalog: list, model, nlp, c
     )
     
     if not scored_details or not scored_details[0]:
-        return "    Log    No keywords mapped."
+        return "    Log To  Console    No keywords mapped."
         
     tool_dict_str = format_tool_dictionary(scored_details[0])
     
-    # Strip markdown artifacts the LLM might hallucinate
     generated_scenario = client.generate_gherkin_scenario_with_prompt(requirement_text, tool_dict_str)
     generated_scenario = generated_scenario.replace("```robot", "").replace("```gherkin", "").replace("```", "").strip()
 
-    # Indent the steps to safely fit under a Test Case header
-    # Use string concatenation to avoid f-string interpretation of curly braces in LLM responses
     return "\n".join(["    " + line for line in generated_scenario.splitlines() if line.strip()])
 
 
@@ -130,8 +126,6 @@ if __name__ == "__main__":
     if not args.requirement and not args.input_file:
         print("Error: Must provide either --requirement or --input-file")
         sys.exit(1)
-
-    print("1. Initializing NLP Processor and LLM Client...")
     nlp = RequirementNLPProcessor(ignore_quoted_text=True)
     model = LocalEmbeddingModel()
     try:
@@ -140,14 +134,13 @@ if __name__ == "__main__":
         print(f"Error: {e}")
         sys.exit(1)
         
-    print(f"2. Extracting Keyword Context from {args.resource_root}/...")
+    print(f"Extracting Keyword Context")
     full_catalog = extract_keyword_catalog(project_root / args.resource_root)
     common_catalog = filter_catalog_by_scope(full_catalog, "common")
     
     requirements_to_process = []
     if args.input_file:
         input_path = project_root / args.input_file if not Path(args.input_file).is_absolute() else Path(args.input_file)
-        print(f"Loading from file: {input_path}")
         reqs = load_requirements(input_path)
         for r in reqs:
             requirements_to_process.append(r.requirement_text)
@@ -157,9 +150,8 @@ if __name__ == "__main__":
     print(f"3. Generating {len(requirements_to_process)} test case(s)...")
     
     feature_name = Path(args.output).stem if args.output else "generated"
-    
+    # Really important import 
     robot_code = f"*** Settings ***\nDocumentation    Generated feature tests from RAG Pipeline.\nResource    ./{feature_name}.resource\n\n*** Test Cases ***\n"
-
     resource_code = f"*** Settings ***\nDocumentation    Auto-generated executable resource.\nResource    ../Resource/MainLib.resource\n\n*** Keywords ***\n"
     
     for idx, req_text in enumerate(requirements_to_process, 1):
@@ -182,10 +174,8 @@ if __name__ == "__main__":
             robot_code = robot_code + "    [Teardown]    Close Browser Session\n\n"
             
         except Exception as e:
-            # Convert exception to string to avoid any f-string formatting issues
             error_msg = str(e)
             print(f"   ! Error generating for requirement {idx}: {error_msg}")
-            # Use string format to avoid f-string issues with curly braces in error messages
             robot_code = robot_code + "Test Case {}: Auto-Generated\n    [Documentation]    {}\n    Log    GENERATION FAILED: {}\n\n".format(idx, req_text, error_msg)
             
     if args.output:
@@ -193,14 +183,12 @@ if __name__ == "__main__":
         if not out_path.is_absolute():
             out_path = project_root / out_path
             
-        print(f"4. Saving output to: {out_path}")
+        print(f"Output: {out_path}")
         out_path.parent.mkdir(parents=True, exist_ok=True)
         out_path.write_text(robot_code, encoding="utf-8")
         
         resource_path = out_path.with_suffix(".resource")
         resource_path.write_text(resource_code, encoding="utf-8")
-        
-        print(f" Success! Saved generated suite to: {out_path} and {resource_path}")
     else:
         print("\n--- GENERATED ROBOT TEST SUITE ---\n")
         print(robot_code)
