@@ -486,6 +486,17 @@ def load_requirements_from_csv(
     requirement_id_prefix: str = "REQ",
 ) -> list[RequirementEntry]:
     with requirement_path.open("r", encoding="utf-8") as file_handle:
+        first_line = file_handle.readline().lower()
+        first_row_cols = [c.strip() for c in first_line.split(",")]
+        obvious_headers = {"req", "req_id", "id", "feature", "text", "description", "title", "story", "epic", "requirement_text", "requirement"}
+        has_headers = any(col in obvious_headers for col in first_row_cols)
+        
+        if not has_headers:
+            return load_requirements_from_text(
+                requirement_path=requirement_path,
+                requirement_id_prefix=requirement_id_prefix,
+            )
+        file_handle.seek(0)
         reader = csv.DictReader(file_handle)
         rows = list(reader)
         fieldnames = list(reader.fieldnames or [])

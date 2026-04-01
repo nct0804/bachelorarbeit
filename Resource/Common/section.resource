@@ -78,3 +78,13 @@ Section Should Be Empty
     [Documentation]    Assert that a section has no child items.
     [Arguments]    ${NAME}
     Section Item Count    ${NAME}    AUTO    0
+
+Validate Section Is In View
+    [Documentation]    Assert that the section is currently inside the viewport.
+    [Arguments]    ${NAME}
+    ${SELECTOR}=    Get Locator In Category    section    ${NAME}
+    Wait For Elements State    css=${SELECTOR} >> nth=0    visible    timeout=15s
+    ${IN_VIEW}=    Evaluate JavaScript
+    ...    css=${SELECTOR} >> nth=0
+    ...    (el)=>{const r=el.getBoundingClientRect();return r.top<innerHeight&&r.bottom>0&&r.left<innerWidth&&r.right>0}
+    Should Be True    ${IN_VIEW}

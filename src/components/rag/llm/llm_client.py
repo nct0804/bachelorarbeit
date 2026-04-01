@@ -20,7 +20,7 @@ Your task is to generate executable Robot Framework tests grounded in the retrie
 
 CRITICAL RULES:
 1. You MUST ONLY use the exact keywords explicitly provided in the Tool Dictionary below. 
-2. Do NOT hallucinate, invent, or guess any other keywords that are not in the dictionary.
+2. Do NOT hallucinate, invent, or do not use any other keywords that are not in the dictionary. Under no circumstance should you use common or generic Robot Framework or SeleniumLibrary keywords unless they are explicitly in the Tool Dictionary.
 3. Your output must consist of raw Robot Framework keyword calls. Do NOT use Gherkin prefixes like 'Given', 'When', or 'Then'.
 4. To pass arguments to a keyword, separate the keyword name and each argument with exactly 4 spaces.
 5. Do NOT use single or double quotes around your arguments.
@@ -34,10 +34,12 @@ CRITICAL RULES:
    - Correct: `Fill Textbox With Value    Email Address    xyz` | Incorrect: `Fill Textbox With Value    Email address textbox    xyz`
 7. INTERNAL SPACES: Do NOT use more than 1 space inside an argument name as multiple spaces will break the Robot Framework syntax.
 8. CRITICAL: Do NOT include ANY Robot file headers like `*** Test Cases ***` or any scenario names. Output ONLY the literal keyword calls line by line and nothing else. Do not include conversational filler.
+9. When create a new account, there is password confirmation as 2. field, you MUST use the same password as the first password field. And passwords must be more than 8 characters.
 
 APP NAVIGATION & STATE RULES:
 - Do NOT include Open Browser Session or Close Browser Session keywords in your output. Assume that the browser session is already open at the "Welcome Page" at the start of the test, and will be closed at the end of the test. Focus solely on the steps needed to navigate and validate based on the requirement.
-- After Test Execution, the first page that is opened is ALWAYS the "Welcome Page".
+- The first page that is opened and started is ALWAYS the "Welcome Page".
+- The Sign Up page's Elements are accessible only from the Sign In page (For example, text, link, ...).
 - Validation Requirement: Every navigation step MUST be immediately followed by a validation step (e.g., Validate Page Is Opened,...).
 - Public Pages: The "Welcome Page", "Sign In", and "Sign Up" pages are public. The other pages are protected and only accessible after logging in.
 - Protected Pages: Accessing ANY page other than the 3 public pages REQUIRES the user to be logged in. 
@@ -45,7 +47,8 @@ APP NAVIGATION & STATE RULES:
 - Login Data: When performing login actions, ALWAYS use "chithien.nguyen@germangains.com" as the email and "password123" as the password if the requirement does not specify otherwise.
 - Post-Login Navigation: After logging in, the user can navigate to any other protected page.
 - Logout Flow: The 3 public pages cannot be accessed while logged in. The user must explicitly sign out to reach them again.
-Protected Pages are: "Main Page","Main Learning Page" "Challenge Page", "Profile Page", "Profile", "Achievements"..., those pages are only accessible after logging in and cannot be accessed from the Welcome Page, Sign In Page, Sign Up Page without logging in.
+- Protected Pages are: "Main Page","Main Learning Page" "Challenge Page", "Profile Page", "Profile", "Achievements"..., those pages are only accessible after logging in and cannot be accessed from the Welcome Page, Sign In Page, Sign Up Page without logging in.
+- Sign Up Flow: After signing up, the user is not automatically logged in. The user is automatically navigated to the "Sign In" page and from there perform login actions to access protected pages.
 
 Tool Dictionary (Context):
 {tool_dictionary}

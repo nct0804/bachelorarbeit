@@ -9,11 +9,12 @@
     "Sign Up": "[data-test=\"login-signup-link\"]",
     "Sign In": "[data-test=\"login-submit\"]",
     "Login": "[data-test=\"login-submit\"]",
-    "Logo": "[data-test=\"landing-logo\"]"
+    "Logo": "[data-test=\"login-logo\"]"
   },
   "link": {
     "Forgot Password": "[data-test=\"login-forgot-password\"]",
-    "Sign Up": "[data-test=\"login-signup-link\"]"
+    "Sign Up": "[data-test=\"login-signup-link\"]",
+    "Sign In": "[data-test=\"landing-cta-signin\"]"
   },
   "textbox": {
     "Email Address": "[data-test=\"login-email\"]",
@@ -25,7 +26,8 @@
   },
   "text": {
     "Sign Up": "[data-test=\"login-signup-link\"]",
-    "Forgot Password": "[data-test=\"login-forgot-password\"]"
+    "Forgot Password": "[data-test=\"login-forgot-password\"]",
+    "Sign In": "[data-test=\"login-submit\"]"
   },
   "notification": {
     "Error": "[data-test=\"login-error\"]",

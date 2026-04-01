@@ -26,7 +26,8 @@
         "Sign In": "[data-test=\"landing-cta-signin\"]",
         "Sign Up": "[data-test=\"landing-cta-signup\"]"
     },
-    "textbox": {
+    "text": {
+        "Sign In": "[data-test=\"landing-cta-signin\"]"
 
     },
     "checkbox": {

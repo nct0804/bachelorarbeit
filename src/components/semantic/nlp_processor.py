@@ -96,7 +96,7 @@ class RequirementNLPProcessor:
             r"\b(sign in|log in|login|authenticate)\b.+\b(email|account|username)\b.+\b(password|pass)\b",
         ],
         'navigate': [
-                r'(?:go to|navigate to|open|visit)\s+(.+)',
+                r'(?:go to page|navigate To Page)\s+(.+)',
                 r'open\s+(?:the\s+)?(.+?)(?:\s+page|\s+url)?',
         ],
         'click': [
@@ -113,6 +113,7 @@ class RequirementNLPProcessor:
         'verify': [
             r'(?:verify|check|ensure|confirm)\s+(?:that\s+)?(.+)',
             r'(?:should\s+see|should\s+contain|should\s+display)\s+(.+)',
+            r'(?:shall|should|must)\s+(?:display|show|have|be)\s+(.+)',
             r'(?:should\s+be\s+(?:visible|opened|open|ready|displayed))',
             r'expect\s+(.+)',
             r'assert\s+(.+)',
@@ -398,7 +399,7 @@ class RequirementNLPProcessor:
                             target=element_name,
                             value=state_value,
                         )
-                    if re.search(r"\bcontain(s)?\b", clause):
+                    if re.search(r"\b(contain(s)?|show(s)?|display(s)?|say(s)?|has|with text)\b", clause):
                         if re.search(r"\btextbox\b|\bfield\b", clause):
                             return RequirementAction(
                                 action_type=action_type,
