@@ -43,6 +43,7 @@ FRONTEND_URL=http://localhost:4242
 ## Getting Social Provider Credentials
 
 ### Google Sign-In
+
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
 2. Create a new project or select existing one
 3. Enable Google+ API
@@ -54,6 +55,7 @@ FRONTEND_URL=http://localhost:4242
 7. Copy the Client ID
 
 ### Facebook Login
+
 1. Go to [Facebook Developers](https://developers.facebook.com/)
 2. Create a new app or select existing one
 3. Add Facebook Login product
@@ -62,6 +64,7 @@ FRONTEND_URL=http://localhost:4242
 6. Add authorized domains: `localhost`
 
 ### Apple Sign-In
+
 1. Go to [Apple Developer](https://developer.apple.com/)
 2. Create a new app or select existing one
 3. Enable Sign in with Apple capability
@@ -76,4 +79,4 @@ After setting up the environment variables:
 2. Open http://localhost:4242
 3. Go to login/register page
 4. Try the social login buttons
-5. Check browser console for any errors 
+5. Check browser console for any errors
