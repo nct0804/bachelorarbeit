@@ -11,7 +11,7 @@ Resource            ../MainLib.resource
 ${SERVER}           localhost:4242
 ${BASE_URL}         http://${SERVER}
 ${HEADLESS}         False
-&{PAGE_ROUTES}      welcomepage=/    welcome page=/    landing=/    landing page=/
+&{PAGE_ROUTES}      welcome=/    welcomepage=/    welcome page=/    landing=/    landing page=/
 ...                 login=/login    log in=/login    signin=/login    sign in=/login
 ...                 sign up=/register    signup=/register    register=/register
 ...                 main page=/home    main learning page=/home    main layout=/home

@@ -27,7 +27,7 @@
         "About": "[data-test=\"main-menu-about\"]",
         "Logout": "[data-test=\"main-menu-logout\"]",
         "Logout Confirm": "[data-test=\"main-logout-confirm\"]",
-        "Continue": "[data-test=\"main-logout-continue\"]",
+        "Continue": "[data-test=\"course-card-action-{index}\"]",
         "Refresh Quote": "[data-test=\"topbar-quote-refresh\"]",
         "New Quote": "[data-test=\"topbar-quote-refresh\"]",
         "Learn": "[data-test=\"rightbar-lesson-start\"]",
@@ -45,11 +45,12 @@
         "5 min": "[data-test=\"focus-timer-duration-5-button\"]",
         "10 min": "[data-test=\"focus-timer-duration-10-button\"]",
         "25 min": "[data-test=\"focus-timer-duration-25-button\"]",
-        "Start": "[data-test=\"course-card-action-1\"]",
+        "Start": "[data-test=\"course-card-action-{index}\"]",
         "Dark Mode Toggle": "[data-test=\"dark-mode-toggle-pulse\"]",
         "Light Mode Toggle": "[data-test=\"light-mode-toggle-pulse\"]",
         "Profile Icon": "[data-test=\"topbar-profile-link\"]",
         "Lesson 1": "[data-test=\"lesson-step-2-button\"]",
+        "Lesson": "[data-test=\"lesson-step-{index}-button\"]",
         "Lesson 1 Start": "[data-test=\"lesson-step-2-bubble-action\"]",
         "Lesson 2": "[data-test=\"lesson-step-1-button\"]",
         "Lesson 2 Start": "[data-test=\"lesson-step-1-bubble-action\"]"
@@ -83,6 +84,8 @@
         "Quote Text": "[data-test=\"topbar-quote-text\"]"
     },
     "list": {
+        "Continue": "[data-test=\"course-card-action-{index}\"]",
+        "Lesson": "[data-test=\"lesson-step-{index}-button\"]",
         "Nav": "[data-test=\"main-nav\"]",
         "More Panel": "[data-test=\"main-more-panel\"]",
         "Topbar": "[data-test=\"main-topbar\"]",
@@ -117,6 +120,7 @@
   
   },
   "section": {
+        "Course": "[data-test=\"course-card-content\"]",
         "Quote Text": "[data-test=\"topbar-quote-text\"]",
         "Word Of The Day": "[data-test=\"home-word-of-day\"]",
         "Focus Timer": "[data-test=\"home-focus-timer\"]",

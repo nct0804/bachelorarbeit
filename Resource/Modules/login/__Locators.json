@@ -3,7 +3,7 @@
     "page": "login",
     "version": 1
   },
-  "page": ["Login", "Log in", "Log In", "LogIn", "Sign In", "signin", "sign in"],
+  "page": ["Login", "Log in", "Log In", "LogIn", "Sign In", "signin", "sign in", "Login Page", "Sign In Page", "Login Screen", "Sign In Screen"],
   "root": "[data-test=\"page-login\"]",
   "button": {
     "Sign Up": "[data-test=\"login-signup-link\"]",
@@ -34,13 +34,15 @@
     "Invalid credentials": "[data-test=\"login-error\"]",
     "Error Message": "[data-test=\"login-error\"]",
     "Invalid credentials Message": "[data-test=\"login-error\"]",
-    "Invalid credentials notification": "[data-test=\"login-error\"]"
+    "Invalid credentials notification": "[data-test=\"login-error\"]",
+        "Error Notification": "[data-test=\"login-error\"]"
   },
   "list": {
     "primary": ""
   },
   "messagebox": {
-      "Error": "[data-test=\"login-error\"]",
+    "Error Notification": "[data-test=\"login-error\"]",
+    "Error": "[data-test=\"login-error\"]",
     "Invalid credentials": "[data-test=\"login-error\"]",
     "Error Message": "[data-test=\"login-error\"]",
     "Invalid credentials Message": "[data-test=\"login-error\"]",

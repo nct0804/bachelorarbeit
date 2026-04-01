@@ -3,7 +3,7 @@
     "page": "register",
     "version": 1
   },
-  "page": ["Signup", "Sign up", "Sign Up", "SignUp", "Register", "register"],
+  "page": ["Signup", "Sign up", "Sign Up", "SignUp", "Register", "register", "Sign up Page", "Signup Page", "Register Page"],
   "root": "[data-test=\"page-register\"]",
   "button": {
     "Create Account": "[data-test=\"register-submit\"]",
