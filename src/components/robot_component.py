@@ -5,8 +5,6 @@ import sys
 import importlib.util
 from glob import glob
 
-from start import ROBOT_TEST_OUTPUT_DIR
-
 
 def _qase_config_path() -> str:
     return os.getenv("QASE_CONFIG_PATH", "qase.config.json")
@@ -61,13 +59,19 @@ def delete_robot_tests():
             os.remove(f)
 
 def _generate_robot_tests_from_req(YOUR_INPUT_FILE: str) -> None:
+    if YOUR_INPUT_FILE == "requirements/gherkin":
+        print("Generating robot tests from Gerkin requirements...")
+        Output_file = f"robot-tests/all_gherkin.robot"
+    else:
+        print("Generating robot tests from Natural language requirements...")
+        Output_file = f"robot-tests/all_natural.robot"
     cmd = [
         sys.executable,
         "src/components/rag/pipeline/rag_generator.py",
         "--input-file",
         YOUR_INPUT_FILE,
         "--output",
-        f"{ROBOT_TEST_OUTPUT_DIR}/all_features.robot",
+        Output_file,
         "--top-k",
         "30",
     ]

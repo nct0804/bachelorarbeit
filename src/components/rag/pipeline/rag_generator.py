@@ -217,7 +217,7 @@ if __name__ == "__main__":
                 step = raw_step.strip()
                 if not step: continue
                 # We extract the first word logic to make a nice name
-                keyword_alias = f"{idx:02d}_{i:02d}: RAG Generative Step" 
+                keyword_alias = f"{idx:02d}_{i:02d}: AI Generative Step" 
                 
                 robot_code=robot_code + f"    {keyword_alias}\n"
                 resource_code= resource_code + f"{keyword_alias}\n    [Documentation]    Execute source step\n    {step}\n\n"

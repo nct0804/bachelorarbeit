@@ -91,7 +91,8 @@ def main():
     #_configure_qase_reporting_env()
     #_pull_tests_from_qase()
     delete_robot_tests()
-    _generate_robot_tests_from_req(GHERKIN_REQ)
+    #_generate_robot_tests_from_req(GHERKIN_REQ)
+    _generate_robot_tests_from_req(NATURAL_REQ)
     delete_results()
     start_robot_tests()
 

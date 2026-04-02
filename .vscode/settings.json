@@ -15,6 +15,9 @@
         "editor.defaultFormatter": "d-biehl.robotcode",
         "editor.codeLens": true
     },
+    "robotcode.robot.paths": [
+        "./robot-tests",
+    ],
     "diffEditor.codeLens": true,
     "testing.alwaysRevealTestOnStateChange": true
 }

@@ -447,10 +447,13 @@ def load_requirements(
     requirement_id_prefix: str = "REQ",
 ) -> list[RequirementEntry]:
     if requirement_path.is_dir():
-        return load_requirements_from_feature_dir(
-            requirements_dir=requirement_path,
-            requirement_id_prefix=requirement_id_prefix,
-        )
+        all_reqs = []
+        for file in sorted(requirement_path.rglob("*")):
+            if file.is_file() and file.suffix.lower() in {".feature", ".gherkin", ".txt", ".md", ".json", ".csv"}:
+                all_reqs.extend(load_requirements(file, requirement_text_field, requirement_id_prefix))
+        if not all_reqs:
+            raise FileNotFoundError(f"No requirement files (.feature, .csv, .txt, etc.) found in {requirement_path}")
+        return all_reqs
     suffix = requirement_path.suffix.lower()
     if suffix in {".feature", ".gherkin"}:
         return load_requirements_from_feature_file(
