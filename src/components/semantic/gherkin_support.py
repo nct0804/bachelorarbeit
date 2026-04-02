@@ -639,6 +639,8 @@ def detect_intent(step_text: str) -> str:
 
     if re.search(r"signs? in.+email.+password", lowered):
         return "sign_in_credentials"
+    if re.search(r"(logs? in|signs? in).+credentials", lowered):
+        return "sign_in_credentials"
     if re.search(r"\bsection\b.+\b(updated?|changed?)\b.+\b(clicking|triggering)\b.+\bbutton\b", lowered):
         return "section_update_after_click"
     if re.search(r"\b(open|start|launch)\w*\b.+\bbrowser\b", lowered):
@@ -693,6 +695,8 @@ def detect_intent(step_text: str) -> str:
         return "list_visible"
     if re.search(r"\b(sign up|signup|register)\b.+\b(with|using)\b", lowered):
         return "sign_up"
+    if re.search(r"\bwait\b.+\b(?:\d+|second)", lowered):
+        return "wait"
     return "generic"
 
 
@@ -720,6 +724,8 @@ def pick_rule_keywords(intent: str) -> list[str]:
         "textbox_visible": ["Textbox Should Be Visible"],
         "text_visible": ["Text Should Be Visible"],
         "validate_page": ["Page Should Be Ready"],
+        "sign_in_credentials": ["Sign In With Credentials", "Fill Sign In Form"],
+        "wait": ["Wait For Second"],
     }
     return rule_map.get(intent, [])
 

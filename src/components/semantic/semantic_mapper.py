@@ -638,38 +638,48 @@ def load_requirements_from_feature_file(
 ) -> list[RequirementEntry]:
     content = requirement_path.read_text(encoding="utf-8")
     requirements: list[RequirementEntry] = []
+    
     feature_name = requirement_path.stem
-    scenario_name = ""
+    current_scenario = ""
+    current_steps: list[str] = []
     index = start_index
+
+    def flush_scenario():
+        nonlocal index
+        if current_steps:
+            full_text = "\n".join(current_steps)
+            feature_context = f"{feature_name}::{current_scenario}" if current_scenario else feature_name
+            requirements.append(
+                RequirementEntry(
+                    req_id=f"{requirement_id_prefix}-{index:03d}",
+                    feature=feature_context,
+                    requirement_text=full_text
+                )
+            )
+            index += 1
+            current_steps.clear()
+
     for raw_line in content.splitlines():
         line = raw_line.strip()
         if not line or line.startswith("#") or line.startswith("@"):
             continue
         feature_match = FEATURE_HEADER_PATTERN.match(line)
         if feature_match:
+            flush_scenario()
             feature_name = feature_match.group(1).strip() or feature_name
             continue
         scenario_match = SCENARIO_HEADER_PATTERN.match(line)
         if scenario_match:
-            scenario_name = scenario_match.group(1).strip()
+            flush_scenario()
+            current_scenario = scenario_match.group(1).strip()
             continue
         step_match = GHERKIN_STEP_PATTERN.match(line)
         if not step_match:
             continue
-        step_text = step_match.group(2).strip()
-        if len(step_text) < MIN_REQUIREMENT_CHARS:
-            continue
-        feature_context = feature_name
-        if scenario_name:
-            feature_context = f"{feature_name}::{scenario_name}"
-        requirements.append(
-            RequirementEntry(
-                req_id=f"{requirement_id_prefix}-{index:03d}",
-                feature=feature_context,
-                requirement_text=step_text,
-            )
-        )
-        index += 1
+        
+        current_steps.append(line)
+        
+    flush_scenario()
     return requirements
 
 

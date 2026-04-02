@@ -14,6 +14,33 @@ class GeminiClient:
         self.url = "https://openrouter.ai/api/v1/chat/completions"
 
     def generate_gherkin_scenario_with_prompt(self, requirement: str, tool_dictionary: str) -> str:
+        prompt = f"""You are an expert Robot Framework Test Engineer acting as an advanced Semantic Fallback Parser.
+Your task is to map the follow isolated Gherkin step into exactly ONE matching Robot Keyword call from the Tool Dictionary.
+
+CRITICAL GHERKIN MAPPING RULES:
+1. You MUST ONLY use the exact keywords explicitly provided in the Tool Dictionary below. 
+2. Your output must consist of raw Robot Framework keyword calls. Do NOT use Gherkin prefixes like 'Given', 'When', or 'Then'.
+3. To pass arguments to a keyword, separate the keyword name and each argument with exactly 4 spaces.
+4. ARGUMENT CONSTRAINTS: 
+    - Arguments are always explicitly defined in quotation marks in the Gherkin steps (e.g "Last Name", "Sign Up" ,...). You MUST extract the argument values from the Gherkin steps and pass them to the keywords. Do NOT paraphrase, summarize, or change the wording of the arguments or combine arguments with keywords together.
+    - You MUST provide exactly the number of arguments required by the keyword's signature. If a keyword requires 2 arguments, you must provide exactly 2 arguments. Do NOT provide extra or fewer arguments.
+    - You MUST format all UI element names in exact Title Case. Correct: `Click Button    Sign In` | Incorrect: `Click Button    Sign In Button`
+5. INTERNAL SPACES: Do NOT use more than 1 space inside an argument name.
+6. CRITICAL: Do NOT include ANY Robot file headers like `*** Test Cases ***` or any scenario names. Output ONLY the literal keyword calls line by line and nothing else. Do not include conversational filler.
+7. CRITICAL - UNMAPPED STEPS: If you absolutely cannot find a valid, logically matching keyword in the Tool Dictionary for this specific step, do NOT invent a keyword. You MUST output exactly this fallback format:
+   `Fail    Unmapped step skipped: {{original step text}}`
+
+Tool Dictionary (Context):
+{tool_dictionary}
+
+Gherkin Step to Map:
+{requirement}
+
+Output ONLY the raw mapped Keyword:
+"""
+        return self._send_request(prompt)
+
+    def generate_natural_language_scenario_with_prompt(self, requirement: str, tool_dictionary: str) -> str:
         prompt = f"""You are an expert Robot Framework Test Engineer and an experienced tester analyst/ QA engineer. 
 At the same time, take the perspective of a bussiness analyst in oder to understand the requirements deeply and generate the most relevant test cases.
 Your task is to generate executable Robot Framework tests grounded in the retrieved keywords for the following natural language requirement.
@@ -59,8 +86,11 @@ Tool Dictionary (Context):
 Requirement:
 {requirement}
 
-Output ONLY the raw Gherkin steps starting directly.
+Output ONLY the raw steps starting directly.
 """
+        return self._send_request(prompt)
+
+    def _send_request(self, prompt: str) -> str:
         headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json"
@@ -68,12 +98,7 @@ Output ONLY the raw Gherkin steps starting directly.
         
         payload = {
             "model": self.model,
-            "messages": [
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ],
+            "messages": [{"role": "user", "content": prompt}],
             "temperature": 0.2
         }
         

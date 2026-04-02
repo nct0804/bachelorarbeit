@@ -5,6 +5,8 @@ import argparse
 import sys
 import os
 from pathlib import Path
+import re
+import sys
 
 project_root = Path(__file__).resolve().parent.parent.parent.parent.parent
 sys.path.append(str(project_root))
@@ -84,10 +86,53 @@ def map_requirements_for_generation(requirements, catalog, model, top_k, semanti
         
     return scored_details_list
 
-
+# Specially developed for Gherkin steps
 def generate_robot_test(requirement_text: str, full_catalog: list, model, nlp, client, top_k: int = 10) -> str:
-    req_entries = [RequirementEntry(req_id="RAG-GEN", feature="General", requirement_text=requirement_text)]
+    is_gherkin = bool(re.search(r'^\s*(Given|When|Then|And)\s', requirement_text, re.IGNORECASE | re.MULTILINE))
     
+    if is_gherkin:
+        from src.components.semantic.gherkin_support import GherkinStepMapper
+        
+        resource_dir = Path("Resource")  # Defaulting, or could pass from arg
+        mapper = GherkinStepMapper.from_resource_root(resource_dir)
+        
+        mapped_lines = []
+        for line in requirement_text.splitlines():
+            line = line.strip()
+            # when we pulling Gherkin test cases from sources, they will be saved as .feature files, and will be defined with @,#,senerios tags..., and we want to keep those lines as they are without mapping, as they are important for the structure of the feature files.
+            if not line or line.startswith("#") or line.startswith("@") or line.lower().startswith("feature:") or line.lower().startswith("scenario:"):
+                if line and not line.lower().startswith(("feature:", "scenario:", "@")):
+                    pass
+                else:
+                    continue
+                
+            analysis = mapper.analyze_step(line)
+            rendered_name, args, conf, src = mapper.map_step(analysis)
+            
+            if conf >= 0.85 or src == "rule":
+                arg_str = "    ".join([rendered_name] + args)
+                mapped_lines.append(arg_str)
+            else:
+                req_entries = [RequirementEntry(req_id="RAG-GEN", feature="General", requirement_text=line)]
+                scored_details = map_requirements_for_generation(
+                    requirements=req_entries,
+                    catalog=full_catalog,
+                    model=model,
+                    top_k=top_k,
+                    semantic_weight=0.85,
+                    lexical_weight=0.15,
+                    nlp_processor=nlp,
+                    ignore_quoted_text=True
+                )
+                tool_dict_str = format_tool_dictionary(scored_details[0]) if (scored_details and scored_details[0]) else "No tools available."
+                ai_generated = client.generate_gherkin_scenario_with_prompt(line, tool_dict_str)
+                ai_generated = ai_generated.replace("```robot", "").replace("```gherkin", "").replace("```", "").strip()
+                mapped_lines.extend([l.strip() for l in ai_generated.splitlines() if l.strip()])
+                
+        return "\n".join(["    " + line for line in mapped_lines])
+
+    # NATURAL LANGUAGE PATH
+    req_entries = [RequirementEntry(req_id="RAG-GEN", feature="General", requirement_text=requirement_text)]
     scored_details = map_requirements_for_generation(
         requirements=req_entries,
         catalog=full_catalog,
@@ -103,10 +148,8 @@ def generate_robot_test(requirement_text: str, full_catalog: list, model, nlp, c
         return "    Log To  Console    No keywords mapped."
         
     tool_dict_str = format_tool_dictionary(scored_details[0])
-    
-    generated_scenario = client.generate_gherkin_scenario_with_prompt(requirement_text, tool_dict_str)
+    generated_scenario = client.generate_natural_language_scenario_with_prompt(requirement_text, tool_dict_str)
     generated_scenario = generated_scenario.replace("```robot", "").replace("```gherkin", "").replace("```", "").strip()
-
     return "\n".join(["    " + line for line in generated_scenario.splitlines() if line.strip()])
 
 
@@ -120,7 +163,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     from dotenv import load_dotenv
-    # Load .env variables implicitly
     load_dotenv(project_root / ".env")
     
     if not args.requirement and not args.input_file:
@@ -141,25 +183,34 @@ if __name__ == "__main__":
     requirements_to_process = []
     if args.input_file:
         input_path = project_root / args.input_file if not Path(args.input_file).is_absolute() else Path(args.input_file)
+        print(f"Loading from file: {input_path}")
         reqs = load_requirements(input_path)
-        for r in reqs:
-            requirements_to_process.append(r.requirement_text)
+        requirements_to_process = reqs
     else:
-        requirements_to_process.append(args.requirement)
+        reqs = [RequirementEntry(req_id="RAG-GEN", feature="General", requirement_text=args.requirement)]
+        requirements_to_process = reqs
 
-    print(f"3. Generating {len(requirements_to_process)} test case(s)...")
+    print(f"Generating {len(requirements_to_process)} test case(s)...")
     
     feature_name = Path(args.output).stem if args.output else "generated"
     # Really important import 
     robot_code = f"*** Settings ***\nDocumentation    Generated feature tests from RAG Pipeline.\nResource    ./{feature_name}.resource\n\n*** Test Cases ***\n"
     resource_code = f"*** Settings ***\nDocumentation    Auto-generated executable resource.\nResource    ../Resource/MainLib.resource\n\n*** Keywords ***\n"
     
-    for idx, req_text in enumerate(requirements_to_process, 1):
-        print(f"   Processing [{idx}/{len(requirements_to_process)}]: {req_text[:60]}...")
+    for idx, req in enumerate(requirements_to_process, 1):
+        req_text = req.requirement_text
+        print(f"   Processing [{idx}/{len(requirements_to_process)}]")
         try:
             output_steps = generate_robot_test(req_text, common_catalog, model, nlp, client, args.top_k)
-            test_name = f"Test Case {idx}: Auto-Generated"
-            robot_code = robot_code + f"{test_name}\n    [Documentation]    {req_text}\n    [Setup]    Open Browser Session\n"
+            test_name = f"Test Case {idx}: {req.feature}" if req.feature and req.feature != "General" else f"Test Case {idx}: Auto-Generated"
+            
+            # Format documentation to handle multi-line Feature tests
+            doc_lines = req_text.splitlines()
+            doc_block = f"    [Documentation]    {doc_lines[0]}\n"
+            for dline in doc_lines[1:]:
+                doc_block += f"    ...    {dline}\n"
+                
+            robot_code = robot_code + f"{test_name}\n{doc_block}    [Setup]    Open Browser Session\n"
             
             step_lines = output_steps.splitlines()
             for i, raw_step in enumerate(step_lines, 1):
@@ -189,8 +240,3 @@ if __name__ == "__main__":
         
         resource_path = out_path.with_suffix(".resource")
         resource_path.write_text(resource_code, encoding="utf-8")
-    else:
-        print("\n--- GENERATED ROBOT TEST SUITE ---\n")
-        print(robot_code)
-        print("\n--- GENERATED RESOURCE FILE ---\n")
-        print(resource_code)
