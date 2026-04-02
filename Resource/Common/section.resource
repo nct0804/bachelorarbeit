@@ -82,6 +82,7 @@ Section Should Be Empty
 Validate Section Is In View
     [Documentation]    Assert that the section is currently inside the viewport.
     [Arguments]    ${NAME}
+    Sleep    1s
     ${SELECTOR}=    Get Locator In Category    section    ${NAME}
     Wait For Elements State    css=${SELECTOR} >> nth=0    visible    timeout=15s
     ${IN_VIEW}=    Evaluate JavaScript
