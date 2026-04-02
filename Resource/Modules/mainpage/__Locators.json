@@ -12,7 +12,9 @@
     ],
     "root": "[data-test=\"page-main-layout\"]",
     "button": {
+        "Quote Text": "[data-test=\"topbar-quote-text\"]",
         "Home": "[data-test=\"main-nav-home\"]",
+        "Main Learning": "[data-test=\"main-nav-home\"]",
         "Challenge": "[data-test=\"main-nav-challenge\"]",
         "Ranking": "[data-test=\"main-nav-ranking\"]",
         "Pronunciation": "[data-test=\"main-nav-pronunciation\"]",
@@ -25,16 +27,18 @@
         "About": "[data-test=\"main-menu-about\"]",
         "Logout": "[data-test=\"main-menu-logout\"]",
         "Logout Confirm": "[data-test=\"main-logout-confirm\"]",
-        "Continue": "[data-test=\"main-logout-continue\"]",
+        "Continue": "[data-test=\"course-card-action-{index}\"]",
+        "Log Out Continue": "[data-test=\"main-logout-continue\"]",
         "Refresh Quote": "[data-test=\"topbar-quote-refresh\"]",
+        "New Quote": "[data-test=\"topbar-quote-refresh\"]",
         "Learn": "[data-test=\"rightbar-lesson-start\"]",
         "Start Challenge": "[data-test=\"rightbar-challenge-start\"]",
         "Quick Practice Next": "[data-test=\"quick-practice-next\"]",
         "Quick Practice Reset": "[data-test=\"quick-practice-reset\"]",
         "Quick Practice Option": "[data-test^=\"quick-practice-option-\"]",
-        "Edit": "[data-test=\"daily-goal-edit-button\"]",
+        "Daily Goal Edit": "[data-test=\"daily-goal-edit-button\"]",
         "Save Goal": "[data-test=\"daily-goal-save-button\"]",
-        "Shuffle": "[data-test=\"word-of-day-shuffle-button\"]",
+        "Word Of The Day Shuffle": "[data-test=\"word-of-day-shuffle-button\"]",
         "Hear it": "[data-test=\"word-of-day-speak-button\"]",
         "Save": "[data-test=\"word-of-day-favorite-button\"]",
         "Play Pause": "[data-test=\"focus-timer-play-pause-button\"]",
@@ -42,10 +46,12 @@
         "5 min": "[data-test=\"focus-timer-duration-5-button\"]",
         "10 min": "[data-test=\"focus-timer-duration-10-button\"]",
         "25 min": "[data-test=\"focus-timer-duration-25-button\"]",
-        "Start": "[data-test=\"course-card-action-1\"]",
+        "Start": "[data-test=\"course-card-action-{index}\"]",
         "Dark Mode Toggle": "[data-test=\"dark-mode-toggle-pulse\"]",
+        "Light Mode Toggle": "[data-test=\"light-mode-toggle-pulse\"]",
         "Profile Icon": "[data-test=\"topbar-profile-link\"]",
         "Lesson 1": "[data-test=\"lesson-step-2-button\"]",
+        "Lesson": "[data-test=\"lesson-step-{index}-button\"]",
         "Lesson 1 Start": "[data-test=\"lesson-step-2-bubble-action\"]",
         "Lesson 2": "[data-test=\"lesson-step-1-button\"]",
         "Lesson 2 Start": "[data-test=\"lesson-step-1-bubble-action\"]"
@@ -55,7 +61,9 @@
     },
     "textbox": {
         "Daily Goal Target": "[data-test=\"daily-goal-target-input\"]",
-        "Daily Goal Option": "[data-test=\"daily-goal-type-select\"]"
+        "Daily Goal Option": "[data-test=\"daily-goal-type-select\"]",
+        "Daily Goal Input": "[data-test=\"daily-goal-target-input\"]",
+        "Daily Goal Type": "[data-test=\"daily-goal-type-select\"]"
 
     },
     "checkbox": {
@@ -73,9 +81,12 @@
     "messagebox": {
         "Main Tooltip": "[data-test=\"main-tooltip\"]",
         "Topbar Tooltip": "[data-test=\"topbar-tooltip\"]",
-        "Logout Message": "[data-test=\"main-logout-modal-message\"]"
+        "Logout Message": "[data-test=\"main-logout-modal-message\"]",
+        "Quote Text": "[data-test=\"topbar-quote-text\"]"
     },
     "list": {
+        "Continue": "[data-test=\"course-card-action-{index}\"]",
+        "Lesson": "[data-test=\"lesson-step-{index}-button\"]",
         "Nav": "[data-test=\"main-nav\"]",
         "More Panel": "[data-test=\"main-more-panel\"]",
         "Topbar": "[data-test=\"main-topbar\"]",
@@ -104,5 +115,16 @@
     },
     "modal": {
         "Logout Confirmation": "[data-test=\"main-logout-modal\"]"
+    },
+     "notification": { 
+        "Quote Text": "[data-test=\"topbar-quote-text\"]"
+  
+  },
+  "section": {
+        "Course": "[data-test=\"course-card-content\"]",
+        "Quote Text": "[data-test=\"topbar-quote-text\"]",
+        "Word Of The Day": "[data-test=\"home-word-of-day\"]",
+        "Focus Timer": "[data-test=\"home-focus-timer\"]",
+        "Daily Goal": "[data-test=\"home-daily-goal\"]"
     }
 }

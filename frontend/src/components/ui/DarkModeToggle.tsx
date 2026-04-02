@@ -32,7 +32,8 @@ export default function DarkModeToggle() {
       className="flex items-center justify-center rounded-lg p-3 transition-all duration-300 hover:scale-105 active:scale-95 hover:bg-white/20 active:bg-white/30"
       title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
     >
-      <div className="w-8 h-8 flex items-center justify-center relative">
+      <div className="w-8 h-8 flex items-center justify-center relative"
+      data-test="light-mode-toggle-pulse">
         <FontAwesomeIcon
           icon={isDark ? faSun : faMoon}
           className={`text-2xl transition-all duration-300 ${

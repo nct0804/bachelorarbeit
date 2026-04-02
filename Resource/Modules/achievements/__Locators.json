@@ -12,20 +12,25 @@
         "Home": "[data-test=\"main-nav-home\"]",
         "Challenge": "[data-test=\"main-nav-challenge\"]",
         "Ranking": "[data-test=\"main-nav-ranking\"]",
+        "Logout Confirm": "[data-test=\"main-logout-confirm\"]",
         "Pronunciation": "[data-test=\"main-nav-pronunciation\"]",
         "Speak": "[data-test=\"main-nav-speak\"]",
         "Review": "[data-test=\"main-nav-review\"]",
         "Inbox": "[data-test=\"main-nav-inbox\"]",
+        "Dark Mode Toggle": "[data-test=\"dark-mode-toggle-pulse\"]",
+        "Light Mode Toggle": "[data-test=\"light-mode-toggle-pulse\"]",
         "Achievements": "[data-test=\"main-nav-achievements\"]",
         "Menu Toggle": "[data-test=\"main-menu-toggle\"]",
         "Profile": "[data-test=\"main-menu-profile\"]",
         "About": "[data-test=\"main-menu-about\"]",
+        "New Quote": "[data-test=\"topbar-quote-refresh\"]",
         "Logout": "[data-test=\"main-menu-logout\"]",
         "Refresh Quote": "[data-test=\"topbar-quote-refresh\"]",
         "Learn": "[data-test=\"rightbar-lesson-start\"]",
         "Start Challenge": "[data-test=\"rightbar-challenge-start\"]"
     },
     "link": {
+        "Quote Text": "[data-test=\"topbar-quote-text\"]"
     },
     "textbox": {
     },
@@ -42,9 +47,17 @@
         "Achievements": "[data-test=\"main-nav-achievements\"]"
     },
     "messagebox": {
+        "Quote Text": "[data-test=\"topbar-quote-text\"]",
+        "Logout Message": "[data-test=\"main-logout-modal-message\"]"
     },
     "list": {
+        "Quote Text": "[data-test=\"topbar-quote-text\"]"
     },
-    "modal": {
-    }
+    "section": {
+        "Your Badges": "[data-test=\"achievements-section\"]"
+    },
+     "notification": { 
+        "Quote Text": "[data-test=\"topbar-quote-text\"]"
+  
+  }
 }

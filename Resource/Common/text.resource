@@ -5,10 +5,12 @@ Resource            common.resource
 
 
 *** Keywords ***
-Click Text '${NAME}'
+Click Text
     [Documentation]    Click a text locator by logical name.
+    [Arguments]    ${NAME}
     Click Category Element    text    ${NAME}
 
-Text '${NAME}' Should Be Visible
+Text Should Be Visible
     [Documentation]    Assert that a text locator is visible.
+    [Arguments]    ${NAME}
     Category Element Should Be Visible    text    ${NAME}

@@ -96,7 +96,7 @@ class RequirementNLPProcessor:
             r"\b(sign in|log in|login|authenticate)\b.+\b(email|account|username)\b.+\b(password|pass)\b",
         ],
         'navigate': [
-                r'(?:go to|navigate to|open|visit)\s+(.+)',
+                r'(?:go to page|navigate To Page)\s+(.+)',
                 r'open\s+(?:the\s+)?(.+?)(?:\s+page|\s+url)?',
         ],
         'click': [
@@ -113,6 +113,7 @@ class RequirementNLPProcessor:
         'verify': [
             r'(?:verify|check|ensure|confirm)\s+(?:that\s+)?(.+)',
             r'(?:should\s+see|should\s+contain|should\s+display)\s+(.+)',
+            r'(?:shall|should|must)\s+(?:display|show|have|be)\s+(.+)',
             r'(?:should\s+be\s+(?:visible|opened|open|ready|displayed))',
             r'expect\s+(.+)',
             r'assert\s+(.+)',
@@ -385,7 +386,20 @@ class RequirementNLPProcessor:
                             target="${NAME}",
                             value=str(minimum_count),
                         )
-                    if re.search(r"\bcontain(s)?\b", clause):
+                    checkbox_state_match = re.search(
+                        r"\b(?:state|status)\b.*\b(checked|unchecked|check|uncheck|true|false|on|off)\b",
+                        clause,
+                    )
+                    if "checkbox" in clause and checkbox_state_match:
+                        state_value = checkbox_state_match.group(1)
+                        element_name = get_original_name(0)
+                        return RequirementAction(
+                            action_type=action_type,
+                            action_text=f"checkbox '{element_name}' state should be '{state_value}'",
+                            target=element_name,
+                            value=state_value,
+                        )
+                    if re.search(r"\b(contain(s)?|show(s)?|display(s)?|say(s)?|has|with text)\b", clause):
                         if re.search(r"\btextbox\b|\bfield\b", clause):
                             return RequirementAction(
                                 action_type=action_type,
@@ -517,7 +531,7 @@ class RequirementNLPProcessor:
     def _format_click_keyword(self, element_type: str, target: str, index_value: int | None) -> str:
         name_token = target or "${NAME}"
         if element_type == "checkbox":
-            return f"set checkbox '{name_token}' to checked state"
+            return f"click checkbox '{name_token}'"
         if element_type == "link":
             return f"click link '{name_token}'"
         if element_type == "tab":

@@ -9,13 +9,14 @@ import Notification from '../notification/notificationRegister';
 import SocialLoginButtons from './SocialLoginButtons';
 
 export default function RegisterLeftPanel() {
-  const { register, loading, error } = useRegister();
+  const { register, loading, error, clearError } = useRegister();
   const navigate = useNavigate();
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [username, setUsername] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [notification, setNotification] = useState<{
@@ -29,35 +30,55 @@ export default function RegisterLeftPanel() {
     title: '',
     message: '',
   });
+  const isPasswordMismatch =
+    confirmPassword.length > 0 && password !== confirmPassword;
 
-  const handleSubmit = async (e: FormEvent) => {
+  const clearFeedback = () => {
+    if (error) {
+      clearError();
+    }
+
+    if (notification.show) {
+      setNotification((previousNotification) =>
+        previousNotification.show
+          ? { ...previousNotification, show: false }
+          : previousNotification
+      );
+    }
+  };
+
+  const handleFieldChange =
+    (setter: React.Dispatch<React.SetStateAction<string>>) =>
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      clearFeedback();
+      setter(event.target.value);
+    };
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
-    if (!firstName.trim() || !lastName.trim() || !email.trim() || !password.trim() || !username.trim()) {
-      return; 
+
+    clearFeedback();
+
+    if (!e.currentTarget.reportValidity() || isPasswordMismatch) {
+      return;
     }
-    
-    if (password.length < 8) {
-      return; 
-    }
-    
-    if (username.length < 3) {
-      return; 
-    }
-    
+
     try {
+      const trimmedFirstName = firstName.trim();
+      const trimmedLastName = lastName.trim();
+      const trimmedUsername = username.trim();
       const registrationData = {
         email: email.trim(),
         password,
-        username: username.trim().toLowerCase(), 
-        firstName: firstName.trim(),
-        lastName: lastName.trim(),
+        ...(trimmedUsername
+          ? { username: trimmedUsername.toLowerCase() }
+          : {}),
+        ...(trimmedFirstName ? { firstName: trimmedFirstName } : {}),
+        ...(trimmedLastName ? { lastName: trimmedLastName } : {}),
       };
-      
-      console.log('Attempting registration with:', registrationData);
-      
+
       await register(registrationData);
-      
+
       setNotification({
         show: true,
         type: 'success',
@@ -71,13 +92,16 @@ export default function RegisterLeftPanel() {
           state: { message: 'Registration successful! Please log in.' }
         });
       }, 2000);
-      
+
     } catch (err) {
       setNotification({
         show: true,
         type: 'error',
         title: 'Registration Failed',
-        message: error || 'Something went wrong. Please try again.',
+        message:
+          err instanceof Error
+            ? err.message
+            : 'Something went wrong. Please try again.',
       });
       console.error('Registration failed:', err);
     }
@@ -125,10 +149,10 @@ export default function RegisterLeftPanel() {
                     id="firstName"
                     data-test="register-first-name"
                     value={firstName}
-                    onChange={e => setFirstName(e.target.value)}
+                    onChange={handleFieldChange(setFirstName)}
                     placeholder="John"
                     className="pl-10 h-9 md:h-10 border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 rounded-lg hover:border-gray-300 bg-white text-gray-800 placeholder-gray-400 transition text-sm"
-                    required
+                    autoComplete="given-name"
                   />
                 </div>
               </div>
@@ -145,10 +169,10 @@ export default function RegisterLeftPanel() {
                     id="lastName"
                     data-test="register-last-name"
                     value={lastName}
-                    onChange={e => setLastName(e.target.value)}
+                    onChange={handleFieldChange(setLastName)}
                     placeholder="Doe"
                     className="pl-10 h-9 md:h-10 border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 rounded-lg hover:border-gray-300 bg-white text-gray-800 placeholder-gray-400 transition text-sm"
-                    required
+                    autoComplete="family-name"
                   />
                 </div>
               </div>
@@ -166,13 +190,13 @@ export default function RegisterLeftPanel() {
                   id="username"
                   data-test="register-username"
                   value={username}
-                  onChange={e => setUsername(e.target.value)}
+                  onChange={handleFieldChange(setUsername)}
                   placeholder="johndoe"
                   minLength={3}
                   pattern="[a-zA-Z0-9_]+"
                   title="Username must be at least 3 characters and contain only letters, numbers, and underscores"
                   className="pl-10 h-9 md:h-10 border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 rounded-lg hover:border-gray-300 bg-white text-gray-800 placeholder-gray-400 transition text-sm"
-                  required
+                  autoComplete="username"
                 />
               </div>
             </div>
@@ -190,9 +214,10 @@ export default function RegisterLeftPanel() {
                   data-test="register-email"
                   type="email"
                   value={email}
-                  onChange={e => setEmail(e.target.value)}
+                  onChange={handleFieldChange(setEmail)}
                   placeholder="you@example.com"
                   className="pl-10 h-9 md:h-10 border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 rounded-lg hover:border-gray-300 bg-white text-gray-800 placeholder-gray-400 transition text-sm"
+                  autoComplete="email"
                   required
                 />
               </div>
@@ -211,10 +236,12 @@ export default function RegisterLeftPanel() {
                   data-test="register-password"
                   type={showPassword ? 'text' : 'password'}
                   value={password}
-                  onChange={e => setPassword(e.target.value)}
+                  onChange={handleFieldChange(setPassword)}
                   placeholder="••••••••"
                   minLength={8}
+                  aria-invalid={isPasswordMismatch || undefined}
                   className="pl-10 pr-10 h-9 md:h-10 border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 rounded-lg hover:border-gray-300 bg-white text-gray-800 placeholder-gray-400 transition text-sm"
+                  autoComplete="new-password"
                   required
                 />
                 <button
@@ -231,6 +258,47 @@ export default function RegisterLeftPanel() {
                 </button>
               </div>
               <p className="text-xs text-gray-500 mt-1">Password must be at least 8 characters long</p>
+            </div>
+
+            <div className="space-y-1">
+              <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">
+                Confirm Password
+              </Label>
+              <div className="relative group">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Lock className="h-4 w-4 text-gray-400 group-focus-within:text-orange-500 transition-colors" />
+                </div>
+                <Input
+                  id="confirmPassword"
+                  data-test="register-confirm-password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={confirmPassword}
+                  onChange={handleFieldChange(setConfirmPassword)}
+                  placeholder="••••••••"
+                  minLength={8}
+                  aria-invalid={isPasswordMismatch || undefined}
+                  className="pl-10 pr-10 h-9 md:h-10 border-gray-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 rounded-lg hover:border-gray-300 bg-white text-gray-800 placeholder-gray-400 transition text-sm"
+                  autoComplete="new-password"
+                  required
+                />
+                <button
+                  type="button"
+                  data-test="register-toggle-confirm-password"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4 text-gray-400 hover:text-gray-600 transition-colors" />
+                  ) : (
+                    <Eye className="h-4 w-4 text-gray-400 hover:text-gray-600 transition-colors" />
+                  )}
+                </button>
+              </div>
+              {isPasswordMismatch && (
+                <p className="text-xs text-red-600 mt-1" data-test="register-confirm-password-error">
+                  Passwords must match
+                </p>
+              )}
             </div>
 
             <Button

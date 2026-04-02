@@ -8,21 +8,22 @@ Resource            ../../Common/__lib.resource
 Profile Page Validation
     [Documentation]    Validate profile panels are visible.
 
-    Validate Page 'Profile' Is Opened
+    Validate Page Is Opened    Profile
     Validate Category Elements If Present    list
     ...    Header Card
     ...    Stats
     ...    Activity
     ...    Achievements
     ...    Favorites
+    ...    Saved Words
 
 Profile Stats Should Be Visible
     [Documentation]    Validate profile stat cards are visible.
 
-    Validate Page 'Profile' Is Opened
+    Validate Page Is Opened    Profile
     Validate Category Elements If Present    list    Stat Xp    Stat Streak    Stat Level
 
-Profile '${MESSAGE}' Should Be Visible
+Profile Message Should Be Visible
     [Documentation]    Assert profile loading message is visible.
-
-    Messagebox '${MESSAGE}' Should Be Visible
+    [Arguments]    ${MESSAGE}
+    Messagebox Should Be Visible    ${MESSAGE}

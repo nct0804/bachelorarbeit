@@ -48,3 +48,33 @@ def delete_results():
     for f in files:
         if os.path.isfile(f):
             os.remove(f)
+
+def delete_robot_tests():
+    """
+    Function to delete previous robot test results.
+    """
+    files = glob('robot-tests/*')
+    for f in files:
+        if os.path.isfile(f):
+            os.remove(f)
+
+def _generate_robot_tests_from_req(YOUR_INPUT_FILE: str) -> None:
+    if YOUR_INPUT_FILE == "requirements/gherkin":
+        print("Generating robot tests from Gerkin requirements...")
+        Output_file = f"robot-tests/all_gherkin.robot"
+    else:
+        print("Generating robot tests from Natural language requirements...")
+        Output_file = f"robot-tests/all_natural.robot"
+    cmd = [
+        sys.executable,
+        "src/components/rag/pipeline/rag_generator.py",
+        "--input-file",
+        YOUR_INPUT_FILE,
+        "--output",
+        Output_file,
+        "--top-k",
+        "30",
+    ]
+    result = subprocess.run(cmd, check=False)
+    if result.returncode != 0:
+        raise SystemExit(result.returncode)

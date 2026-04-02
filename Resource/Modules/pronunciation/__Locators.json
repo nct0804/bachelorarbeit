@@ -17,7 +17,9 @@
         "Review": "[data-test=\"main-nav-review\"]",
         "Inbox": "[data-test=\"main-nav-inbox\"]",
         "Achievements": "[data-test=\"main-nav-achievements\"]",
+        "Logout Confirm": "[data-test=\"main-logout-confirm\"]",
         "Menu Toggle": "[data-test=\"main-menu-toggle\"]",
+        "New Quote": "[data-test=\"topbar-quote-refresh\"]",
         "Profile": "[data-test=\"main-menu-profile\"]",
         "About": "[data-test=\"main-menu-about\"]",
         "Logout": "[data-test=\"main-menu-logout\"]",
@@ -43,12 +45,13 @@
     },
     "messagebox": {
         "Loading": "[data-test=\"pronunciation-loading\"]",
+        "Logout Message": "[data-test=\"main-logout-modal-message\"]",
         "Error": "[data-test=\"pronunciation-error\"]"
     },
     "list": {
         "Group": "[data-test^=\"pronunciation-group\"]",
         "Sound": "[data-test^=\"pronunciation-sound\"]",
-        "Example": "[data-test=\"pronunciation-sound-{index}\"]"
+        "German Vowels": "[data-test=\"pronunciation-sound-{index}\"]"
     },
     "modal": {
     }

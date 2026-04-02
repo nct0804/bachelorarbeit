@@ -5,6 +5,7 @@
     },
     "page": [
         "welcome",
+        "Welcome",
         "welcomepage",
         "welcome page",
         "landing",
@@ -13,7 +14,7 @@
     ],
     "root": "[data-test=\"page-landing\"]",
     "button": {
-        "logo": "[data-test=\"landing-logo\"]",
+        "Logo": "[data-test=\"landing-logo\"]",
         "Sign In": "[data-test=\"landing-cta-signin\"]",
         "Sign Up": "[data-test=\"landing-cta-signup\"]",
         "Features": "[data-test=\"landing-nav-features\"]",
@@ -26,7 +27,8 @@
         "Sign In": "[data-test=\"landing-cta-signin\"]",
         "Sign Up": "[data-test=\"landing-cta-signup\"]"
     },
-    "textbox": {
+    "text": {
+        "Sign In": "[data-test=\"landing-cta-signin\"]"
 
     },
     "checkbox": {

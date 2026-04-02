@@ -5,31 +5,43 @@ Resource            common.resource
 
 
 *** Keywords ***
-Fill Textbox '${NAME}' With Value '${VALUE}'
+Fill Textbox With Value
     [Documentation]    Fill a textbox locator with provided value.
+    [Arguments]    ${TEXTBOX}    ${VALUE}
+    Fill Category Element    textbox    ${TEXTBOX}    ${VALUE}
 
-    Fill Category Element    textbox    ${NAME}    ${VALUE}
+Fill Textbox
+    [Documentation]    Fill a textbox locator with provided value.
+    [Arguments]    ${TEXTBOX}    ${VALUE}
+    Fill Category Element    textbox    ${TEXTBOX}    ${VALUE}
 
-Clear Textbox '${NAME}'
+Clear Textbox
     [Documentation]    Clear a textbox locator value.
+    [Arguments]    ${TEXTBOX}
+    Fill Category Element    textbox    ${TEXTBOX}    ${EMPTY}
 
-    Fill Category Element    textbox    ${NAME}    ${EMPTY}
-
-Textbox '${NAME}' Should Be Visible
+Textbox Should Be Visible
     [Documentation]    validate that a textbox locator is visible.
+    [Arguments]    ${TEXTBOX}
+    Category Element Should Be Visible    textbox    ${TEXTBOX}
 
-    Category Element Should Be Visible    textbox    ${NAME}
-
-Textbox '${NAME}' Value Should Contain '${EXPECTED_VALUE}'
+Textbox Contain Value
     [Documentation]    validate textbox value contains expected text.
+    [Arguments]    ${TEXTBOX}    ${EXPECTED_VALUE}
 
-    ${SELECTOR}=    Get Locator In Category    textbox    ${NAME}
+    ${SELECTOR}=    Get Locator In Category    textbox    ${TEXTBOX}
     ${VALUE}=    Get Property    css=${SELECTOR}    value
     Should Contain    ${VALUE}    ${EXPECTED_VALUE}
 
-Textbox '${NAME}' Should Be Empty
+Textbox Should Be Empty
     [Documentation]    validate that a textbox locator is empty.
+    [Arguments]    ${TEXTBOX}
 
-    ${SELECTOR}=    Get Locator In Category    textbox    ${NAME}
+    ${SELECTOR}=    Get Locator In Category    textbox    ${TEXTBOX}
     ${VALUE}=    Get Property    css=${SELECTOR}    value
     Should Be Empty    ${VALUE}
+
+Set Value In The Textbox
+    [Documentation]    Gherkin wrapper for filling a textbox with a value.
+    [Arguments]    ${TEXTBOX}    ${VALUE}
+    Fill Textbox With Value    ${TEXTBOX}    ${VALUE}

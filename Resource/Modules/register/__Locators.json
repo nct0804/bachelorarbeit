@@ -3,12 +3,13 @@
     "page": "register",
     "version": 1
   },
-  "page": ["Signup", "Sign up", "Sign Up", "SignUp", "Register", "register"],
+  "page": ["Signup", "Sign up", "Sign Up", "SignUp", "Register", "register", "Sign up Page", "Signup Page", "Register Page"],
   "root": "[data-test=\"page-register\"]",
   "button": {
     "Create Account": "[data-test=\"register-submit\"]",
     "Google": "[data-test=\"register-google-button\"]",
-    "Facebook": "[data-test=\"register-facebook-button\"]"
+    "Facebook": "[data-test=\"register-facebook-button\"]",
+    "Sign Up": "[data-test=\"register-submit\"]"
   },
   "link": {
     "Sign In": "[data-test=\"register-login-link\"]"
@@ -21,7 +22,9 @@
     "Last Name": "[data-test=\"register-last-name\"]",
     "Username": "[data-test=\"register-username\"]",
     "Email Address": "[data-test=\"register-email\"]",
-    "Password": "[data-test=\"register-password\"]"
+    "Email": "[data-test=\"register-email\"]",
+    "Password": "[data-test=\"register-password\"]",
+    "Confirm Password": "[data-test=\"register-confirm-password\"]"
   },
   "checkbox": {
     "primary": ""

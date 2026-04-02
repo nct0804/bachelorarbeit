@@ -16,11 +16,15 @@
         "Speak": "[data-test=\"main-nav-speak\"]",
         "Review": "[data-test=\"main-nav-review\"]",
         "Inbox": "[data-test=\"main-nav-inbox\"]",
+        "Logout Confirm": "[data-test=\"main-logout-confirm\"]",
+        "New Quote": "[data-test=\"topbar-quote-refresh\"]",
         "Achievements": "[data-test=\"main-nav-achievements\"]",
         "Menu Toggle": "[data-test=\"main-menu-toggle\"]",
         "Profile": "[data-test=\"main-menu-profile\"]",
         "About": "[data-test=\"main-menu-about\"]",
         "Logout": "[data-test=\"main-menu-logout\"]",
+        "Dark Mode Toggle": "[data-test=\"dark-mode-toggle-pulse\"]",
+        "Light Mode Toggle": "[data-test=\"light-mode-toggle-pulse\"]",
         "This Week": "[data-test=\"ranking-tab-week\"]",
         "This Month": "[data-test=\"ranking-tab-month\"]",
         "All Time": "[data-test=\"ranking-tab-all\"]",
@@ -46,6 +50,7 @@
         "Achievements": "[data-test=\"main-nav-achievements\"]"
     },
     "messagebox": {
+        "Logout Message": "[data-test=\"main-logout-modal-message\"]"
     },
     "list": {
         "Card": "[data-test=\"ranking-card\"]",

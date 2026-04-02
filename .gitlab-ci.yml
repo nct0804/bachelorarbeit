@@ -23,10 +23,10 @@ variables:
   ROBOT_TESTCASE: ""
   ROBOT_VARIABLES: ""
   FEATURES_ROOT: "Features"
-  FEATURE_PIPELINE_ANALYSIS_DIR: "Results/feature-pipeline"
-  FEATURE_PIPELINE_REQUIREMENTS: ""
-  FEATURE_PIPELINE_REQUIREMENT_TEXT_FIELD: ""
-  FEATURE_PIPELINE_NO_CLEAN_OUTPUT: "false"
+  GHERKIN_PIPELINE_ANALYSIS_DIR: "Results/gherkin_pipeline"
+  GHERKIN_PIPELINE_REQUIREMENTS: ""
+  GHERKIN_PIPELINE_REQUIREMENT_TEXT_FIELD: ""
+  GHERKIN_PIPELINE_NO_CLEAN_OUTPUT: "false"
   QASE_PULL_CONFIG: "src/components/qase/qase.pull.ci.json"
   QASE_PULL_SUITE_NAMES: "Human2"
   QASE_PULL_SUITE_IDS: ""
@@ -160,28 +160,22 @@ robot_tests:
         echo "Skipping Qase pull step."
       fi
     - |
-      DEFAULT_FEATURES_ROOT="$(python3 -c "import start; print(getattr(start, 'QASE_FEATURE_OUTPUT_DIR', 'Features'))")"
+      DEFAULT_FEATURES_ROOT="$(python3 -c "import start; print(getattr(start, 'QASE_FEATURE_OUTPUT_DIR', 'requirements/gherkin'))")"
       DEFAULT_ROBOT_SUITE="$(python3 -c "import start; print(getattr(start, 'ROBOT_TEST_OUTPUT_DIR', 'robot-tests'))")"
-      DEFAULT_ANALYSIS_DIR="$(python3 -c "import start; print(getattr(start, 'FEATURE_PIPELINE_ANALYSIS_DIR', 'Results/feature-pipeline'))")"
       EFFECTIVE_FEATURES_ROOT="${FEATURES_ROOT:-$DEFAULT_FEATURES_ROOT}"
       EFFECTIVE_ROBOT_SUITE="${ROBOT_SUITE:-$DEFAULT_ROBOT_SUITE}"
-      EFFECTIVE_ANALYSIS_DIR="${FEATURE_PIPELINE_ANALYSIS_DIR:-$DEFAULT_ANALYSIS_DIR}"
-      if [ -d "$EFFECTIVE_FEATURES_ROOT" ] && ls "$EFFECTIVE_FEATURES_ROOT"/*.feature >/dev/null 2>&1; then
-        echo "Generating Robot tests from feature files via semantic pipeline..."
-        PIPELINE_CMD=(python3 src/components/semantic/feature_pipeline.py --features-root "$EFFECTIVE_FEATURES_ROOT" --resource-root Resource --output-root "$EFFECTIVE_ROBOT_SUITE" --analysis-dir "$EFFECTIVE_ANALYSIS_DIR")
-        if [ -n "$FEATURE_PIPELINE_REQUIREMENTS" ]; then
-          PIPELINE_CMD+=(--requirements "$FEATURE_PIPELINE_REQUIREMENTS")
-        fi
-        if [ -n "$FEATURE_PIPELINE_REQUIREMENT_TEXT_FIELD" ]; then
-          PIPELINE_CMD+=(--requirement-text-field "$FEATURE_PIPELINE_REQUIREMENT_TEXT_FIELD")
-        fi
-        if [ "$(echo "$FEATURE_PIPELINE_NO_CLEAN_OUTPUT" | tr '[:upper:]' '[:lower:]')" = "true" ]; then
-          PIPELINE_CMD+=(--no-clean-output)
-        fi
-        "${PIPELINE_CMD[@]}"
+      
+      # Clean out previous artifacts if needed (optional since container runs fresh)
+      mkdir -p "$EFFECTIVE_ROBOT_SUITE"
+      
+      if [ -d "$EFFECTIVE_FEATURES_ROOT" ]; then
+        echo "Generating Robot tests from Gherkin feature files via RAG pipeline..."
+        PIPELINE_CMD_G=(python3 src/components/rag/pipeline/rag_generator.py --input-file "$EFFECTIVE_FEATURES_ROOT" --output "$EFFECTIVE_ROBOT_SUITE/all_gherkin.robot" --top-k 30)
+        "${PIPELINE_CMD_G[@]}"
       else
-        echo "No .feature files found under $EFFECTIVE_FEATURES_ROOT. Skipping feature pipeline."
+        echo "No directory found at $EFFECTIVE_FEATURES_ROOT. Skipping Gherkin feature generation."
       fi
+
     - |
       DEFAULT_QASE_REPORT="$(python3 -c "import start; print('true' if start.QASE_REPORT else 'false')")"
       EFFECTIVE_QASE_REPORT="${QASE_REPORT:-$DEFAULT_QASE_REPORT}"
@@ -209,7 +203,7 @@ robot_tests:
     expire_in: 7 days
     paths:
       - $ROBOT_OUTPUT_DIR
-      - $FEATURE_PIPELINE_ANALYSIS_DIR
+      - $GHERKIN_PIPELINE_ANALYSIS_DIR
   rules:
     - if: '$CI_PIPELINE_SOURCE == "push"'
       when: on_success

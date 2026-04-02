@@ -329,26 +329,38 @@ def parse_robot_keywords(resource_path: Path) -> list[KeywordEntry]:
     in_keywords_section = False
     current_keyword_name = ""
     current_documentation = ""
-    current_arguments = ""
+    current_argument_lines: list[str] = []
     current_tags: list[str] = []
+    collecting_arguments = False
 
     def flush_keyword() -> None:
         nonlocal current_keyword_name
         nonlocal current_documentation
-        nonlocal current_arguments
+        nonlocal current_argument_lines
         nonlocal current_tags
+        nonlocal collecting_arguments
 
         if not current_keyword_name:
             return
 
         tag_type = "Unknown"
         lowered = {tag.lower() for tag in current_tags}
+        
+        if "technical" in lowered:
+            current_keyword_name = ""
+            current_documentation = ""
+            current_argument_lines = []
+            current_tags = []
+            collecting_arguments = False
+            return
+            
         if "gherkin" in lowered:
             tag_type = "Gherkin"
         elif "basic" in lowered:
             tag_type = "Basic"
 
         module_name = resource_path.parent.name
+        current_arguments = "    ".join(current_argument_lines).strip()
         normalized_keyword_text = normalize_text(
             f"{current_keyword_name} {current_documentation} {current_arguments}",
             remove_stops=True,
@@ -366,8 +378,9 @@ def parse_robot_keywords(resource_path: Path) -> list[KeywordEntry]:
         )
         current_keyword_name = ""
         current_documentation = ""
-        current_arguments = ""
+        current_argument_lines = []
         current_tags = []
+        collecting_arguments = False
 
     for raw_line in lines:
         line = raw_line.rstrip("\n")
@@ -394,11 +407,21 @@ def parse_robot_keywords(resource_path: Path) -> list[KeywordEntry]:
         if not current_keyword_name:
             continue
 
+        if collecting_arguments and stripped.startswith("..."):
+            continuation_args = stripped[3:].strip()
+            if continuation_args:
+                current_argument_lines.append(continuation_args)
+            continue
+
+        collecting_arguments = False
+
         if stripped.startswith("[Documentation]"):
             current_documentation = stripped.replace("[Documentation]", "", 1).strip()
             continue
         if stripped.startswith("[Arguments]"):
-            current_arguments = stripped.replace("[Arguments]", "", 1).strip()
+            raw_arguments = stripped.replace("[Arguments]", "", 1).strip()
+            current_argument_lines = [raw_arguments] if raw_arguments else []
+            collecting_arguments = True
             continue
         if stripped.startswith("[Tags]"):
             raw_tags = stripped.replace("[Tags]", "", 1).strip()
@@ -424,10 +447,13 @@ def load_requirements(
     requirement_id_prefix: str = "REQ",
 ) -> list[RequirementEntry]:
     if requirement_path.is_dir():
-        return load_requirements_from_feature_dir(
-            requirements_dir=requirement_path,
-            requirement_id_prefix=requirement_id_prefix,
-        )
+        all_reqs = []
+        for file in sorted(requirement_path.rglob("*")):
+            if file.is_file() and file.suffix.lower() in {".feature", ".gherkin", ".txt", ".md", ".json", ".csv"}:
+                all_reqs.extend(load_requirements(file, requirement_text_field, requirement_id_prefix))
+        if not all_reqs:
+            raise FileNotFoundError(f"No requirement files (.feature, .csv, .txt, etc.) found in {requirement_path}")
+        return all_reqs
     suffix = requirement_path.suffix.lower()
     if suffix in {".feature", ".gherkin"}:
         return load_requirements_from_feature_file(
@@ -463,6 +489,17 @@ def load_requirements_from_csv(
     requirement_id_prefix: str = "REQ",
 ) -> list[RequirementEntry]:
     with requirement_path.open("r", encoding="utf-8") as file_handle:
+        first_line = file_handle.readline().lower()
+        first_row_cols = [c.strip() for c in first_line.split(",")]
+        obvious_headers = {"req", "req_id", "id", "feature", "text", "description", "title", "story", "epic", "requirement_text", "requirement"}
+        has_headers = any(col in obvious_headers for col in first_row_cols)
+        
+        if not has_headers:
+            return load_requirements_from_text(
+                requirement_path=requirement_path,
+                requirement_id_prefix=requirement_id_prefix,
+            )
+        file_handle.seek(0)
         reader = csv.DictReader(file_handle)
         rows = list(reader)
         fieldnames = list(reader.fieldnames or [])
@@ -604,38 +641,48 @@ def load_requirements_from_feature_file(
 ) -> list[RequirementEntry]:
     content = requirement_path.read_text(encoding="utf-8")
     requirements: list[RequirementEntry] = []
+    
     feature_name = requirement_path.stem
-    scenario_name = ""
+    current_scenario = ""
+    current_steps: list[str] = []
     index = start_index
+
+    def flush_scenario():
+        nonlocal index
+        if current_steps:
+            full_text = "\n".join(current_steps)
+            feature_context = f"{feature_name}::{current_scenario}" if current_scenario else feature_name
+            requirements.append(
+                RequirementEntry(
+                    req_id=f"{requirement_id_prefix}-{index:03d}",
+                    feature=feature_context,
+                    requirement_text=full_text
+                )
+            )
+            index += 1
+            current_steps.clear()
+
     for raw_line in content.splitlines():
         line = raw_line.strip()
         if not line or line.startswith("#") or line.startswith("@"):
             continue
         feature_match = FEATURE_HEADER_PATTERN.match(line)
         if feature_match:
+            flush_scenario()
             feature_name = feature_match.group(1).strip() or feature_name
             continue
         scenario_match = SCENARIO_HEADER_PATTERN.match(line)
         if scenario_match:
-            scenario_name = scenario_match.group(1).strip()
+            flush_scenario()
+            current_scenario = scenario_match.group(1).strip()
             continue
         step_match = GHERKIN_STEP_PATTERN.match(line)
         if not step_match:
             continue
-        step_text = step_match.group(2).strip()
-        if len(step_text) < MIN_REQUIREMENT_CHARS:
-            continue
-        feature_context = feature_name
-        if scenario_name:
-            feature_context = f"{feature_name}::{scenario_name}"
-        requirements.append(
-            RequirementEntry(
-                req_id=f"{requirement_id_prefix}-{index:03d}",
-                feature=feature_context,
-                requirement_text=step_text,
-            )
-        )
-        index += 1
+        
+        current_steps.append(line)
+        
+    flush_scenario()
     return requirements
 
 

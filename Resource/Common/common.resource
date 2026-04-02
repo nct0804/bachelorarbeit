@@ -11,7 +11,7 @@ Resource            ../MainLib.resource
 ${SERVER}           localhost:4242
 ${BASE_URL}         http://${SERVER}
 ${HEADLESS}         False
-&{PAGE_ROUTES}      welcomepage=/    landing=/    landing page=/
+&{PAGE_ROUTES}      welcome=/    welcomepage=/    welcome page=/    landing=/    landing page=/
 ...                 login=/login    log in=/login    signin=/login    sign in=/login
 ...                 sign up=/register    signup=/register    register=/register
 ...                 main page=/home    main learning page=/home    main layout=/home
@@ -29,80 +29,66 @@ ${HEADLESS}         False
 
 
 *** Keywords ***
-Resolve Browser '${BROWSER}' Type
-    [Documentation]    Map friendly browser names to Browser library engines.
-
-    ${TYPE}=    Normalize Page '${BROWSER}' Name
-    IF    '${TYPE}' == 'chrome' or '${TYPE}' == 'chromium' or '${TYPE}' == 'edge'
-        RETURN    chromium
-    END
-    IF    '${TYPE}' == 'firefox'    RETURN    firefox
-    IF    '${TYPE}' == 'webkit'    RETURN    webkit
-    Fail    Unsupported browser type: ${BROWSER}
-
-Resolve Page '${PAGE}' Route
+Resolve Page Route
     [Documentation]    Resolve a page route path from the PAGE_ROUTES mapping using normalized page name.
-
-    ${PAGE_KEY}=    Normalize Page '${PAGE}' Name
+    [Tags]    technical
+    [Arguments]    ${PAGE}
+    ${PAGE_KEY}=    Normalize Page Name    ${PAGE}
     ${HAS_ROUTE}=    Run Keyword And Return Status    Dictionary Should Contain Key    ${PAGE_ROUTES}    ${PAGE_KEY}
     IF    not ${HAS_ROUTE}    Fail    No route mapping found for page: ${PAGE}
     ${ROUTE}=    Get From Dictionary    ${PAGE_ROUTES}    ${PAGE_KEY}
     RETURN    ${ROUTE}
 
-Open Browser '${BROWSER}' Session
+Open Browser Session
     [Documentation]    Open browser session and navigate to base URL.
-    [Arguments]    ${BROWSER}=chromium
-
-    ${ENGINE}=    Resolve Browser '${BROWSER}' Type
+    [Tags]    technical
+    [Arguments]    ${BROWSER}=firefox
     ${HEADLESS_BOOL}=    Evaluate    str($HEADLESS).lower() in ['true', '1', 'yes']
 
-    New Browser    ${ENGINE}    headless=${HEADLESS_BOOL}    args=["--start-maximized"]
+    New Browser    ${BROWSER}    headless=${HEADLESS_BOOL}    args=["--start-maximized"]
     New Context    viewport=None
     New Page    ${BASE_URL}/
     Wait For Load State    domcontentloaded
+    Load Locators    Welcome Page
+    Validate Current Page Root
 
 Close Browser Session
     [Documentation]    Close active browser session if one exists.
 
     Run Keyword And Ignore Error    Close Browser
 
-Go To Relative Path '${PATH}'
+Go To Relative Path
     [Documentation]    Navigate to an application route relative to base URL.
-
+    [Tags]    technical
+    [Arguments]    ${PATH}
     Go To    ${BASE_URL}${PATH}
     Wait For Load State    networkidle    timeout=20s
 
-Navigate To Page '${PAGE}'
+Navigate To Page
     [Documentation]    Navigate to a page by alias and load matching locator map.
-
-    ${PATH}=    Resolve Page '${PAGE}' Route
-    Go To Relative Path '${PATH}'
+    [Arguments]    ${PAGE}
+    ${PATH}=    Resolve Page Route    ${PAGE}
+    Go To Relative Path    ${PATH}
     Load Locators    ${PAGE}
     Validate Current Page Root
 
 Validate Current Page Root
     [Documentation]    Validate loaded page root locator is visible.
-
+    [Tags]    technical
     ${ROOT}=    Get Locator    root
     Wait For Elements State    css=${ROOT}    visible    timeout=20s
 
-Validate Page '${PAGE}' Is Opened
+Validate Page Is Opened
     [Documentation]    Load locators for page alias and validate root visibility.
-
+    [Arguments]    ${PAGE}
     Load Locators    ${PAGE}
     Wait For Load State    domcontentloaded
     Validate Current Page Root
 
-Open Page '${PAGE}' From Main Navigation By Clicking '${BUTTON}' Button
-    [Documentation]    Click a main navigation button and validate the target page is opened.
-
-    Click Button '${BUTTON}'
-    Validate Page '${PAGE}' Is Opened
-
 Wait For Category Element State
     [Documentation]    Wait for a locator category element to reach target state.
+    [Tags]    technical
     [Arguments]    ${CATEGORY}    ${NAME}    ${STATE}=visible    ${TIMEOUT}=15s
-
     ${SELECTOR}=    Get Locator In Category    ${CATEGORY}    ${NAME}
     ${STATE_KEY}=    Convert To Lowercase    ${STATE}
     ${COUNT}=    Get Element Count    css=${SELECTOR}
@@ -113,28 +99,28 @@ Wait For Category Element State
 
 Category Element Should Be Visible
     [Documentation]    Assert a category element is visible on the page.
+    [Tags]    technical
     [Arguments]    ${CATEGORY}    ${NAME}
-
     Wait For Category Element State    ${CATEGORY}    ${NAME}    visible
 
 Category Element Should Not Be Visible
     [Documentation]    Assert a category element is hidden on the page.
+    [Tags]    technical
     [Arguments]    ${CATEGORY}    ${NAME}
-
     Wait For Category Element State    ${CATEGORY}    ${NAME}    hidden
 
 Click Category Element
     [Documentation]    Click a locator category element by name.
+    [Tags]    technical
     [Arguments]    ${CATEGORY}    ${NAME}
-
     ${SELECTOR}=    Get Locator In Category    ${CATEGORY}    ${NAME}
     Wait For Elements State    css=${SELECTOR}    visible    timeout=15s
     Click    css=${SELECTOR}
 
 Click Category Element At Index
     [Documentation]    Click indexed element. Supports both {index} placeholder and nth-based selection.
+    [Tags]    technical
     [Arguments]    ${CATEGORY}    ${NAME}    ${INDEX}=1
-
     ${SELECTOR}=    Get Locator In Category    ${CATEGORY}    ${NAME}
 
     # Check if selector contains {index} placeholder
@@ -154,24 +140,24 @@ Click Category Element At Index
 
 Fill Category Element
     [Documentation]    Fill text into a category element by name.
+    [Tags]    technical
     [Arguments]    ${CATEGORY}    ${NAME}    ${VALUE}
-
     ${SELECTOR}=    Get Locator In Category    ${CATEGORY}    ${NAME}
     Wait For Elements State    css=${SELECTOR}    visible    timeout=15s
     Fill Text    css=${SELECTOR}    ${VALUE}
 
 Get Category Element Count
     [Documentation]    Return the number of matched elements for a locator entry.
+    [Tags]    technical
     [Arguments]    ${CATEGORY}    ${NAME}
-
     ${SELECTOR}=    Get Locator In Category    ${CATEGORY}    ${NAME}
     ${COUNT}=    Get Element Count    css=${SELECTOR}
     RETURN    ${COUNT}
 
 Get Category Element Text
     [Documentation]    Return the text value of a category element.
+    [Tags]    technical
     [Arguments]    ${CATEGORY}    ${NAME}
-
     ${SELECTOR}=    Get Locator In Category    ${CATEGORY}    ${NAME}
     Wait For Elements State    css=${SELECTOR} >> nth=0    visible    timeout=15s
     ${TEXT}=    Get Text    css=${SELECTOR} >> nth=0
@@ -179,15 +165,15 @@ Get Category Element Text
 
 Category Element Text Should Contain
     [Documentation]    Assert a category element text contains expected content.
+    [Tags]    technical
     [Arguments]    ${CATEGORY}    ${NAME}    ${EXPECTED_TEXT}
-
     ${TEXT}=    Get Category Element Text    ${CATEGORY}    ${NAME}
     Should Contain    ${TEXT}    ${EXPECTED_TEXT}
 
 Validate Category Elements If Present
     [Documentation]    Validate category locators are visible when present in the locator map.
+    [Tags]    technical
     [Arguments]    ${CATEGORY}    @{NAMES}
-
     FOR    ${NAME}    IN    @{NAMES}
         ${HAS_LOCATOR}=    Locator Exists    ${CATEGORY}.${NAME}
         IF    ${HAS_LOCATOR}
@@ -210,9 +196,14 @@ Validate Current Page Categories
         END
     END
 
-Scroll Into Element '${NAME}'
+Scroll Into Element
     [Documentation]    Scroll to a category element by name.
-
+    [Arguments]    ${NAME}
     ${SELECTOR}=    Get Locator In Category    section    ${NAME}
     Wait For Elements State    css=${SELECTOR} >> nth=0    visible    timeout=15s
     Scroll To Element    css=${SELECTOR} >> nth=0
+
+Wait for Second
+    [Documentation]    Wait for a specified number of seconds.
+    [Arguments]    ${SECONDS}
+    Sleep    ${SECONDS}s

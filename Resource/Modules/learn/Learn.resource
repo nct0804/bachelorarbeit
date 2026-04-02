@@ -6,32 +6,32 @@ Resource            ../../MainLib.resource
 
 
 *** Keywords ***
-Select Learn Option At Index '${INDEX}'
+Select Learn Option At Index
     [Documentation]    Select a learn option by index.
     [Arguments]    ${INDEX}=1
 
-    Click List Item 'Option' At Index '${INDEX}'
+    Click List Item At Index    Option    ${INDEX}
 
-Fill Learn Blank Input Answer '${ANSWER}'
+Fill Learn Blank Input Answer
     [Documentation]    Fill the blank input with the provided answer.
-
-    Fill Textbox 'Blank Input' With Value '${ANSWER}'
+    [Arguments]    ${ANSWER}
+    Fill Textbox With Value    Blank Input    ${ANSWER}
 
 Submit Learn Check
     [Documentation]    Submit the current learn exercise for checking.
 
-    Click Button 'Check'
-    Messagebox 'Check Result' Should Be Visible
+    Click Button    Check
+    Messagebox Should Be Visible    Check Result
 
 Try Learn Again
     [Documentation]    Retry the current learn exercise.
 
-    Click Button 'Try Again'
+    Click Button    Try Again
 
 Exit Learn Session
     [Documentation]    Exit the learn session and return to the main page.
 
-    Click Button 'Exit'
-    Messagebox 'Exit Modal' Should Be Visible
-    Click Button 'Back to Home'
-    Validate Page 'Main Page' Is Opened
+    Click Button    Exit
+    Messagebox Should Be Visible    Exit Modal
+    Click Button    Back to Home
+    Validate Page Is Opened    Main Page

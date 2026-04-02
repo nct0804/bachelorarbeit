@@ -18,7 +18,10 @@
         "Inbox": "[data-test=\"main-nav-inbox\"]",
         "Achievements": "[data-test=\"main-nav-achievements\"]",
         "Menu Toggle": "[data-test=\"main-menu-toggle\"]",
+        "Logout Confirm": "[data-test=\"main-logout-confirm\"]",
         "Profile": "[data-test=\"main-menu-profile\"]",
+        "Dark Mode Toggle": "[data-test=\"dark-mode-toggle-pulse\"]",
+        "Light Mode Toggle": "[data-test=\"light-mode-toggle-pulse\"]",
         "About": "[data-test=\"main-menu-about\"]",
         "Logout": "[data-test=\"main-menu-logout\"]",
         "All": "[data-test=\"challenge-category-all\"]",
@@ -28,10 +31,12 @@
         "Numbers": "[data-test=\"challenge-category-numbers\"]",
         "Speaking": "[data-test=\"challenge-category-speaking\"]",
         "Refresh Quote": "[data-test=\"topbar-quote-refresh\"]",
+        "New Quote": "[data-test=\"topbar-quote-refresh\"]",
         "Learn": "[data-test=\"rightbar-lesson-start\"]",
         "Start Challenge": "[data-test=\"rightbar-challenge-start\"]"
     },
     "link": {
+        "Quote Text": "[data-test=\"topbar-quote-text\"]"
     },
     "textbox": {
     },
@@ -48,9 +53,16 @@
         "Achievements": "[data-test=\"main-nav-achievements\"]"
     },
     "messagebox": {
+        "Logout Message": "[data-test=\"main-logout-modal-message\"]",
+        "Quote Text": "[data-test=\"topbar-quote-text\"]"
     },
     "list": {
+        "Quote Text": "[data-test=\"topbar-quote-text\"]"
     },
     "modal": {
-    }
+    },
+     "notification": { 
+        "Quote Text": "[data-test=\"topbar-quote-text\"]"
+  
+  }
 }

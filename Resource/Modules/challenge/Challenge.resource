@@ -9,10 +9,10 @@ Resource            ../../MainLib.resource
 Select Challenge Category
     [Documentation]    Select a challenge category by name.
     [Arguments]    ${CATEGORY}
+    Go To Page    Challenge
+    Click Button    ${CATEGORY}
 
-    Click Button '${CATEGORY}'
-
-Start Challenge Card At '${INDEX}'
+Start Challenge Card At Index
     [Documentation]    Start a challenge card by index.
-
-    Click Button 'Card Action' At Index '${INDEX}'
+    [Arguments]    ${INDEX}=1
+    Click Button At Index    Card Action    ${INDEX}

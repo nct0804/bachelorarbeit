@@ -5,17 +5,19 @@ Resource            common.resource
 
 
 *** Keywords ***
-Messagebox '${NAME}' Should Be Visible
+Messagebox Should Be Visible
     [Documentation]    Assert that a messagebox locator is visible.
-
+    [Arguments]    ${NAME}
     Category Element Should Be Visible    messagebox    ${NAME}
 
-Messagebox '${NAME}' Should Not Be Visible
+Messagebox Should Not Be Visible
     [Documentation]    Assert that a messagebox locator is not visible.
+    [Arguments]    ${NAME}
 
     Category Element Should Not Be Visible    messagebox    ${NAME}
 
-Messagebox '${NAME}' Should Contain Text '${EXPECTED_TEXT}'
+Messagebox Should Contain Text
     [Documentation]    Assert messagebox text contains expected content.
+    [Arguments]    ${NAME}    ${EXPECTED_TEXT}
 
     Category Element Text Should Contain    messagebox    ${NAME}    ${EXPECTED_TEXT}

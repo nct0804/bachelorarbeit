@@ -3,9 +3,9 @@ import { useState } from 'react';
 export interface RegisterData {
   email: string;
   password: string;
-  username: string;
-  firstName: string;
-  lastName: string;
+  username?: string;
+  firstName?: string;
+  lastName?: string;
 }
 
 export interface RegisterResponse {

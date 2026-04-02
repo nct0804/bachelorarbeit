@@ -2,7 +2,6 @@ import React from 'react';
 import { Globe } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { Button } from '../ui/button';
 
 function Header() {
   const { user } = useAuth();
@@ -27,7 +26,8 @@ function Header() {
             <Globe className="h-6 w-6 text-orange-500" />
             <h1 className="text-lg font-bold text-gray-900">GermanGains</h1>
           </button>
-          <nav className="hidden md:flex items-center space-x-5" data-test="landing-nav">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <nav className="hidden md:flex items-center space-x-5" data-test="landing-nav">
             <button 
               onClick={() => scrollToSection('features')}
               data-test="landing-nav-features"
@@ -49,20 +49,34 @@ function Header() {
             >
               About
             </button>
+            </nav>
             {user ? (
               <Link to="/home">
-                <button className="bg-orange-500 text-white px-4 py-1.5 rounded-full hover:bg-orange-600 transition-colors text-xs font-semibold" data-test="landing-cta-dashboard">
+                <button className="bg-orange-500 text-white px-3 sm:px-4 py-1.5 rounded-full hover:bg-orange-600 transition-colors text-xs font-semibold whitespace-nowrap" data-test="landing-cta-dashboard">
                   Go to Dashboard
                 </button>
               </Link>
             ) : (
-              <Link to="/login">
-                <button className="bg-orange-500 text-white px-4 py-1.5 rounded-full hover:bg-orange-600 transition-colors text-xs font-semibold" data-test="landing-cta-signin">
-                  Sign In
-                </button>
-              </Link>
+              <div className="flex items-center gap-2">
+                <Link to="/login">
+                  <button
+                    className="border border-orange-200 bg-white text-orange-600 px-3 sm:px-4 py-1.5 rounded-full hover:bg-orange-50 transition-colors text-xs font-semibold whitespace-nowrap"
+                    data-test="landing-cta-signin"
+                  >
+                    Sign In
+                  </button>
+                </Link>
+                <Link to="/register">
+                  <button
+                    className="bg-orange-500 text-white px-3 sm:px-4 py-1.5 rounded-full hover:bg-orange-600 transition-colors text-xs font-semibold whitespace-nowrap"
+                    data-test="landing-cta-signup"
+                  >
+                    Sign Up
+                  </button>
+                </Link>
+              </div>
             )}
-          </nav>
+          </div>
         </div>
       </div>
     </header>

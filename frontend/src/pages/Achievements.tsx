@@ -6,7 +6,8 @@ export default function Achievements() {
 
   return (
     <div className="flex-1 flex justify-center overflow-auto max-w-3xl 2xl:max-w-4xl 3xl:max-w-6xl mx-auto" data-test="page-achievements">
-      <div className="w-full bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 border border-gray-100 dark:border-gray-700">
+      <div className="w-full bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 border border-gray-100 dark:border-gray-700"
+        data-test="achievements-section">
         <div className="flex items-center justify-between mb-5">
           <div>
             <p className="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400">Achievements</p>

@@ -25,9 +25,11 @@
         "Try Again": "[data-test=\"learn-try-again\"]",
         "Exit": "[data-test=\"learn-exit\"]",
         "Continue": "[data-test=\"learn-exit-continue\"]",
+        "New Quote": "[data-test=\"topbar-quote-refresh\"]",
         "Back to Home": "[data-test=\"learn-exit-confirm\"]"
     },
     "link": {
+        "Quote Text": "[data-test=\"topbar-quote-text\"]"
     },
     "textbox": {
         "Blank Input": "[data-test=\"exercise-fill-blank-input\"]"
@@ -47,8 +49,13 @@
         "Option": "[data-test=\"exercise-option-{index}\"]",
         "Lesson Summary": "[data-test=\"lesson-summary\"]",
         "Lesson Summary Stats": "[data-test=\"lesson-summary-stats\"]",
-        "Lesson Summary Recap": "[data-test=\"lesson-summary-recap\"]"
+        "Lesson Summary Recap": "[data-test=\"lesson-summary-recap\"]",
+        "Quote Text": "[data-test=\"topbar-quote-text\"]"
     },
     "modal": {
-    }
+    },
+     "notification": { 
+        "Quote Text": "[data-test=\"topbar-quote-text\"]"
+  
+  }
 }

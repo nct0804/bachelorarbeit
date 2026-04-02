@@ -114,6 +114,7 @@ export default function Speak() {
           <button
             onClick={speakPhrase}
             className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500 text-white text-sm font-semibold hover:bg-blue-600"
+            data-test="play-phrase-button"
           >
             <Volume2 className="w-4 h-4" /> Play Phrase
           </button>
@@ -129,7 +130,8 @@ export default function Speak() {
               </div>
               <button
                 onClick={() => setSelected(phrases[Math.floor(Math.random() * phrases.length)])}
-                className="flex items-center gap-2 text-xs font-semibold text-gray-500 dark:text-gray-300"
+                className="flex items-center gap-2 text-xs font-semibold text-gray-500 dark:text-gray-300"  
+                data-test="new-phrase-button"
               >
                 <Repeat className="w-4 h-4" /> New Phrase
               </button>

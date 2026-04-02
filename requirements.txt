@@ -8,6 +8,8 @@ robotframework-browser
 robotframework-robocop
 
 sentence-transformers
+requests
+python-dotenv
 pandas
 matplotlib
 tabulate
