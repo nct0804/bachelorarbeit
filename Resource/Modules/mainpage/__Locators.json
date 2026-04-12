@@ -14,6 +14,7 @@
     "button": {
         "Quote Text": "[data-test=\"topbar-quote-text\"]",
         "Home": "[data-test=\"main-nav-home\"]",
+        "Main Learning Page": "[data-test=\"main-nav-home\"]",
         "Main Learning": "[data-test=\"main-nav-home\"]",
         "Challenge": "[data-test=\"main-nav-challenge\"]",
         "Ranking": "[data-test=\"main-nav-ranking\"]",
@@ -57,7 +58,9 @@
         "Lesson 2 Start": "[data-test=\"lesson-step-1-bubble-action\"]"
     },
     "link": {
-        "Profile Link": "[data-test=\"topbar-profile-link\"]"
+        "Profile Link": "[data-test=\"topbar-profile-link\"]",
+        "Main Learning Page": "[data-test=\"main-nav-home\"]",
+        "Main Learning": "[data-test=\"main-nav-home\"]"
     },
     "textbox": {
         "Daily Goal Target": "[data-test=\"daily-goal-target-input\"]",
@@ -69,7 +72,8 @@
     "checkbox": {
     },
     "tab": {
-                "Home": "[data-test=\"main-nav-home\"]",
+        "Home": "[data-test=\"main-nav-home\"]",
+        "Main Learning Page": "[data-test=\"main-nav-home\"]",
         "Challenge": "[data-test=\"main-nav-challenge\"]",
         "Ranking": "[data-test=\"main-nav-ranking\"]",
         "Pronunciation": "[data-test=\"main-nav-pronunciation\"]",

@@ -38,7 +38,8 @@
   "notification": {
     "Container": "[data-test=\"register-notification\"]",
     "Title": "[data-test=\"register-notification-title\"]",
-    "Message": "[data-test=\"register-notification-message\"]"
+    "Message": "[data-test=\"register-notification-message\"]",
+    "Invalid Credentials": "[data-test=\"register-notification-message\"]"
   },
   "list": {
     "primary": ""

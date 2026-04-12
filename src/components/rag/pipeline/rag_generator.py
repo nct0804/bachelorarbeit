@@ -14,6 +14,7 @@ sys.path.append(str(project_root))
 from src.components.semantic.nlp_processor import RequirementNLPProcessor
 from src.components.semantic.semantic_mapper import (
     LocalEmbeddingModel,
+    SentenceTransformerEmbeddingModel,
     extract_keyword_catalog,
     filter_catalog_by_scope,
     normalize_text,
@@ -169,7 +170,7 @@ if __name__ == "__main__":
         print("Error: Must provide either --requirement or --input-file")
         sys.exit(1)
     nlp = RequirementNLPProcessor(ignore_quoted_text=True)
-    model = LocalEmbeddingModel()
+    model = SentenceTransformerEmbeddingModel()
     try:
         client = GeminiClient()
     except ValueError as e:
