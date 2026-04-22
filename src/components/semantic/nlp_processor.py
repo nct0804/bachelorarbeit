@@ -9,7 +9,7 @@ text -> phrase_map -> synonyms -> action extraction
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import re
 from typing import Any, Dict, List
 
@@ -37,6 +37,16 @@ class ProcessedRequirement:
     normalized_text: str
     actions: List[RequirementAction]
     mapping_text: str
+    preprocessing_steps: List["PreprocessingStep"] = field(default_factory=list)
+
+
+@dataclass
+class PreprocessingStep:
+    """Traceable preprocessing step for requirement normalization."""
+
+    step_name: str
+    text: str
+    description: str = ""
 
 
 class RequirementNLPProcessor:
@@ -166,7 +176,7 @@ class RequirementNLPProcessor:
     def preprocess_requirement_text(self, text: str) -> ProcessedRequirement:
         """Convert requirement text to a normalized, action-augmented mapping text."""
         original = str(text or "").strip()
-        normalized = self._normalize_text(original)
+        normalized, preprocessing_steps = self._normalize_text_with_steps(original)
         requirement_type = self._detect_requirement_type(normalized)
         gherkin_intent = self._detect_gherkin_intent(original)
         actions = self._extract_actions(normalized, original_text=original, gherkin_intent=gherkin_intent)
@@ -184,17 +194,72 @@ class RequirementNLPProcessor:
             normalized_text=normalized,
             actions=actions,
             mapping_text=mapping_text.strip(),
+            preprocessing_steps=preprocessing_steps,
         )
 
     def _normalize_text(self, text: str) -> str:
+        normalized_text, _ = self._normalize_text_with_steps(text)
+        return normalized_text
+
+    def _normalize_text_with_steps(self, text: str) -> tuple[str, List[PreprocessingStep]]:
+        steps: List[PreprocessingStep] = []
         cleaned = LIST_PREFIX.sub("", text.strip())
+        steps.append(
+            PreprocessingStep(
+                step_name="original",
+                text=text.strip(),
+                description="Original requirement text before NLP preprocessing.",
+            )
+        )
+        steps.append(
+            PreprocessingStep(
+                step_name="list_prefix_removed",
+                text=cleaned,
+                description="Requirement text after removing list markers and leading numbering.",
+            )
+        )
         if self.ignore_quoted_text:
             cleaned = QUOTED_TEXT_PATTERN.sub(" ", cleaned)
+            steps.append(
+                PreprocessingStep(
+                    step_name="quoted_text_removed",
+                    text=cleaned,
+                    description="Requirement text after removing quoted values from similarity preprocessing.",
+                )
+            )
         cleaned = cleaned.lower()
+        steps.append(
+            PreprocessingStep(
+                step_name="lowercased",
+                text=cleaned,
+                description="Requirement text converted to lowercase for consistent matching.",
+            )
+        )
         cleaned = self._apply_phrase_map(cleaned)
+        steps.append(
+            PreprocessingStep(
+                step_name="phrase_map_applied",
+                text=cleaned,
+                description="Requirement text after canonical phrase replacements.",
+            )
+        )
         cleaned = self._apply_synonym_map(cleaned)
+        steps.append(
+            PreprocessingStep(
+                step_name="synonym_map_applied",
+                text=cleaned,
+                description="Requirement text after synonym normalization.",
+            )
+        )
         cleaned = TEXT_SPACES.sub(" ", cleaned).strip()
-        return cleaned
+        steps.append(
+            PreprocessingStep(
+                step_name="normalized",
+                text=cleaned,
+                description="Final normalized text used for requirement classification and action extraction.",
+            )
+        )
+        return cleaned, steps
 
     def _build_synonym_map(self) -> Dict[str, str]:
         synonym_map: Dict[str, str] = {}

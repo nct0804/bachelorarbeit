@@ -3,7 +3,6 @@
 
 from __future__ import annotations
 
-import hashlib
 import math
 import re
 from collections import Counter
@@ -11,6 +10,14 @@ from dataclasses import dataclass
 from difflib import SequenceMatcher
 from pathlib import Path
 from typing import Iterable
+
+try:
+    from sentence_transformers import SentenceTransformer
+
+    SENTENCE_TRANSFORMERS_AVAILABLE = True
+except Exception:
+    SENTENCE_TRANSFORMERS_AVAILABLE = False
+    SentenceTransformer = None
 
 
 TEXT_SPLIT_PATTERN = re.compile(r"[^a-z0-9]+")
@@ -290,50 +297,96 @@ def dot_product(vector_a: list[float], vector_b: list[float]) -> float:
     return sum(a * b for a, b in zip(vector_a, vector_b))
 
 
-class LocalEmbeddingModel:
-    """Deterministic local embedding model with hashing and IDF weighting."""
+class SentenceTransformerEmbeddingModel:
+    """Dense embedding model backed by sentence-transformers."""
 
-    def __init__(self, dimension: int = 384) -> None:
-        if dimension <= 0:
-            raise ValueError("Embedding dimension must be positive.")
-        self.dimension = dimension
+    def __init__(self, model_name: str = "all-MiniLM-L6-v2") -> None:
+        if not SENTENCE_TRANSFORMERS_AVAILABLE:
+            raise RuntimeError("sentence-transformers is not installed in this environment.")
+        self.model_name = model_name
+        self.model = SentenceTransformer(model_name)
+
+    def fit(self, texts: Iterable[str]) -> None:
+        _ = texts
+
+    def encode_many(self, texts: Iterable[str]) -> list[list[float]]:
+        text_list = list(texts)
+        if not text_list:
+            return []
+        vectors = self.model.encode(text_list, normalize_embeddings=True)
+        return [vector.tolist() for vector in vectors]
+
+    def encode(self, text: str) -> list[float]:
+        vector = self.model.encode([text], normalize_embeddings=True)[0]
+        return vector.tolist()
+
+
+class BM25SparseRetriever:
+    """Sparse retriever using BM25 over normalized keyword texts."""
+
+    def __init__(self, k1: float = 1.5, b: float = 0.75) -> None:
+        self.k1 = k1
+        self.b = b
+        self.doc_tokens: list[list[str]] = []
+        self.doc_term_frequencies: list[Counter[str]] = []
+        self.doc_lengths: list[int] = []
+        self.avg_doc_length = 0.0
         self.idf_by_token: dict[str, float] = {}
-        self.default_idf = 1.0
 
     def fit(self, texts: Iterable[str]) -> None:
         text_list = list(texts)
-        if not text_list:
-            return
+        self.doc_tokens = [tokenize(text, ignore_quoted_text=False) for text in text_list]
+        self.doc_term_frequencies = [Counter(tokens) for tokens in self.doc_tokens]
+        self.doc_lengths = [len(tokens) for tokens in self.doc_tokens]
+        self.avg_doc_length = (
+            sum(self.doc_lengths) / float(len(self.doc_lengths)) if self.doc_lengths else 0.0
+        )
 
-        doc_count = len(text_list)
-        token_document_frequency: Counter[str] = Counter()
-        for text in text_list:
-            for token in set(tokenize(text, ignore_quoted_text=False)):
-                token_document_frequency[token] += 1
+        document_frequency: Counter[str] = Counter()
+        for tokens in self.doc_tokens:
+            for token in set(tokens):
+                document_frequency[token] += 1
 
+        document_count = len(self.doc_tokens)
         self.idf_by_token = {}
-        for token, frequency in token_document_frequency.items():
-            self.idf_by_token[token] = math.log((1 + doc_count) / (1 + frequency)) + 1.0
-        self.default_idf = math.log(1 + doc_count) + 1.0
+        for token, frequency in document_frequency.items():
+            numerator = document_count - frequency + 0.5
+            denominator = frequency + 0.5
+            self.idf_by_token[token] = math.log(1.0 + (numerator / denominator))
 
-    def encode_many(self, texts: Iterable[str]) -> list[list[float]]:
-        return [self.encode(text) for text in texts]
+    def score(self, query_text: str, document_index: int) -> float:
+        if document_index < 0 or document_index >= len(self.doc_term_frequencies):
+            return 0.0
 
-    def encode(self, text: str) -> list[float]:
-        vector = [0.0] * self.dimension
-        token_counts = Counter(tokenize(text, ignore_quoted_text=False))
-        if not token_counts:
-            return vector
+        query_tokens = tokenize(query_text, ignore_quoted_text=False)
+        if not query_tokens:
+            return 0.0
 
-        for token, count in token_counts.items():
-            index_hash = hashlib.blake2b(token.encode("utf-8"), digest_size=8).digest()
-            sign_hash = hashlib.blake2b(f"sign::{token}".encode("utf-8"), digest_size=8).digest()
-            index = int.from_bytes(index_hash, "big") % self.dimension
-            sign = -1.0 if int.from_bytes(sign_hash, "big") % 2 else 1.0
-            idf = self.idf_by_token.get(token, self.default_idf)
-            vector[index] += sign * float(count) * idf
+        term_frequencies = self.doc_term_frequencies[document_index]
+        doc_length = self.doc_lengths[document_index] if self.doc_lengths else 0
+        avg_doc_length = self.avg_doc_length or 1.0
 
-        return normalize_vector(vector)
+        score = 0.0
+        for token in query_tokens:
+            frequency = term_frequencies.get(token, 0)
+            if frequency <= 0:
+                continue
+            idf = self.idf_by_token.get(token, 0.0)
+            numerator = frequency * (self.k1 + 1.0)
+            denominator = frequency + self.k1 * (1.0 - self.b + self.b * (doc_length / avg_doc_length))
+            score += idf * (numerator / denominator)
+        return score
+
+
+def normalize_scores(values: list[float]) -> list[float]:
+    if not values:
+        return []
+    maximum = max(values)
+    minimum = min(values)
+    if math.isclose(maximum, minimum):
+        return [1.0 if maximum > 0.0 else 0.0 for _ in values]
+    scale = maximum - minimum
+    return [(value - minimum) / scale for value in values]
 
 
 def parse_arg_specs(argument_line: str) -> list[ArgSpec]:
@@ -883,7 +936,7 @@ class GherkinStepMapper:
         ignore_quoted_text: bool = True,
         semantic_weight: float = 0.85,
         lexical_weight: float = 0.15,
-        embedding_dim: int = 384,
+        sentence_model: str = "all-MiniLM-L6-v2",
     ) -> None:
         if semantic_weight < 0 or lexical_weight < 0:
             raise ValueError("Similarity weights must be non-negative.")
@@ -899,9 +952,8 @@ class GherkinStepMapper:
         self.ignore_quoted_text = bool(ignore_quoted_text)
         self.semantic_weight = semantic_weight / total_weight
         self.lexical_weight = lexical_weight / total_weight
-        self.embedding_dim = embedding_dim
+        self.sentence_model = sentence_model
 
-        self.embedding_model = LocalEmbeddingModel(dimension=embedding_dim)
         self.keyword_texts = [
             entry.normalized_text
             or normalize_text(
@@ -911,8 +963,11 @@ class GherkinStepMapper:
             )
             for entry in self.catalog
         ]
+        self.embedding_model = SentenceTransformerEmbeddingModel(model_name=sentence_model)
         self.embedding_model.fit(self.keyword_texts)
         self.keyword_vectors = self.embedding_model.encode_many(self.keyword_texts)
+        self.sparse_retriever = BM25SparseRetriever()
+        self.sparse_retriever.fit(self.keyword_texts)
 
     @classmethod
     def from_resource_root(
@@ -921,14 +976,14 @@ class GherkinStepMapper:
         ignore_quoted_text: bool = True,
         semantic_weight: float = 0.85,
         lexical_weight: float = 0.15,
-        embedding_dim: int = 384,
+        sentence_model: str = "all-MiniLM-L6-v2",
     ) -> GherkinStepMapper:
         return cls(
             catalog=build_keyword_catalog(resource_root),
             ignore_quoted_text=ignore_quoted_text,
             semantic_weight=semantic_weight,
             lexical_weight=lexical_weight,
-            embedding_dim=embedding_dim,
+            sentence_model=sentence_model,
         )
 
     def analyze_step(self, step_text: str) -> StepAnalysis:
@@ -958,6 +1013,9 @@ class GherkinStepMapper:
             ignore_quoted_text=self.ignore_quoted_text,
         )
         requirement_vector = self.embedding_model.encode(requirement_text)
+        sparse_scores = normalize_scores(
+            [self.sparse_retriever.score(requirement_text, index) for index in range(len(self.catalog))]
+        )
 
         best_entry: KeywordEntry | None = None
         best_score = -1.0
@@ -965,6 +1023,7 @@ class GherkinStepMapper:
         for index, entry in enumerate(self.catalog):
             keyword_text = f"{entry.keyword_name} {entry.documentation} {' '.join(arg.name for arg in entry.arguments)}"
             semantic_score = dot_product(requirement_vector, self.keyword_vectors[index])
+            sparse_score = sparse_scores[index] if index < len(sparse_scores) else 0.0
             lexical_score = lexical_similarity(
                 analysis.mapping_text,
                 keyword_text,
@@ -974,8 +1033,8 @@ class GherkinStepMapper:
             element_boost = calculate_element_type_boost(analysis.mapping_text, keyword_text)
             disambiguation_penalty = calculate_disambiguation_penalty(analysis.mapping_text, keyword_text)
 
-            base_score = (self.semantic_weight * semantic_score) + (self.lexical_weight * lexical_score)
-            score = max(0.0, base_score + element_boost - disambiguation_penalty)
+            hybrid_score = (self.semantic_weight * semantic_score) + (self.lexical_weight * sparse_score)
+            score = max(0.0, hybrid_score + (0.05 * lexical_score) + element_boost - disambiguation_penalty)
 
             if analysis.intent != "generic":
                 intent_tokens = set(tokenize(analysis.intent.replace("_", " ")))

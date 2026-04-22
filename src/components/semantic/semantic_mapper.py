@@ -792,6 +792,7 @@ def map_requirements(
     lexical_weight: float,
     nlp_processor=None,
     ignore_quoted_text: bool = False,
+    preprocessing_rows: list[dict] | None = None,
 ) -> tuple[list[dict], list[dict]]:
     keyword_texts = [
         entry.normalized_text or normalize_text(entry.keyword_name, remove_stops=True)
@@ -807,12 +808,32 @@ def map_requirements(
         requirement_type = "general_requirement"
         nlp_actions_text = ""
         requirement_mapping_text = requirement.requirement_text
+        preprocess_before_text = requirement.requirement_text
+        preprocess_after_text = ""
         if nlp_processor is not None:
             processed = nlp_processor.preprocess_requirement_text(requirement.requirement_text)
             requirement_type = processed.requirement_type
             nlp_actions_text = " | ".join(action.action_text for action in processed.actions)
+            preprocess_before_text = processed.original_text
+            preprocess_after_text = processed.normalized_text
             if processed.mapping_text:
                 requirement_mapping_text = processed.mapping_text
+            if preprocessing_rows is not None:
+                for step_order, step in enumerate(processed.preprocessing_steps, start=1):
+                    preprocessing_rows.append(
+                        {
+                            "REQ_ID": requirement.req_id,
+                            "FEATURE": requirement.feature,
+                            "REQUIREMENT_TYPE": requirement_type,
+                            "STEP_ORDER": step_order,
+                            "STEP_NAME": step.step_name,
+                            "STEP_DESCRIPTION": step.description,
+                            "STEP_TEXT": step.text,
+                            "FINAL_NORMALIZED_TEXT": processed.normalized_text,
+                            "MAPPING_TEXT": processed.mapping_text,
+                            "NLP_ACTIONS": nlp_actions_text,
+                        }
+                    )
 
         requirement_text = normalize_text(
             requirement_mapping_text,
@@ -857,6 +878,9 @@ def map_requirements(
             "FEATURE": requirement.feature,
             "REQUIREMENT_TEXT": requirement.requirement_text,
             "REQUIREMENT_TYPE": requirement_type,
+            "PREPROCESS_BEFORE": preprocess_before_text,
+            "PREPROCESS_AFTER": preprocess_after_text,
+            "PREPROCESS_MAPPING_TEXT": requirement_mapping_text,
             "NLP_ACTIONS": nlp_actions_text,
             "STATUS": status,
         }
@@ -884,6 +908,9 @@ def map_requirements(
                     "FEATURE": requirement.feature,
                     "REQUIREMENT_TEXT": requirement.requirement_text,
                     "REQUIREMENT_TYPE": requirement_type,
+                    "PREPROCESS_BEFORE": preprocess_before_text,
+                    "PREPROCESS_AFTER": preprocess_after_text,
+                    "PREPROCESS_MAPPING_TEXT": requirement_mapping_text,
                     "NLP_ACTIONS": nlp_actions_text,
                     "BEST_SCORE": f"{best_score:.4f}",
                 }
@@ -899,6 +926,9 @@ def write_mapping_csv(rows: list[dict], output_path: Path, top_k: int) -> None:
         "FEATURE",
         "REQUIREMENT_TEXT",
         "REQUIREMENT_TYPE",
+        "PREPROCESS_BEFORE",
+        "PREPROCESS_AFTER",
+        "PREPROCESS_MAPPING_TEXT",
         "NLP_ACTIONS",
         "STATUS",
     ]
@@ -928,6 +958,9 @@ def write_unmapped_csv(rows: list[dict], output_path: Path) -> None:
         "FEATURE",
         "REQUIREMENT_TEXT",
         "REQUIREMENT_TYPE",
+        "PREPROCESS_BEFORE",
+        "PREPROCESS_AFTER",
+        "PREPROCESS_MAPPING_TEXT",
         "NLP_ACTIONS",
         "BEST_SCORE",
     ]
@@ -976,6 +1009,27 @@ def write_summary_markdown(
     ]
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def write_preprocessing_trace_csv(rows: list[dict], output_path: Path) -> None:
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    headers = [
+        "REQ_ID",
+        "FEATURE",
+        "REQUIREMENT_TYPE",
+        "STEP_ORDER",
+        "STEP_NAME",
+        "STEP_DESCRIPTION",
+        "STEP_TEXT",
+        "FINAL_NORMALIZED_TEXT",
+        "MAPPING_TEXT",
+        "NLP_ACTIONS",
+    ]
+    with output_path.open("w", encoding="utf-8", newline="") as file_handle:
+        writer = csv.DictWriter(file_handle, fieldnames=headers)
+        writer.writeheader()
+        for row in rows:
+            writer.writerow(row)
 
 
 def build_argument_parser() -> argparse.ArgumentParser:
@@ -1161,6 +1215,7 @@ def main() -> int:
     semantic_weight = args.semantic_weight / total_weight
     lexical_weight = args.lexical_weight / total_weight
 
+    preprocessing_rows: list[dict] = []
     mapping_rows, unmapped_rows = map_requirements(
         requirements=requirements,
         catalog=scoped_catalog,
@@ -1172,16 +1227,20 @@ def main() -> int:
         lexical_weight=lexical_weight,
         nlp_processor=nlp_processor,
         ignore_quoted_text=args.ignore_quoted_text,
+        preprocessing_rows=preprocessing_rows,
     )
 
     keyword_catalog_path = output_dir / "keyword_catalog.csv"
     mapping_report_path = output_dir / "mapping_report.csv"
     unmapped_report_path = output_dir / "unmapped_requirements.csv"
+    preprocessing_trace_path = output_dir / "preprocessing_trace.csv"
     summary_path = output_dir / "summary.md"
 
     save_keyword_catalog(scoped_catalog, keyword_catalog_path)
     write_mapping_csv(mapping_rows, mapping_report_path, args.top_k)
     write_unmapped_csv(unmapped_rows, unmapped_report_path)
+    if preprocessing_rows:
+        write_preprocessing_trace_csv(preprocessing_rows, preprocessing_trace_path)
     write_summary_markdown(
         mapping_rows=mapping_rows,
         catalog_size=len(scoped_catalog),
@@ -1199,6 +1258,8 @@ def main() -> int:
     print(f"NLP preprocessing: {'enabled' if nlp_enabled else 'disabled'}")
     print(f"Mapping report: {mapping_report_path}")
     print(f"Unmapped report: {unmapped_report_path}")
+    if preprocessing_rows:
+        print(f"Preprocessing trace: {preprocessing_trace_path}")
     print(f"Summary: {summary_path}")
     return 0
 
