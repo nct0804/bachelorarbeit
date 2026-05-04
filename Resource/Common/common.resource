@@ -17,8 +17,8 @@ ${HEADLESS}         False
 ...                 main page=/home    main learning page=/home    main layout=/home
 ...                 main=/home    mainpage=/home    home=/home
 ...                 challenge=/challenge    challenge page=/challenge
-...                 ranking=/ranking    leaderboard=/ranking
-...                 profile=/profile    user profile=/profile
+...                 ranking=/ranking    leaderboard=/ranking    Leaderboard Page=/ranking    ranking Page=/ranking
+...                 profile=/profile    user profile=/profile    Profile Page=/profile
 ...                 pronunciation=/pronunciation    sounds=/pronunciation
 ...                 speak=/speak    speaking=/speak
 ...                 review=/review    review page=/review
@@ -207,3 +207,10 @@ Wait for Second
     [Documentation]    Wait for a specified number of seconds.
     [Arguments]    ${SECONDS}
     Sleep    ${SECONDS}s
+
+Category Element Text Should Be Empty
+    [Documentation]    Assert a category element's text is empty.
+    [Tags]    technical
+    [Arguments]    ${CATEGORY}    ${NAME}
+    ${TEXT}=    Get Category Element Text    ${CATEGORY}    ${NAME}
+    Should Not Be Empty    ${TEXT}

@@ -21,3 +21,9 @@ Messagebox Should Contain Text
     [Arguments]    ${NAME}    ${EXPECTED_TEXT}
 
     Category Element Text Should Contain    messagebox    ${NAME}    ${EXPECTED_TEXT}
+
+Messagebox Should Be Empty
+    [Documentation]    Assert messagebox text is empty.
+    [Arguments]    ${NAME}
+
+    Category Element Text Should Be Empty    messagebox    ${NAME}

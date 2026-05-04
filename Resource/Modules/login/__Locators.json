@@ -35,7 +35,8 @@
     "Error Message": "[data-test=\"login-error\"]",
     "Invalid credentials Message": "[data-test=\"login-error\"]",
     "Invalid credentials notification": "[data-test=\"login-error\"]",
-        "Error Notification": "[data-test=\"login-error\"]"
+        "Error Notification": "[data-test=\"login-error\"]",
+        "Notification": "[data-test=\"login-error\"]"
   },
   "list": {
     "primary": ""
@@ -46,6 +47,6 @@
     "Invalid credentials": "[data-test=\"login-error\"]",
     "Error Message": "[data-test=\"login-error\"]",
     "Invalid credentials Message": "[data-test=\"login-error\"]",
-    "Invalid credentials notification": "[data-test=\"login-error\"]"
+    "Invalid credentials Notification": "[data-test=\"login-error\"]"
   }
 }

@@ -5,7 +5,8 @@
     },
     "page": [
         "Profile",
-        "User Profile"
+        "User Profile",
+        "Profile Page"
     ],
     "root": "[data-test=\"page-profile\"]",
     "button": {
@@ -63,7 +64,8 @@
         "Quote Text": "[data-test=\"topbar-quote-text\"]"
     },
     "section": {
-        "Saved Words": "[data-test=\"profile-favorites\"]"
+        "Saved Words": "[data-test=\"profile-favorites\"]",
+        "User ID": "[class=\"text-xs\"]"
     },
      "notification": { 
         "Quote Text": "[data-test=\"topbar-quote-text\"]"

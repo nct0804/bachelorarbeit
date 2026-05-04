@@ -1,0 +1,20 @@
+REQ_ID,FEATURE,REQUIREMENT_TEXT,REQUIREMENT_TYPE,PREPROCESS_BEFORE,PREPROCESS_AFTER,PREPROCESS_MAPPING_TEXT,NLP_ACTIONS,STATUS,MATCH_1_KEYWORD,MATCH_1_TAG,MATCH_1_MODULE,MATCH_1_SOURCE,MATCH_1_SEMANTIC,MATCH_1_LEXICAL,MATCH_1_SCORE,MATCH_2_KEYWORD,MATCH_2_TAG,MATCH_2_MODULE,MATCH_2_SOURCE,MATCH_2_SEMANTIC,MATCH_2_LEXICAL,MATCH_2_SCORE,MATCH_3_KEYWORD,MATCH_3_TAG,MATCH_3_MODULE,MATCH_3_SOURCE,MATCH_3_SEMANTIC,MATCH_3_LEXICAL,MATCH_3_SCORE,MATCH_4_KEYWORD,MATCH_4_TAG,MATCH_4_MODULE,MATCH_4_SOURCE,MATCH_4_SEMANTIC,MATCH_4_LEXICAL,MATCH_4_SCORE,MATCH_5_KEYWORD,MATCH_5_TAG,MATCH_5_MODULE,MATCH_5_SOURCE,MATCH_5_SEMANTIC,MATCH_5_LEXICAL,MATCH_5_SCORE
+REQ-001,achievements_validation::User accesses their achievements and sees their unlocked badges,"Given the user navigates to the ""Sign In"" page
+When the user signs in with email ""chithien.nguyen@germangains.com"" and password ""password123""
+Then the ""Main Page"" page should be opened
+When the user is on the ""main"" page
+And the user clicks the ""Achievements"" button right sidebar
+Then the ""Achievements"" page should be opened
+And the ""Your Badges"" section should be visible",functional_requirement,"Given the user navigates to the ""Sign In"" page
+When the user signs in with email ""chithien.nguyen@germangains.com"" and password ""password123""
+Then the ""Main Page"" page should be opened
+When the user is on the ""main"" page
+And the user clicks the ""Achievements"" button right sidebar
+Then the ""Achievements"" page should be opened
+And the ""Your Badges"" section should be visible",given the user navigate to the page when the user signs in with email and password then the page should be opened when the user is on the page and the user click the button right sidebar then the page should be opened and the section should be visible,"Given the user navigates to the ""Sign In"" page
+When the user signs in with email ""chithien.nguyen@germangains.com"" and password ""password123""
+Then the ""Main Page"" page should be opened
+When the user is on the ""main"" page
+And the user clicks the ""Achievements"" button right sidebar
+Then the ""Achievements"" page should be opened
+And the ""Your Badges"" section should be visible ; extracted actions: fill textbox '${NAME}' with value '${VALUE}' for email and password ; click button '${NAME}' ; validate page 'Sign In' is opened ; 'Sign In' page should be ready ; click button 'Sign In' ; section 'Sign In' should be visible",fill textbox '${NAME}' with value '${VALUE}' for email and password ; click button '${NAME}' | validate page 'Sign In' is opened ; 'Sign In' page should be ready | click button 'Sign In' | section 'Sign In' should be visible,NEEDS_REVIEW,Page Should Be Ready,Unknown,Common,Resource/Common/page.resource,0.5186,0.1960,0.4202,Button Should Be Visible,Unknown,Common,Resource/Common/button.resource,0.2619,0.1838,0.3502,Main Page Validation,Unknown,mainpage,Resource/Modules/mainpage/mainpage.resource,0.2541,0.2180,0.3487,Clear Textbox,Unknown,Common,Resource/Common/textbox.resource,0.2007,0.1192,0.3385,Textbox Should Be Visible,Unknown,Common,Resource/Common/textbox.resource,0.1487,0.1795,0.3033

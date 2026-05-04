@@ -1,0 +1,565 @@
+LOCATOR_FILE,ENTRY_TYPE,CATEGORY,ENTRY_NAME,JSON_PATH,SELECTOR_OR_VALUE,LOCATION
+Resource/Modules/aboutus/__Locators.json,page_alias,page,About Us,page[0],About Us,Resource/Modules/aboutus/__Locators.json::page[0]
+Resource/Modules/aboutus/__Locators.json,page_alias,page,About,page[1],About,Resource/Modules/aboutus/__Locators.json::page[1]
+Resource/Modules/aboutus/__Locators.json,page_alias,page,About Page,page[2],About Page,Resource/Modules/aboutus/__Locators.json::page[2]
+Resource/Modules/aboutus/__Locators.json,root,root,root,root,"[data-test=""page-about""]",Resource/Modules/aboutus/__Locators.json::root
+Resource/Modules/aboutus/__Locators.json,locator,button,Home,button.Home,"[data-test=""main-nav-home""]",Resource/Modules/aboutus/__Locators.json::button.Home
+Resource/Modules/aboutus/__Locators.json,locator,button,Challenge,button.Challenge,"[data-test=""main-nav-challenge""]",Resource/Modules/aboutus/__Locators.json::button.Challenge
+Resource/Modules/aboutus/__Locators.json,locator,button,Ranking,button.Ranking,"[data-test=""main-nav-ranking""]",Resource/Modules/aboutus/__Locators.json::button.Ranking
+Resource/Modules/aboutus/__Locators.json,locator,button,Pronunciation,button.Pronunciation,"[data-test=""main-nav-pronunciation""]",Resource/Modules/aboutus/__Locators.json::button.Pronunciation
+Resource/Modules/aboutus/__Locators.json,locator,button,Speak,button.Speak,"[data-test=""main-nav-speak""]",Resource/Modules/aboutus/__Locators.json::button.Speak
+Resource/Modules/aboutus/__Locators.json,locator,button,Review,button.Review,"[data-test=""main-nav-review""]",Resource/Modules/aboutus/__Locators.json::button.Review
+Resource/Modules/aboutus/__Locators.json,locator,button,Inbox,button.Inbox,"[data-test=""main-nav-inbox""]",Resource/Modules/aboutus/__Locators.json::button.Inbox
+Resource/Modules/aboutus/__Locators.json,locator,button,Logout Confirm,button.Logout Confirm,"[data-test=""main-logout-confirm""]",Resource/Modules/aboutus/__Locators.json::button.Logout Confirm
+Resource/Modules/aboutus/__Locators.json,locator,button,Achievements,button.Achievements,"[data-test=""main-nav-achievements""]",Resource/Modules/aboutus/__Locators.json::button.Achievements
+Resource/Modules/aboutus/__Locators.json,locator,button,New Quote,button.New Quote,"[data-test=""topbar-quote-refresh""]",Resource/Modules/aboutus/__Locators.json::button.New Quote
+Resource/Modules/aboutus/__Locators.json,locator,button,Menu Toggle,button.Menu Toggle,"[data-test=""main-menu-toggle""]",Resource/Modules/aboutus/__Locators.json::button.Menu Toggle
+Resource/Modules/aboutus/__Locators.json,locator,button,Profile,button.Profile,"[data-test=""main-menu-profile""]",Resource/Modules/aboutus/__Locators.json::button.Profile
+Resource/Modules/aboutus/__Locators.json,locator,button,About,button.About,"[data-test=""main-menu-about""]",Resource/Modules/aboutus/__Locators.json::button.About
+Resource/Modules/aboutus/__Locators.json,locator,button,Logout,button.Logout,"[data-test=""main-menu-logout""]",Resource/Modules/aboutus/__Locators.json::button.Logout
+Resource/Modules/aboutus/__Locators.json,locator,button,Refresh Quote,button.Refresh Quote,"[data-test=""topbar-quote-refresh""]",Resource/Modules/aboutus/__Locators.json::button.Refresh Quote
+Resource/Modules/aboutus/__Locators.json,locator,button,Learn,button.Learn,"[data-test=""rightbar-lesson-start""]",Resource/Modules/aboutus/__Locators.json::button.Learn
+Resource/Modules/aboutus/__Locators.json,locator,button,Start Challenge,button.Start Challenge,"[data-test=""rightbar-challenge-start""]",Resource/Modules/aboutus/__Locators.json::button.Start Challenge
+Resource/Modules/aboutus/__Locators.json,locator,link,Quote Text,link.Quote Text,"[data-test=""topbar-quote-text""]",Resource/Modules/aboutus/__Locators.json::link.Quote Text
+Resource/Modules/aboutus/__Locators.json,locator,tab,Home,tab.Home,"[data-test=""main-nav-home""]",Resource/Modules/aboutus/__Locators.json::tab.Home
+Resource/Modules/aboutus/__Locators.json,locator,tab,Challenge,tab.Challenge,"[data-test=""main-nav-challenge""]",Resource/Modules/aboutus/__Locators.json::tab.Challenge
+Resource/Modules/aboutus/__Locators.json,locator,tab,Ranking,tab.Ranking,"[data-test=""main-nav-ranking""]",Resource/Modules/aboutus/__Locators.json::tab.Ranking
+Resource/Modules/aboutus/__Locators.json,locator,tab,Pronunciation,tab.Pronunciation,"[data-test=""main-nav-pronunciation""]",Resource/Modules/aboutus/__Locators.json::tab.Pronunciation
+Resource/Modules/aboutus/__Locators.json,locator,tab,Speak,tab.Speak,"[data-test=""main-nav-speak""]",Resource/Modules/aboutus/__Locators.json::tab.Speak
+Resource/Modules/aboutus/__Locators.json,locator,tab,Review,tab.Review,"[data-test=""main-nav-review""]",Resource/Modules/aboutus/__Locators.json::tab.Review
+Resource/Modules/aboutus/__Locators.json,locator,tab,Inbox,tab.Inbox,"[data-test=""main-nav-inbox""]",Resource/Modules/aboutus/__Locators.json::tab.Inbox
+Resource/Modules/aboutus/__Locators.json,locator,tab,Achievements,tab.Achievements,"[data-test=""main-nav-achievements""]",Resource/Modules/aboutus/__Locators.json::tab.Achievements
+Resource/Modules/aboutus/__Locators.json,locator,messagebox,Quote Text,messagebox.Quote Text,"[data-test=""topbar-quote-text""]",Resource/Modules/aboutus/__Locators.json::messagebox.Quote Text
+Resource/Modules/aboutus/__Locators.json,locator,messagebox,Logout Message,messagebox.Logout Message,"[data-test=""main-logout-modal-message""]",Resource/Modules/aboutus/__Locators.json::messagebox.Logout Message
+Resource/Modules/aboutus/__Locators.json,locator,list,Quote Text,list.Quote Text,"[data-test=""topbar-quote-text""]",Resource/Modules/aboutus/__Locators.json::list.Quote Text
+Resource/Modules/achievements/__Locators.json,page_alias,page,Achievements,page[0],Achievements,Resource/Modules/achievements/__Locators.json::page[0]
+Resource/Modules/achievements/__Locators.json,page_alias,page,Badges,page[1],Badges,Resource/Modules/achievements/__Locators.json::page[1]
+Resource/Modules/achievements/__Locators.json,root,root,root,root,"[data-test=""page-achievements""]",Resource/Modules/achievements/__Locators.json::root
+Resource/Modules/achievements/__Locators.json,locator,button,Home,button.Home,"[data-test=""main-nav-home""]",Resource/Modules/achievements/__Locators.json::button.Home
+Resource/Modules/achievements/__Locators.json,locator,button,Challenge,button.Challenge,"[data-test=""main-nav-challenge""]",Resource/Modules/achievements/__Locators.json::button.Challenge
+Resource/Modules/achievements/__Locators.json,locator,button,Ranking,button.Ranking,"[data-test=""main-nav-ranking""]",Resource/Modules/achievements/__Locators.json::button.Ranking
+Resource/Modules/achievements/__Locators.json,locator,button,Logout Confirm,button.Logout Confirm,"[data-test=""main-logout-confirm""]",Resource/Modules/achievements/__Locators.json::button.Logout Confirm
+Resource/Modules/achievements/__Locators.json,locator,button,Pronunciation,button.Pronunciation,"[data-test=""main-nav-pronunciation""]",Resource/Modules/achievements/__Locators.json::button.Pronunciation
+Resource/Modules/achievements/__Locators.json,locator,button,Speak,button.Speak,"[data-test=""main-nav-speak""]",Resource/Modules/achievements/__Locators.json::button.Speak
+Resource/Modules/achievements/__Locators.json,locator,button,Review,button.Review,"[data-test=""main-nav-review""]",Resource/Modules/achievements/__Locators.json::button.Review
+Resource/Modules/achievements/__Locators.json,locator,button,Inbox,button.Inbox,"[data-test=""main-nav-inbox""]",Resource/Modules/achievements/__Locators.json::button.Inbox
+Resource/Modules/achievements/__Locators.json,locator,button,Dark Mode Toggle,button.Dark Mode Toggle,"[data-test=""dark-mode-toggle-pulse""]",Resource/Modules/achievements/__Locators.json::button.Dark Mode Toggle
+Resource/Modules/achievements/__Locators.json,locator,button,Light Mode Toggle,button.Light Mode Toggle,"[data-test=""light-mode-toggle-pulse""]",Resource/Modules/achievements/__Locators.json::button.Light Mode Toggle
+Resource/Modules/achievements/__Locators.json,locator,button,Achievements,button.Achievements,"[data-test=""main-nav-achievements""]",Resource/Modules/achievements/__Locators.json::button.Achievements
+Resource/Modules/achievements/__Locators.json,locator,button,Menu Toggle,button.Menu Toggle,"[data-test=""main-menu-toggle""]",Resource/Modules/achievements/__Locators.json::button.Menu Toggle
+Resource/Modules/achievements/__Locators.json,locator,button,Profile,button.Profile,"[data-test=""main-menu-profile""]",Resource/Modules/achievements/__Locators.json::button.Profile
+Resource/Modules/achievements/__Locators.json,locator,button,About,button.About,"[data-test=""main-menu-about""]",Resource/Modules/achievements/__Locators.json::button.About
+Resource/Modules/achievements/__Locators.json,locator,button,New Quote,button.New Quote,"[data-test=""topbar-quote-refresh""]",Resource/Modules/achievements/__Locators.json::button.New Quote
+Resource/Modules/achievements/__Locators.json,locator,button,Logout,button.Logout,"[data-test=""main-menu-logout""]",Resource/Modules/achievements/__Locators.json::button.Logout
+Resource/Modules/achievements/__Locators.json,locator,button,Refresh Quote,button.Refresh Quote,"[data-test=""topbar-quote-refresh""]",Resource/Modules/achievements/__Locators.json::button.Refresh Quote
+Resource/Modules/achievements/__Locators.json,locator,button,Learn,button.Learn,"[data-test=""rightbar-lesson-start""]",Resource/Modules/achievements/__Locators.json::button.Learn
+Resource/Modules/achievements/__Locators.json,locator,button,Start Challenge,button.Start Challenge,"[data-test=""rightbar-challenge-start""]",Resource/Modules/achievements/__Locators.json::button.Start Challenge
+Resource/Modules/achievements/__Locators.json,locator,link,Quote Text,link.Quote Text,"[data-test=""topbar-quote-text""]",Resource/Modules/achievements/__Locators.json::link.Quote Text
+Resource/Modules/achievements/__Locators.json,locator,tab,Home,tab.Home,"[data-test=""main-nav-home""]",Resource/Modules/achievements/__Locators.json::tab.Home
+Resource/Modules/achievements/__Locators.json,locator,tab,Challenge,tab.Challenge,"[data-test=""main-nav-challenge""]",Resource/Modules/achievements/__Locators.json::tab.Challenge
+Resource/Modules/achievements/__Locators.json,locator,tab,Ranking,tab.Ranking,"[data-test=""main-nav-ranking""]",Resource/Modules/achievements/__Locators.json::tab.Ranking
+Resource/Modules/achievements/__Locators.json,locator,tab,Pronunciation,tab.Pronunciation,"[data-test=""main-nav-pronunciation""]",Resource/Modules/achievements/__Locators.json::tab.Pronunciation
+Resource/Modules/achievements/__Locators.json,locator,tab,Speak,tab.Speak,"[data-test=""main-nav-speak""]",Resource/Modules/achievements/__Locators.json::tab.Speak
+Resource/Modules/achievements/__Locators.json,locator,tab,Review,tab.Review,"[data-test=""main-nav-review""]",Resource/Modules/achievements/__Locators.json::tab.Review
+Resource/Modules/achievements/__Locators.json,locator,tab,Inbox,tab.Inbox,"[data-test=""main-nav-inbox""]",Resource/Modules/achievements/__Locators.json::tab.Inbox
+Resource/Modules/achievements/__Locators.json,locator,tab,Achievements,tab.Achievements,"[data-test=""main-nav-achievements""]",Resource/Modules/achievements/__Locators.json::tab.Achievements
+Resource/Modules/achievements/__Locators.json,locator,messagebox,Quote Text,messagebox.Quote Text,"[data-test=""topbar-quote-text""]",Resource/Modules/achievements/__Locators.json::messagebox.Quote Text
+Resource/Modules/achievements/__Locators.json,locator,messagebox,Logout Message,messagebox.Logout Message,"[data-test=""main-logout-modal-message""]",Resource/Modules/achievements/__Locators.json::messagebox.Logout Message
+Resource/Modules/achievements/__Locators.json,locator,list,Quote Text,list.Quote Text,"[data-test=""topbar-quote-text""]",Resource/Modules/achievements/__Locators.json::list.Quote Text
+Resource/Modules/achievements/__Locators.json,locator,section,Your Badges,section.Your Badges,"[data-test=""achievements-section""]",Resource/Modules/achievements/__Locators.json::section.Your Badges
+Resource/Modules/achievements/__Locators.json,locator,notification,Quote Text,notification.Quote Text,"[data-test=""topbar-quote-text""]",Resource/Modules/achievements/__Locators.json::notification.Quote Text
+Resource/Modules/challenge/__Locators.json,page_alias,page,Challenge,page[0],Challenge,Resource/Modules/challenge/__Locators.json::page[0]
+Resource/Modules/challenge/__Locators.json,page_alias,page,Challenge Page,page[1],Challenge Page,Resource/Modules/challenge/__Locators.json::page[1]
+Resource/Modules/challenge/__Locators.json,root,root,root,root,"[data-test=""page-challenge""]",Resource/Modules/challenge/__Locators.json::root
+Resource/Modules/challenge/__Locators.json,locator,button,Home,button.Home,"[data-test=""main-nav-home""]",Resource/Modules/challenge/__Locators.json::button.Home
+Resource/Modules/challenge/__Locators.json,locator,button,Challenge,button.Challenge,"[data-test=""main-nav-challenge""]",Resource/Modules/challenge/__Locators.json::button.Challenge
+Resource/Modules/challenge/__Locators.json,locator,button,Ranking,button.Ranking,"[data-test=""main-nav-ranking""]",Resource/Modules/challenge/__Locators.json::button.Ranking
+Resource/Modules/challenge/__Locators.json,locator,button,Pronunciation,button.Pronunciation,"[data-test=""main-nav-pronunciation""]",Resource/Modules/challenge/__Locators.json::button.Pronunciation
+Resource/Modules/challenge/__Locators.json,locator,button,Speak,button.Speak,"[data-test=""main-nav-speak""]",Resource/Modules/challenge/__Locators.json::button.Speak
+Resource/Modules/challenge/__Locators.json,locator,button,Review,button.Review,"[data-test=""main-nav-review""]",Resource/Modules/challenge/__Locators.json::button.Review
+Resource/Modules/challenge/__Locators.json,locator,button,Inbox,button.Inbox,"[data-test=""main-nav-inbox""]",Resource/Modules/challenge/__Locators.json::button.Inbox
+Resource/Modules/challenge/__Locators.json,locator,button,Achievements,button.Achievements,"[data-test=""main-nav-achievements""]",Resource/Modules/challenge/__Locators.json::button.Achievements
+Resource/Modules/challenge/__Locators.json,locator,button,Menu Toggle,button.Menu Toggle,"[data-test=""main-menu-toggle""]",Resource/Modules/challenge/__Locators.json::button.Menu Toggle
+Resource/Modules/challenge/__Locators.json,locator,button,Logout Confirm,button.Logout Confirm,"[data-test=""main-logout-confirm""]",Resource/Modules/challenge/__Locators.json::button.Logout Confirm
+Resource/Modules/challenge/__Locators.json,locator,button,Profile,button.Profile,"[data-test=""main-menu-profile""]",Resource/Modules/challenge/__Locators.json::button.Profile
+Resource/Modules/challenge/__Locators.json,locator,button,Dark Mode Toggle,button.Dark Mode Toggle,"[data-test=""dark-mode-toggle-pulse""]",Resource/Modules/challenge/__Locators.json::button.Dark Mode Toggle
+Resource/Modules/challenge/__Locators.json,locator,button,Light Mode Toggle,button.Light Mode Toggle,"[data-test=""light-mode-toggle-pulse""]",Resource/Modules/challenge/__Locators.json::button.Light Mode Toggle
+Resource/Modules/challenge/__Locators.json,locator,button,About,button.About,"[data-test=""main-menu-about""]",Resource/Modules/challenge/__Locators.json::button.About
+Resource/Modules/challenge/__Locators.json,locator,button,Logout,button.Logout,"[data-test=""main-menu-logout""]",Resource/Modules/challenge/__Locators.json::button.Logout
+Resource/Modules/challenge/__Locators.json,locator,button,All,button.All,"[data-test=""challenge-category-all""]",Resource/Modules/challenge/__Locators.json::button.All
+Resource/Modules/challenge/__Locators.json,locator,button,Grammar,button.Grammar,"[data-test=""challenge-category-grammar""]",Resource/Modules/challenge/__Locators.json::button.Grammar
+Resource/Modules/challenge/__Locators.json,locator,button,Vocabulary,button.Vocabulary,"[data-test=""challenge-category-vocabulary""]",Resource/Modules/challenge/__Locators.json::button.Vocabulary
+Resource/Modules/challenge/__Locators.json,locator,button,Listening,button.Listening,"[data-test=""challenge-category-listening""]",Resource/Modules/challenge/__Locators.json::button.Listening
+Resource/Modules/challenge/__Locators.json,locator,button,Numbers,button.Numbers,"[data-test=""challenge-category-numbers""]",Resource/Modules/challenge/__Locators.json::button.Numbers
+Resource/Modules/challenge/__Locators.json,locator,button,Speaking,button.Speaking,"[data-test=""challenge-category-speaking""]",Resource/Modules/challenge/__Locators.json::button.Speaking
+Resource/Modules/challenge/__Locators.json,locator,button,Refresh Quote,button.Refresh Quote,"[data-test=""topbar-quote-refresh""]",Resource/Modules/challenge/__Locators.json::button.Refresh Quote
+Resource/Modules/challenge/__Locators.json,locator,button,New Quote,button.New Quote,"[data-test=""topbar-quote-refresh""]",Resource/Modules/challenge/__Locators.json::button.New Quote
+Resource/Modules/challenge/__Locators.json,locator,button,Learn,button.Learn,"[data-test=""rightbar-lesson-start""]",Resource/Modules/challenge/__Locators.json::button.Learn
+Resource/Modules/challenge/__Locators.json,locator,button,Start Challenge,button.Start Challenge,"[data-test=""rightbar-challenge-start""]",Resource/Modules/challenge/__Locators.json::button.Start Challenge
+Resource/Modules/challenge/__Locators.json,locator,link,Quote Text,link.Quote Text,"[data-test=""topbar-quote-text""]",Resource/Modules/challenge/__Locators.json::link.Quote Text
+Resource/Modules/challenge/__Locators.json,locator,tab,Home,tab.Home,"[data-test=""main-nav-home""]",Resource/Modules/challenge/__Locators.json::tab.Home
+Resource/Modules/challenge/__Locators.json,locator,tab,Challenge,tab.Challenge,"[data-test=""main-nav-challenge""]",Resource/Modules/challenge/__Locators.json::tab.Challenge
+Resource/Modules/challenge/__Locators.json,locator,tab,Ranking,tab.Ranking,"[data-test=""main-nav-ranking""]",Resource/Modules/challenge/__Locators.json::tab.Ranking
+Resource/Modules/challenge/__Locators.json,locator,tab,Pronunciation,tab.Pronunciation,"[data-test=""main-nav-pronunciation""]",Resource/Modules/challenge/__Locators.json::tab.Pronunciation
+Resource/Modules/challenge/__Locators.json,locator,tab,Speak,tab.Speak,"[data-test=""main-nav-speak""]",Resource/Modules/challenge/__Locators.json::tab.Speak
+Resource/Modules/challenge/__Locators.json,locator,tab,Review,tab.Review,"[data-test=""main-nav-review""]",Resource/Modules/challenge/__Locators.json::tab.Review
+Resource/Modules/challenge/__Locators.json,locator,tab,Inbox,tab.Inbox,"[data-test=""main-nav-inbox""]",Resource/Modules/challenge/__Locators.json::tab.Inbox
+Resource/Modules/challenge/__Locators.json,locator,tab,Achievements,tab.Achievements,"[data-test=""main-nav-achievements""]",Resource/Modules/challenge/__Locators.json::tab.Achievements
+Resource/Modules/challenge/__Locators.json,locator,messagebox,Logout Message,messagebox.Logout Message,"[data-test=""main-logout-modal-message""]",Resource/Modules/challenge/__Locators.json::messagebox.Logout Message
+Resource/Modules/challenge/__Locators.json,locator,messagebox,Quote Text,messagebox.Quote Text,"[data-test=""topbar-quote-text""]",Resource/Modules/challenge/__Locators.json::messagebox.Quote Text
+Resource/Modules/challenge/__Locators.json,locator,list,Quote Text,list.Quote Text,"[data-test=""topbar-quote-text""]",Resource/Modules/challenge/__Locators.json::list.Quote Text
+Resource/Modules/challenge/__Locators.json,locator,notification,Quote Text,notification.Quote Text,"[data-test=""topbar-quote-text""]",Resource/Modules/challenge/__Locators.json::notification.Quote Text
+Resource/Modules/inbox/__Locators.json,page_alias,page,Inbox,page[0],Inbox,Resource/Modules/inbox/__Locators.json::page[0]
+Resource/Modules/inbox/__Locators.json,page_alias,page,Notifications,page[1],Notifications,Resource/Modules/inbox/__Locators.json::page[1]
+Resource/Modules/inbox/__Locators.json,root,root,root,root,"[data-test=""page-inbox""]",Resource/Modules/inbox/__Locators.json::root
+Resource/Modules/inbox/__Locators.json,locator,button,Home,button.Home,"[data-test=""main-nav-home""]",Resource/Modules/inbox/__Locators.json::button.Home
+Resource/Modules/inbox/__Locators.json,locator,button,Challenge,button.Challenge,"[data-test=""main-nav-challenge""]",Resource/Modules/inbox/__Locators.json::button.Challenge
+Resource/Modules/inbox/__Locators.json,locator,button,Ranking,button.Ranking,"[data-test=""main-nav-ranking""]",Resource/Modules/inbox/__Locators.json::button.Ranking
+Resource/Modules/inbox/__Locators.json,locator,button,Pronunciation,button.Pronunciation,"[data-test=""main-nav-pronunciation""]",Resource/Modules/inbox/__Locators.json::button.Pronunciation
+Resource/Modules/inbox/__Locators.json,locator,button,Speak,button.Speak,"[data-test=""main-nav-speak""]",Resource/Modules/inbox/__Locators.json::button.Speak
+Resource/Modules/inbox/__Locators.json,locator,button,Review,button.Review,"[data-test=""main-nav-review""]",Resource/Modules/inbox/__Locators.json::button.Review
+Resource/Modules/inbox/__Locators.json,locator,button,Inbox,button.Inbox,"[data-test=""main-nav-inbox""]",Resource/Modules/inbox/__Locators.json::button.Inbox
+Resource/Modules/inbox/__Locators.json,locator,button,Achievements,button.Achievements,"[data-test=""main-nav-achievements""]",Resource/Modules/inbox/__Locators.json::button.Achievements
+Resource/Modules/inbox/__Locators.json,locator,button,Menu Toggle,button.Menu Toggle,"[data-test=""main-menu-toggle""]",Resource/Modules/inbox/__Locators.json::button.Menu Toggle
+Resource/Modules/inbox/__Locators.json,locator,button,Profile,button.Profile,"[data-test=""main-menu-profile""]",Resource/Modules/inbox/__Locators.json::button.Profile
+Resource/Modules/inbox/__Locators.json,locator,button,Logout Confirm,button.Logout Confirm,"[data-test=""main-logout-confirm""]",Resource/Modules/inbox/__Locators.json::button.Logout Confirm
+Resource/Modules/inbox/__Locators.json,locator,button,New Quote,button.New Quote,"[data-test=""topbar-quote-refresh""]",Resource/Modules/inbox/__Locators.json::button.New Quote
+Resource/Modules/inbox/__Locators.json,locator,button,Dark Mode Toggle,button.Dark Mode Toggle,"[data-test=""dark-mode-toggle-pulse""]",Resource/Modules/inbox/__Locators.json::button.Dark Mode Toggle
+Resource/Modules/inbox/__Locators.json,locator,button,Light Mode Toggle,button.Light Mode Toggle,"[data-test=""light-mode-toggle-pulse""]",Resource/Modules/inbox/__Locators.json::button.Light Mode Toggle
+Resource/Modules/inbox/__Locators.json,locator,button,About,button.About,"[data-test=""main-menu-about""]",Resource/Modules/inbox/__Locators.json::button.About
+Resource/Modules/inbox/__Locators.json,locator,button,Logout,button.Logout,"[data-test=""main-menu-logout""]",Resource/Modules/inbox/__Locators.json::button.Logout
+Resource/Modules/inbox/__Locators.json,locator,button,Learn,button.Learn,"[data-test=""rightbar-lesson-start""]",Resource/Modules/inbox/__Locators.json::button.Learn
+Resource/Modules/inbox/__Locators.json,locator,button,Start Challenge,button.Start Challenge,"[data-test=""rightbar-challenge-start""]",Resource/Modules/inbox/__Locators.json::button.Start Challenge
+Resource/Modules/inbox/__Locators.json,locator,button,Refresh Quote,button.Refresh Quote,"[data-test=""topbar-quote-refresh""]",Resource/Modules/inbox/__Locators.json::button.Refresh Quote
+Resource/Modules/inbox/__Locators.json,locator,link,Quote Text,link.Quote Text,"[data-test=""topbar-quote-text""]",Resource/Modules/inbox/__Locators.json::link.Quote Text
+Resource/Modules/inbox/__Locators.json,locator,tab,Home,tab.Home,"[data-test=""main-nav-home""]",Resource/Modules/inbox/__Locators.json::tab.Home
+Resource/Modules/inbox/__Locators.json,locator,tab,Challenge,tab.Challenge,"[data-test=""main-nav-challenge""]",Resource/Modules/inbox/__Locators.json::tab.Challenge
+Resource/Modules/inbox/__Locators.json,locator,tab,Ranking,tab.Ranking,"[data-test=""main-nav-ranking""]",Resource/Modules/inbox/__Locators.json::tab.Ranking
+Resource/Modules/inbox/__Locators.json,locator,tab,Pronunciation,tab.Pronunciation,"[data-test=""main-nav-pronunciation""]",Resource/Modules/inbox/__Locators.json::tab.Pronunciation
+Resource/Modules/inbox/__Locators.json,locator,tab,Speak,tab.Speak,"[data-test=""main-nav-speak""]",Resource/Modules/inbox/__Locators.json::tab.Speak
+Resource/Modules/inbox/__Locators.json,locator,tab,Review,tab.Review,"[data-test=""main-nav-review""]",Resource/Modules/inbox/__Locators.json::tab.Review
+Resource/Modules/inbox/__Locators.json,locator,tab,Inbox,tab.Inbox,"[data-test=""main-nav-inbox""]",Resource/Modules/inbox/__Locators.json::tab.Inbox
+Resource/Modules/inbox/__Locators.json,locator,tab,Achievements,tab.Achievements,"[data-test=""main-nav-achievements""]",Resource/Modules/inbox/__Locators.json::tab.Achievements
+Resource/Modules/inbox/__Locators.json,locator,messagebox,Logout Message,messagebox.Logout Message,"[data-test=""main-logout-modal-message""]",Resource/Modules/inbox/__Locators.json::messagebox.Logout Message
+Resource/Modules/inbox/__Locators.json,locator,messagebox,Quote Text,messagebox.Quote Text,"[data-test=""topbar-quote-text""]",Resource/Modules/inbox/__Locators.json::messagebox.Quote Text
+Resource/Modules/inbox/__Locators.json,locator,list,Quote Text,list.Quote Text,"[data-test=""topbar-quote-text""]",Resource/Modules/inbox/__Locators.json::list.Quote Text
+Resource/Modules/inbox/__Locators.json,locator,notification,Quote Text,notification.Quote Text,"[data-test=""topbar-quote-text""]",Resource/Modules/inbox/__Locators.json::notification.Quote Text
+Resource/Modules/learn/__Locators.json,page_alias,page,Learn,page[0],Learn,Resource/Modules/learn/__Locators.json::page[0]
+Resource/Modules/learn/__Locators.json,page_alias,page,Learning,page[1],Learning,Resource/Modules/learn/__Locators.json::page[1]
+Resource/Modules/learn/__Locators.json,root,root,root,root,"[data-test=""page-learn""]",Resource/Modules/learn/__Locators.json::root
+Resource/Modules/learn/__Locators.json,locator,button,Home,button.Home,"[data-test=""main-nav-home""]",Resource/Modules/learn/__Locators.json::button.Home
+Resource/Modules/learn/__Locators.json,locator,button,Challenge,button.Challenge,"[data-test=""main-nav-challenge""]",Resource/Modules/learn/__Locators.json::button.Challenge
+Resource/Modules/learn/__Locators.json,locator,button,Ranking,button.Ranking,"[data-test=""main-nav-ranking""]",Resource/Modules/learn/__Locators.json::button.Ranking
+Resource/Modules/learn/__Locators.json,locator,button,Pronunciation,button.Pronunciation,"[data-test=""main-nav-pronunciation""]",Resource/Modules/learn/__Locators.json::button.Pronunciation
+Resource/Modules/learn/__Locators.json,locator,button,Speak,button.Speak,"[data-test=""main-nav-speak""]",Resource/Modules/learn/__Locators.json::button.Speak
+Resource/Modules/learn/__Locators.json,locator,button,Review,button.Review,"[data-test=""main-nav-review""]",Resource/Modules/learn/__Locators.json::button.Review
+Resource/Modules/learn/__Locators.json,locator,button,Inbox,button.Inbox,"[data-test=""main-nav-inbox""]",Resource/Modules/learn/__Locators.json::button.Inbox
+Resource/Modules/learn/__Locators.json,locator,button,Achievements,button.Achievements,"[data-test=""main-nav-achievements""]",Resource/Modules/learn/__Locators.json::button.Achievements
+Resource/Modules/learn/__Locators.json,locator,button,Menu Toggle,button.Menu Toggle,"[data-test=""main-menu-toggle""]",Resource/Modules/learn/__Locators.json::button.Menu Toggle
+Resource/Modules/learn/__Locators.json,locator,button,Profile,button.Profile,"[data-test=""main-menu-profile""]",Resource/Modules/learn/__Locators.json::button.Profile
+Resource/Modules/learn/__Locators.json,locator,button,About,button.About,"[data-test=""main-menu-about""]",Resource/Modules/learn/__Locators.json::button.About
+Resource/Modules/learn/__Locators.json,locator,button,Logout,button.Logout,"[data-test=""main-menu-logout""]",Resource/Modules/learn/__Locators.json::button.Logout
+Resource/Modules/learn/__Locators.json,locator,button,Check,button.Check,"[data-test=""learn-check-button""]",Resource/Modules/learn/__Locators.json::button.Check
+Resource/Modules/learn/__Locators.json,locator,button,Try Again,button.Try Again,"[data-test=""learn-try-again""]",Resource/Modules/learn/__Locators.json::button.Try Again
+Resource/Modules/learn/__Locators.json,locator,button,Exit,button.Exit,"[data-test=""learn-exit""]",Resource/Modules/learn/__Locators.json::button.Exit
+Resource/Modules/learn/__Locators.json,locator,button,Continue,button.Continue,"[data-test=""learn-exit-continue""]",Resource/Modules/learn/__Locators.json::button.Continue
+Resource/Modules/learn/__Locators.json,locator,button,New Quote,button.New Quote,"[data-test=""topbar-quote-refresh""]",Resource/Modules/learn/__Locators.json::button.New Quote
+Resource/Modules/learn/__Locators.json,locator,button,Back to Home,button.Back to Home,"[data-test=""learn-exit-confirm""]",Resource/Modules/learn/__Locators.json::button.Back to Home
+Resource/Modules/learn/__Locators.json,locator,link,Quote Text,link.Quote Text,"[data-test=""topbar-quote-text""]",Resource/Modules/learn/__Locators.json::link.Quote Text
+Resource/Modules/learn/__Locators.json,locator,textbox,Blank Input,textbox.Blank Input,"[data-test=""exercise-fill-blank-input""]",Resource/Modules/learn/__Locators.json::textbox.Blank Input
+Resource/Modules/learn/__Locators.json,locator,messagebox,Exit Modal,messagebox.Exit Modal,"[data-test=""learn-exit-modal""]",Resource/Modules/learn/__Locators.json::messagebox.Exit Modal
+Resource/Modules/learn/__Locators.json,locator,messagebox,Check Result,messagebox.Check Result,"[data-test=""learn-check-result""]",Resource/Modules/learn/__Locators.json::messagebox.Check Result
+Resource/Modules/learn/__Locators.json,locator,list,Progress,list.Progress,"[data-test=""learn-exercise-progress-text""]",Resource/Modules/learn/__Locators.json::list.Progress
+Resource/Modules/learn/__Locators.json,locator,list,Header Bar,list.Header Bar,"[data-test=""learn-header-bar""]",Resource/Modules/learn/__Locators.json::list.Header Bar
+Resource/Modules/learn/__Locators.json,locator,list,Hearts,list.Hearts,"[data-test=""learn-hearts""]",Resource/Modules/learn/__Locators.json::list.Hearts
+Resource/Modules/learn/__Locators.json,locator,list,Option,list.Option,"[data-test=""exercise-option-{index}""]",Resource/Modules/learn/__Locators.json::list.Option
+Resource/Modules/learn/__Locators.json,locator,list,Lesson Summary,list.Lesson Summary,"[data-test=""lesson-summary""]",Resource/Modules/learn/__Locators.json::list.Lesson Summary
+Resource/Modules/learn/__Locators.json,locator,list,Lesson Summary Stats,list.Lesson Summary Stats,"[data-test=""lesson-summary-stats""]",Resource/Modules/learn/__Locators.json::list.Lesson Summary Stats
+Resource/Modules/learn/__Locators.json,locator,list,Lesson Summary Recap,list.Lesson Summary Recap,"[data-test=""lesson-summary-recap""]",Resource/Modules/learn/__Locators.json::list.Lesson Summary Recap
+Resource/Modules/learn/__Locators.json,locator,list,Quote Text,list.Quote Text,"[data-test=""topbar-quote-text""]",Resource/Modules/learn/__Locators.json::list.Quote Text
+Resource/Modules/learn/__Locators.json,locator,notification,Quote Text,notification.Quote Text,"[data-test=""topbar-quote-text""]",Resource/Modules/learn/__Locators.json::notification.Quote Text
+Resource/Modules/login/__Locators.json,page_alias,page,Login,page[0],Login,Resource/Modules/login/__Locators.json::page[0]
+Resource/Modules/login/__Locators.json,page_alias,page,Log in,page[1],Log in,Resource/Modules/login/__Locators.json::page[1]
+Resource/Modules/login/__Locators.json,page_alias,page,Log In,page[2],Log In,Resource/Modules/login/__Locators.json::page[2]
+Resource/Modules/login/__Locators.json,page_alias,page,LogIn,page[3],LogIn,Resource/Modules/login/__Locators.json::page[3]
+Resource/Modules/login/__Locators.json,page_alias,page,Sign In,page[4],Sign In,Resource/Modules/login/__Locators.json::page[4]
+Resource/Modules/login/__Locators.json,page_alias,page,signin,page[5],signin,Resource/Modules/login/__Locators.json::page[5]
+Resource/Modules/login/__Locators.json,page_alias,page,sign in,page[6],sign in,Resource/Modules/login/__Locators.json::page[6]
+Resource/Modules/login/__Locators.json,page_alias,page,Login Page,page[7],Login Page,Resource/Modules/login/__Locators.json::page[7]
+Resource/Modules/login/__Locators.json,page_alias,page,Sign In Page,page[8],Sign In Page,Resource/Modules/login/__Locators.json::page[8]
+Resource/Modules/login/__Locators.json,page_alias,page,Login Screen,page[9],Login Screen,Resource/Modules/login/__Locators.json::page[9]
+Resource/Modules/login/__Locators.json,page_alias,page,Sign In Screen,page[10],Sign In Screen,Resource/Modules/login/__Locators.json::page[10]
+Resource/Modules/login/__Locators.json,root,root,root,root,"[data-test=""page-login""]",Resource/Modules/login/__Locators.json::root
+Resource/Modules/login/__Locators.json,locator,button,Sign Up,button.Sign Up,"[data-test=""login-signup-link""]",Resource/Modules/login/__Locators.json::button.Sign Up
+Resource/Modules/login/__Locators.json,locator,button,Sign In,button.Sign In,"[data-test=""login-submit""]",Resource/Modules/login/__Locators.json::button.Sign In
+Resource/Modules/login/__Locators.json,locator,button,Login,button.Login,"[data-test=""login-submit""]",Resource/Modules/login/__Locators.json::button.Login
+Resource/Modules/login/__Locators.json,locator,button,Logo,button.Logo,"[data-test=""login-logo""]",Resource/Modules/login/__Locators.json::button.Logo
+Resource/Modules/login/__Locators.json,locator,link,Forgot Password,link.Forgot Password,"[data-test=""login-forgot-password""]",Resource/Modules/login/__Locators.json::link.Forgot Password
+Resource/Modules/login/__Locators.json,locator,link,Sign Up,link.Sign Up,"[data-test=""login-signup-link""]",Resource/Modules/login/__Locators.json::link.Sign Up
+Resource/Modules/login/__Locators.json,locator,link,Sign In,link.Sign In,"[data-test=""landing-cta-signin""]",Resource/Modules/login/__Locators.json::link.Sign In
+Resource/Modules/login/__Locators.json,locator,textbox,Email Address,textbox.Email Address,"[data-test=""login-email""]",Resource/Modules/login/__Locators.json::textbox.Email Address
+Resource/Modules/login/__Locators.json,locator,textbox,Email,textbox.Email,"[data-test=""login-email""]",Resource/Modules/login/__Locators.json::textbox.Email
+Resource/Modules/login/__Locators.json,locator,textbox,Password,textbox.Password,"[data-test=""login-password""]",Resource/Modules/login/__Locators.json::textbox.Password
+Resource/Modules/login/__Locators.json,locator,checkbox,Remember Me,checkbox.Remember Me,"[data-test=""login-remember""]",Resource/Modules/login/__Locators.json::checkbox.Remember Me
+Resource/Modules/login/__Locators.json,locator,text,Sign Up,text.Sign Up,"[data-test=""login-signup-link""]",Resource/Modules/login/__Locators.json::text.Sign Up
+Resource/Modules/login/__Locators.json,locator,text,Forgot Password,text.Forgot Password,"[data-test=""login-forgot-password""]",Resource/Modules/login/__Locators.json::text.Forgot Password
+Resource/Modules/login/__Locators.json,locator,text,Sign In,text.Sign In,"[data-test=""login-submit""]",Resource/Modules/login/__Locators.json::text.Sign In
+Resource/Modules/login/__Locators.json,locator,notification,Error,notification.Error,"[data-test=""login-error""]",Resource/Modules/login/__Locators.json::notification.Error
+Resource/Modules/login/__Locators.json,locator,notification,Invalid credentials,notification.Invalid credentials,"[data-test=""login-error""]",Resource/Modules/login/__Locators.json::notification.Invalid credentials
+Resource/Modules/login/__Locators.json,locator,notification,Error Message,notification.Error Message,"[data-test=""login-error""]",Resource/Modules/login/__Locators.json::notification.Error Message
+Resource/Modules/login/__Locators.json,locator,notification,Invalid credentials Message,notification.Invalid credentials Message,"[data-test=""login-error""]",Resource/Modules/login/__Locators.json::notification.Invalid credentials Message
+Resource/Modules/login/__Locators.json,locator,notification,Invalid credentials notification,notification.Invalid credentials notification,"[data-test=""login-error""]",Resource/Modules/login/__Locators.json::notification.Invalid credentials notification
+Resource/Modules/login/__Locators.json,locator,notification,Error Notification,notification.Error Notification,"[data-test=""login-error""]",Resource/Modules/login/__Locators.json::notification.Error Notification
+Resource/Modules/login/__Locators.json,locator,list,primary,list.primary,,Resource/Modules/login/__Locators.json::list.primary
+Resource/Modules/login/__Locators.json,locator,messagebox,Error Notification,messagebox.Error Notification,"[data-test=""login-error""]",Resource/Modules/login/__Locators.json::messagebox.Error Notification
+Resource/Modules/login/__Locators.json,locator,messagebox,Error,messagebox.Error,"[data-test=""login-error""]",Resource/Modules/login/__Locators.json::messagebox.Error
+Resource/Modules/login/__Locators.json,locator,messagebox,Invalid credentials,messagebox.Invalid credentials,"[data-test=""login-error""]",Resource/Modules/login/__Locators.json::messagebox.Invalid credentials
+Resource/Modules/login/__Locators.json,locator,messagebox,Error Message,messagebox.Error Message,"[data-test=""login-error""]",Resource/Modules/login/__Locators.json::messagebox.Error Message
+Resource/Modules/login/__Locators.json,locator,messagebox,Invalid credentials Message,messagebox.Invalid credentials Message,"[data-test=""login-error""]",Resource/Modules/login/__Locators.json::messagebox.Invalid credentials Message
+Resource/Modules/login/__Locators.json,locator,messagebox,Invalid credentials notification,messagebox.Invalid credentials notification,"[data-test=""login-error""]",Resource/Modules/login/__Locators.json::messagebox.Invalid credentials notification
+Resource/Modules/mainpage/__Locators.json,page_alias,page,Main Page,page[0],Main Page,Resource/Modules/mainpage/__Locators.json::page[0]
+Resource/Modules/mainpage/__Locators.json,page_alias,page,Main Learning Page,page[1],Main Learning Page,Resource/Modules/mainpage/__Locators.json::page[1]
+Resource/Modules/mainpage/__Locators.json,page_alias,page,Main Layout,page[2],Main Layout,Resource/Modules/mainpage/__Locators.json::page[2]
+Resource/Modules/mainpage/__Locators.json,page_alias,page,Main,page[3],Main,Resource/Modules/mainpage/__Locators.json::page[3]
+Resource/Modules/mainpage/__Locators.json,page_alias,page,Mainpage,page[4],Mainpage,Resource/Modules/mainpage/__Locators.json::page[4]
+Resource/Modules/mainpage/__Locators.json,root,root,root,root,"[data-test=""page-main-layout""]",Resource/Modules/mainpage/__Locators.json::root
+Resource/Modules/mainpage/__Locators.json,locator,button,Quote Text,button.Quote Text,"[data-test=""topbar-quote-text""]",Resource/Modules/mainpage/__Locators.json::button.Quote Text
+Resource/Modules/mainpage/__Locators.json,locator,button,Home,button.Home,"[data-test=""main-nav-home""]",Resource/Modules/mainpage/__Locators.json::button.Home
+Resource/Modules/mainpage/__Locators.json,locator,button,Main Learning Page,button.Main Learning Page,"[data-test=""main-nav-home""]",Resource/Modules/mainpage/__Locators.json::button.Main Learning Page
+Resource/Modules/mainpage/__Locators.json,locator,button,Main Learning,button.Main Learning,"[data-test=""main-nav-home""]",Resource/Modules/mainpage/__Locators.json::button.Main Learning
+Resource/Modules/mainpage/__Locators.json,locator,button,Challenge,button.Challenge,"[data-test=""main-nav-challenge""]",Resource/Modules/mainpage/__Locators.json::button.Challenge
+Resource/Modules/mainpage/__Locators.json,locator,button,Ranking,button.Ranking,"[data-test=""main-nav-ranking""]",Resource/Modules/mainpage/__Locators.json::button.Ranking
+Resource/Modules/mainpage/__Locators.json,locator,button,Pronunciation,button.Pronunciation,"[data-test=""main-nav-pronunciation""]",Resource/Modules/mainpage/__Locators.json::button.Pronunciation
+Resource/Modules/mainpage/__Locators.json,locator,button,Speak,button.Speak,"[data-test=""main-nav-speak""]",Resource/Modules/mainpage/__Locators.json::button.Speak
+Resource/Modules/mainpage/__Locators.json,locator,button,Review,button.Review,"[data-test=""main-nav-review""]",Resource/Modules/mainpage/__Locators.json::button.Review
+Resource/Modules/mainpage/__Locators.json,locator,button,Inbox,button.Inbox,"[data-test=""main-nav-inbox""]",Resource/Modules/mainpage/__Locators.json::button.Inbox
+Resource/Modules/mainpage/__Locators.json,locator,button,Achievements,button.Achievements,"[data-test=""main-nav-achievements""]",Resource/Modules/mainpage/__Locators.json::button.Achievements
+Resource/Modules/mainpage/__Locators.json,locator,button,Menu Toggle,button.Menu Toggle,"[data-test=""main-menu-toggle""]",Resource/Modules/mainpage/__Locators.json::button.Menu Toggle
+Resource/Modules/mainpage/__Locators.json,locator,button,Profile,button.Profile,"[data-test=""main-menu-profile""]",Resource/Modules/mainpage/__Locators.json::button.Profile
+Resource/Modules/mainpage/__Locators.json,locator,button,About,button.About,"[data-test=""main-menu-about""]",Resource/Modules/mainpage/__Locators.json::button.About
+Resource/Modules/mainpage/__Locators.json,locator,button,Logout,button.Logout,"[data-test=""main-menu-logout""]",Resource/Modules/mainpage/__Locators.json::button.Logout
+Resource/Modules/mainpage/__Locators.json,locator,button,Logout Confirm,button.Logout Confirm,"[data-test=""main-logout-confirm""]",Resource/Modules/mainpage/__Locators.json::button.Logout Confirm
+Resource/Modules/mainpage/__Locators.json,locator,button,Continue,button.Continue,"[data-test=""course-card-action-{index}""]",Resource/Modules/mainpage/__Locators.json::button.Continue
+Resource/Modules/mainpage/__Locators.json,locator,button,Log Out Continue,button.Log Out Continue,"[data-test=""main-logout-continue""]",Resource/Modules/mainpage/__Locators.json::button.Log Out Continue
+Resource/Modules/mainpage/__Locators.json,locator,button,Refresh Quote,button.Refresh Quote,"[data-test=""topbar-quote-refresh""]",Resource/Modules/mainpage/__Locators.json::button.Refresh Quote
+Resource/Modules/mainpage/__Locators.json,locator,button,New Quote,button.New Quote,"[data-test=""topbar-quote-refresh""]",Resource/Modules/mainpage/__Locators.json::button.New Quote
+Resource/Modules/mainpage/__Locators.json,locator,button,Learn,button.Learn,"[data-test=""rightbar-lesson-start""]",Resource/Modules/mainpage/__Locators.json::button.Learn
+Resource/Modules/mainpage/__Locators.json,locator,button,Start Challenge,button.Start Challenge,"[data-test=""rightbar-challenge-start""]",Resource/Modules/mainpage/__Locators.json::button.Start Challenge
+Resource/Modules/mainpage/__Locators.json,locator,button,Quick Practice Next,button.Quick Practice Next,"[data-test=""quick-practice-next""]",Resource/Modules/mainpage/__Locators.json::button.Quick Practice Next
+Resource/Modules/mainpage/__Locators.json,locator,button,Quick Practice Reset,button.Quick Practice Reset,"[data-test=""quick-practice-reset""]",Resource/Modules/mainpage/__Locators.json::button.Quick Practice Reset
+Resource/Modules/mainpage/__Locators.json,locator,button,Quick Practice Option,button.Quick Practice Option,"[data-test^=""quick-practice-option-""]",Resource/Modules/mainpage/__Locators.json::button.Quick Practice Option
+Resource/Modules/mainpage/__Locators.json,locator,button,Daily Goal Edit,button.Daily Goal Edit,"[data-test=""daily-goal-edit-button""]",Resource/Modules/mainpage/__Locators.json::button.Daily Goal Edit
+Resource/Modules/mainpage/__Locators.json,locator,button,Save Goal,button.Save Goal,"[data-test=""daily-goal-save-button""]",Resource/Modules/mainpage/__Locators.json::button.Save Goal
+Resource/Modules/mainpage/__Locators.json,locator,button,Word Of The Day Shuffle,button.Word Of The Day Shuffle,"[data-test=""word-of-day-shuffle-button""]",Resource/Modules/mainpage/__Locators.json::button.Word Of The Day Shuffle
+Resource/Modules/mainpage/__Locators.json,locator,button,Hear it,button.Hear it,"[data-test=""word-of-day-speak-button""]",Resource/Modules/mainpage/__Locators.json::button.Hear it
+Resource/Modules/mainpage/__Locators.json,locator,button,Save,button.Save,"[data-test=""word-of-day-favorite-button""]",Resource/Modules/mainpage/__Locators.json::button.Save
+Resource/Modules/mainpage/__Locators.json,locator,button,Play Pause,button.Play Pause,"[data-test=""focus-timer-play-pause-button""]",Resource/Modules/mainpage/__Locators.json::button.Play Pause
+Resource/Modules/mainpage/__Locators.json,locator,button,Timer Reset,button.Timer Reset,"[data-test=""focus-timer-reset-button""]",Resource/Modules/mainpage/__Locators.json::button.Timer Reset
+Resource/Modules/mainpage/__Locators.json,locator,button,5 min,button.5 min,"[data-test=""focus-timer-duration-5-button""]",Resource/Modules/mainpage/__Locators.json::button.5 min
+Resource/Modules/mainpage/__Locators.json,locator,button,10 min,button.10 min,"[data-test=""focus-timer-duration-10-button""]",Resource/Modules/mainpage/__Locators.json::button.10 min
+Resource/Modules/mainpage/__Locators.json,locator,button,25 min,button.25 min,"[data-test=""focus-timer-duration-25-button""]",Resource/Modules/mainpage/__Locators.json::button.25 min
+Resource/Modules/mainpage/__Locators.json,locator,button,Start,button.Start,"[data-test=""course-card-action-{index}""]",Resource/Modules/mainpage/__Locators.json::button.Start
+Resource/Modules/mainpage/__Locators.json,locator,button,Dark Mode Toggle,button.Dark Mode Toggle,"[data-test=""dark-mode-toggle-pulse""]",Resource/Modules/mainpage/__Locators.json::button.Dark Mode Toggle
+Resource/Modules/mainpage/__Locators.json,locator,button,Light Mode Toggle,button.Light Mode Toggle,"[data-test=""light-mode-toggle-pulse""]",Resource/Modules/mainpage/__Locators.json::button.Light Mode Toggle
+Resource/Modules/mainpage/__Locators.json,locator,button,Profile Icon,button.Profile Icon,"[data-test=""topbar-profile-link""]",Resource/Modules/mainpage/__Locators.json::button.Profile Icon
+Resource/Modules/mainpage/__Locators.json,locator,button,Lesson 1,button.Lesson 1,"[data-test=""lesson-step-2-button""]",Resource/Modules/mainpage/__Locators.json::button.Lesson 1
+Resource/Modules/mainpage/__Locators.json,locator,button,Lesson,button.Lesson,"[data-test=""lesson-step-{index}-button""]",Resource/Modules/mainpage/__Locators.json::button.Lesson
+Resource/Modules/mainpage/__Locators.json,locator,button,Lesson 1 Start,button.Lesson 1 Start,"[data-test=""lesson-step-2-bubble-action""]",Resource/Modules/mainpage/__Locators.json::button.Lesson 1 Start
+Resource/Modules/mainpage/__Locators.json,locator,button,Lesson 2,button.Lesson 2,"[data-test=""lesson-step-1-button""]",Resource/Modules/mainpage/__Locators.json::button.Lesson 2
+Resource/Modules/mainpage/__Locators.json,locator,button,Lesson 2 Start,button.Lesson 2 Start,"[data-test=""lesson-step-1-bubble-action""]",Resource/Modules/mainpage/__Locators.json::button.Lesson 2 Start
+Resource/Modules/mainpage/__Locators.json,locator,link,Profile Link,link.Profile Link,"[data-test=""topbar-profile-link""]",Resource/Modules/mainpage/__Locators.json::link.Profile Link
+Resource/Modules/mainpage/__Locators.json,locator,link,Main Learning Page,link.Main Learning Page,"[data-test=""main-nav-home""]",Resource/Modules/mainpage/__Locators.json::link.Main Learning Page
+Resource/Modules/mainpage/__Locators.json,locator,link,Main Learning,link.Main Learning,"[data-test=""main-nav-home""]",Resource/Modules/mainpage/__Locators.json::link.Main Learning
+Resource/Modules/mainpage/__Locators.json,locator,textbox,Daily Goal Target,textbox.Daily Goal Target,"[data-test=""daily-goal-target-input""]",Resource/Modules/mainpage/__Locators.json::textbox.Daily Goal Target
+Resource/Modules/mainpage/__Locators.json,locator,textbox,Daily Goal Option,textbox.Daily Goal Option,"[data-test=""daily-goal-type-select""]",Resource/Modules/mainpage/__Locators.json::textbox.Daily Goal Option
+Resource/Modules/mainpage/__Locators.json,locator,textbox,Daily Goal Input,textbox.Daily Goal Input,"[data-test=""daily-goal-target-input""]",Resource/Modules/mainpage/__Locators.json::textbox.Daily Goal Input
+Resource/Modules/mainpage/__Locators.json,locator,textbox,Daily Goal Type,textbox.Daily Goal Type,"[data-test=""daily-goal-type-select""]",Resource/Modules/mainpage/__Locators.json::textbox.Daily Goal Type
+Resource/Modules/mainpage/__Locators.json,locator,tab,Home,tab.Home,"[data-test=""main-nav-home""]",Resource/Modules/mainpage/__Locators.json::tab.Home
+Resource/Modules/mainpage/__Locators.json,locator,tab,Main Learning Page,tab.Main Learning Page,"[data-test=""main-nav-home""]",Resource/Modules/mainpage/__Locators.json::tab.Main Learning Page
+Resource/Modules/mainpage/__Locators.json,locator,tab,Challenge,tab.Challenge,"[data-test=""main-nav-challenge""]",Resource/Modules/mainpage/__Locators.json::tab.Challenge
+Resource/Modules/mainpage/__Locators.json,locator,tab,Ranking,tab.Ranking,"[data-test=""main-nav-ranking""]",Resource/Modules/mainpage/__Locators.json::tab.Ranking
+Resource/Modules/mainpage/__Locators.json,locator,tab,Pronunciation,tab.Pronunciation,"[data-test=""main-nav-pronunciation""]",Resource/Modules/mainpage/__Locators.json::tab.Pronunciation
+Resource/Modules/mainpage/__Locators.json,locator,tab,Speak,tab.Speak,"[data-test=""main-nav-speak""]",Resource/Modules/mainpage/__Locators.json::tab.Speak
+Resource/Modules/mainpage/__Locators.json,locator,tab,Review,tab.Review,"[data-test=""main-nav-review""]",Resource/Modules/mainpage/__Locators.json::tab.Review
+Resource/Modules/mainpage/__Locators.json,locator,tab,Inbox,tab.Inbox,"[data-test=""main-nav-inbox""]",Resource/Modules/mainpage/__Locators.json::tab.Inbox
+Resource/Modules/mainpage/__Locators.json,locator,tab,Achievements,tab.Achievements,"[data-test=""main-nav-achievements""]",Resource/Modules/mainpage/__Locators.json::tab.Achievements
+Resource/Modules/mainpage/__Locators.json,locator,messagebox,Main Tooltip,messagebox.Main Tooltip,"[data-test=""main-tooltip""]",Resource/Modules/mainpage/__Locators.json::messagebox.Main Tooltip
+Resource/Modules/mainpage/__Locators.json,locator,messagebox,Topbar Tooltip,messagebox.Topbar Tooltip,"[data-test=""topbar-tooltip""]",Resource/Modules/mainpage/__Locators.json::messagebox.Topbar Tooltip
+Resource/Modules/mainpage/__Locators.json,locator,messagebox,Logout Message,messagebox.Logout Message,"[data-test=""main-logout-modal-message""]",Resource/Modules/mainpage/__Locators.json::messagebox.Logout Message
+Resource/Modules/mainpage/__Locators.json,locator,messagebox,Quote Text,messagebox.Quote Text,"[data-test=""topbar-quote-text""]",Resource/Modules/mainpage/__Locators.json::messagebox.Quote Text
+Resource/Modules/mainpage/__Locators.json,locator,list,Continue,list.Continue,"[data-test=""course-card-action-{index}""]",Resource/Modules/mainpage/__Locators.json::list.Continue
+Resource/Modules/mainpage/__Locators.json,locator,list,Lesson,list.Lesson,"[data-test=""lesson-step-{index}-button""]",Resource/Modules/mainpage/__Locators.json::list.Lesson
+Resource/Modules/mainpage/__Locators.json,locator,list,Nav,list.Nav,"[data-test=""main-nav""]",Resource/Modules/mainpage/__Locators.json::list.Nav
+Resource/Modules/mainpage/__Locators.json,locator,list,More Panel,list.More Panel,"[data-test=""main-more-panel""]",Resource/Modules/mainpage/__Locators.json::list.More Panel
+Resource/Modules/mainpage/__Locators.json,locator,list,Topbar,list.Topbar,"[data-test=""main-topbar""]",Resource/Modules/mainpage/__Locators.json::list.Topbar
+Resource/Modules/mainpage/__Locators.json,locator,list,Quote,list.Quote,"[data-test=""topbar-quote""]",Resource/Modules/mainpage/__Locators.json::list.Quote
+Resource/Modules/mainpage/__Locators.json,locator,list,Quote Text,list.Quote Text,"[data-test=""topbar-quote-text""]",Resource/Modules/mainpage/__Locators.json::list.Quote Text
+Resource/Modules/mainpage/__Locators.json,locator,list,Profile Stats,list.Profile Stats,"[data-test=""topbar-profile-stats""]",Resource/Modules/mainpage/__Locators.json::list.Profile Stats
+Resource/Modules/mainpage/__Locators.json,locator,list,Progress,list.Progress,"[data-test=""topbar-progress""]",Resource/Modules/mainpage/__Locators.json::list.Progress
+Resource/Modules/mainpage/__Locators.json,locator,list,Progress Bar,list.Progress Bar,"[data-test=""topbar-progress-bar""]",Resource/Modules/mainpage/__Locators.json::list.Progress Bar
+Resource/Modules/mainpage/__Locators.json,locator,list,Progress Text,list.Progress Text,"[data-test=""topbar-progress-text""]",Resource/Modules/mainpage/__Locators.json::list.Progress Text
+Resource/Modules/mainpage/__Locators.json,locator,list,Rightbar,list.Rightbar,"[data-test=""main-rightbar""]",Resource/Modules/mainpage/__Locators.json::list.Rightbar
+Resource/Modules/mainpage/__Locators.json,locator,list,Rightbar Reminders,list.Rightbar Reminders,"[data-test=""rightbar-reminders""]",Resource/Modules/mainpage/__Locators.json::list.Rightbar Reminders
+Resource/Modules/mainpage/__Locators.json,locator,list,Rightbar Leaderboard,list.Rightbar Leaderboard,"[data-test=""rightbar-leaderboard""]",Resource/Modules/mainpage/__Locators.json::list.Rightbar Leaderboard
+Resource/Modules/mainpage/__Locators.json,locator,list,Leaderboard List,list.Leaderboard List,"[data-test=""leaderboard-list""]",Resource/Modules/mainpage/__Locators.json::list.Leaderboard List
+Resource/Modules/mainpage/__Locators.json,locator,list,Leaderboard Item,list.Leaderboard Item,"[data-test^=""leaderboard-item-""]",Resource/Modules/mainpage/__Locators.json::list.Leaderboard Item
+Resource/Modules/mainpage/__Locators.json,locator,list,Lesson Reminder,list.Lesson Reminder,"[data-test=""rightbar-lesson-reminder""]",Resource/Modules/mainpage/__Locators.json::list.Lesson Reminder
+Resource/Modules/mainpage/__Locators.json,locator,list,Lesson Loading,list.Lesson Loading,"[data-test=""rightbar-lesson-loading""]",Resource/Modules/mainpage/__Locators.json::list.Lesson Loading
+Resource/Modules/mainpage/__Locators.json,locator,list,Challenge Reminder,list.Challenge Reminder,"[data-test=""rightbar-challenge-reminder""]",Resource/Modules/mainpage/__Locators.json::list.Challenge Reminder
+Resource/Modules/mainpage/__Locators.json,locator,list,Challenge Loading,list.Challenge Loading,"[data-test=""rightbar-challenge-loading""]",Resource/Modules/mainpage/__Locators.json::list.Challenge Loading
+Resource/Modules/mainpage/__Locators.json,locator,list,Quick Practice,list.Quick Practice,"[data-test=""home-quick-practice""]",Resource/Modules/mainpage/__Locators.json::list.Quick Practice
+Resource/Modules/mainpage/__Locators.json,locator,list,Quick Practice Progress,list.Quick Practice Progress,"[data-test=""quick-practice-progress""]",Resource/Modules/mainpage/__Locators.json::list.Quick Practice Progress
+Resource/Modules/mainpage/__Locators.json,locator,list,Quick Practice Word,list.Quick Practice Word,"[data-test=""quick-practice-word""]",Resource/Modules/mainpage/__Locators.json::list.Quick Practice Word
+Resource/Modules/mainpage/__Locators.json,locator,list,Quick Practice Options,list.Quick Practice Options,"[data-test=""quick-practice-options""]",Resource/Modules/mainpage/__Locators.json::list.Quick Practice Options
+Resource/Modules/mainpage/__Locators.json,locator,list,Quick Practice Tip,list.Quick Practice Tip,"[data-test=""quick-practice-tip""]",Resource/Modules/mainpage/__Locators.json::list.Quick Practice Tip
+Resource/Modules/mainpage/__Locators.json,locator,list,Quick Practice Complete,list.Quick Practice Complete,"[data-test=""quick-practice-complete""]",Resource/Modules/mainpage/__Locators.json::list.Quick Practice Complete
+Resource/Modules/mainpage/__Locators.json,locator,list,Quick Practice Score,list.Quick Practice Score,"[data-test=""quick-practice-score""]",Resource/Modules/mainpage/__Locators.json::list.Quick Practice Score
+Resource/Modules/mainpage/__Locators.json,locator,modal,Logout Confirmation,modal.Logout Confirmation,"[data-test=""main-logout-modal""]",Resource/Modules/mainpage/__Locators.json::modal.Logout Confirmation
+Resource/Modules/mainpage/__Locators.json,locator,notification,Quote Text,notification.Quote Text,"[data-test=""topbar-quote-text""]",Resource/Modules/mainpage/__Locators.json::notification.Quote Text
+Resource/Modules/mainpage/__Locators.json,locator,section,Course,section.Course,"[data-test=""course-card-content""]",Resource/Modules/mainpage/__Locators.json::section.Course
+Resource/Modules/mainpage/__Locators.json,locator,section,Quote Text,section.Quote Text,"[data-test=""topbar-quote-text""]",Resource/Modules/mainpage/__Locators.json::section.Quote Text
+Resource/Modules/mainpage/__Locators.json,locator,section,Word Of The Day,section.Word Of The Day,"[data-test=""home-word-of-day""]",Resource/Modules/mainpage/__Locators.json::section.Word Of The Day
+Resource/Modules/mainpage/__Locators.json,locator,section,Focus Timer,section.Focus Timer,"[data-test=""home-focus-timer""]",Resource/Modules/mainpage/__Locators.json::section.Focus Timer
+Resource/Modules/mainpage/__Locators.json,locator,section,Daily Goal,section.Daily Goal,"[data-test=""home-daily-goal""]",Resource/Modules/mainpage/__Locators.json::section.Daily Goal
+Resource/Modules/profile/__Locators.json,page_alias,page,Profile,page[0],Profile,Resource/Modules/profile/__Locators.json::page[0]
+Resource/Modules/profile/__Locators.json,page_alias,page,User Profile,page[1],User Profile,Resource/Modules/profile/__Locators.json::page[1]
+Resource/Modules/profile/__Locators.json,root,root,root,root,"[data-test=""page-profile""]",Resource/Modules/profile/__Locators.json::root
+Resource/Modules/profile/__Locators.json,locator,button,Home,button.Home,"[data-test=""main-nav-home""]",Resource/Modules/profile/__Locators.json::button.Home
+Resource/Modules/profile/__Locators.json,locator,button,Challenge,button.Challenge,"[data-test=""main-nav-challenge""]",Resource/Modules/profile/__Locators.json::button.Challenge
+Resource/Modules/profile/__Locators.json,locator,button,Ranking,button.Ranking,"[data-test=""main-nav-ranking""]",Resource/Modules/profile/__Locators.json::button.Ranking
+Resource/Modules/profile/__Locators.json,locator,button,Pronunciation,button.Pronunciation,"[data-test=""main-nav-pronunciation""]",Resource/Modules/profile/__Locators.json::button.Pronunciation
+Resource/Modules/profile/__Locators.json,locator,button,Speak,button.Speak,"[data-test=""main-nav-speak""]",Resource/Modules/profile/__Locators.json::button.Speak
+Resource/Modules/profile/__Locators.json,locator,button,Review,button.Review,"[data-test=""main-nav-review""]",Resource/Modules/profile/__Locators.json::button.Review
+Resource/Modules/profile/__Locators.json,locator,button,Inbox,button.Inbox,"[data-test=""main-nav-inbox""]",Resource/Modules/profile/__Locators.json::button.Inbox
+Resource/Modules/profile/__Locators.json,locator,button,Achievements,button.Achievements,"[data-test=""main-nav-achievements""]",Resource/Modules/profile/__Locators.json::button.Achievements
+Resource/Modules/profile/__Locators.json,locator,button,Menu Toggle,button.Menu Toggle,"[data-test=""main-menu-toggle""]",Resource/Modules/profile/__Locators.json::button.Menu Toggle
+Resource/Modules/profile/__Locators.json,locator,button,Logout Confirm,button.Logout Confirm,"[data-test=""main-logout-confirm""]",Resource/Modules/profile/__Locators.json::button.Logout Confirm
+Resource/Modules/profile/__Locators.json,locator,button,Profile,button.Profile,"[data-test=""main-menu-profile""]",Resource/Modules/profile/__Locators.json::button.Profile
+Resource/Modules/profile/__Locators.json,locator,button,About,button.About,"[data-test=""main-menu-about""]",Resource/Modules/profile/__Locators.json::button.About
+Resource/Modules/profile/__Locators.json,locator,button,Dark Mode Toggle,button.Dark Mode Toggle,"[data-test=""dark-mode-toggle-pulse""]",Resource/Modules/profile/__Locators.json::button.Dark Mode Toggle
+Resource/Modules/profile/__Locators.json,locator,button,Light Mode Toggle,button.Light Mode Toggle,"[data-test=""light-mode-toggle-pulse""]",Resource/Modules/profile/__Locators.json::button.Light Mode Toggle
+Resource/Modules/profile/__Locators.json,locator,button,Logout,button.Logout,"[data-test=""main-menu-logout""]",Resource/Modules/profile/__Locators.json::button.Logout
+Resource/Modules/profile/__Locators.json,locator,button,Retry,button.Retry,"[data-test=""profile-retry""]",Resource/Modules/profile/__Locators.json::button.Retry
+Resource/Modules/profile/__Locators.json,locator,button,Learn,button.Learn,"[data-test=""rightbar-lesson-start""]",Resource/Modules/profile/__Locators.json::button.Learn
+Resource/Modules/profile/__Locators.json,locator,button,Start Challenge,button.Start Challenge,"[data-test=""rightbar-challenge-start""]",Resource/Modules/profile/__Locators.json::button.Start Challenge
+Resource/Modules/profile/__Locators.json,locator,button,Refresh Quote,button.Refresh Quote,"[data-test=""topbar-quote-refresh""]",Resource/Modules/profile/__Locators.json::button.Refresh Quote
+Resource/Modules/profile/__Locators.json,locator,tab,Home,tab.Home,"[data-test=""main-nav-home""]",Resource/Modules/profile/__Locators.json::tab.Home
+Resource/Modules/profile/__Locators.json,locator,tab,Challenge,tab.Challenge,"[data-test=""main-nav-challenge""]",Resource/Modules/profile/__Locators.json::tab.Challenge
+Resource/Modules/profile/__Locators.json,locator,tab,Ranking,tab.Ranking,"[data-test=""main-nav-ranking""]",Resource/Modules/profile/__Locators.json::tab.Ranking
+Resource/Modules/profile/__Locators.json,locator,tab,Pronunciation,tab.Pronunciation,"[data-test=""main-nav-pronunciation""]",Resource/Modules/profile/__Locators.json::tab.Pronunciation
+Resource/Modules/profile/__Locators.json,locator,tab,Speak,tab.Speak,"[data-test=""main-nav-speak""]",Resource/Modules/profile/__Locators.json::tab.Speak
+Resource/Modules/profile/__Locators.json,locator,tab,Review,tab.Review,"[data-test=""main-nav-review""]",Resource/Modules/profile/__Locators.json::tab.Review
+Resource/Modules/profile/__Locators.json,locator,tab,Inbox,tab.Inbox,"[data-test=""main-nav-inbox""]",Resource/Modules/profile/__Locators.json::tab.Inbox
+Resource/Modules/profile/__Locators.json,locator,tab,Achievements,tab.Achievements,"[data-test=""main-nav-achievements""]",Resource/Modules/profile/__Locators.json::tab.Achievements
+Resource/Modules/profile/__Locators.json,locator,messagebox,Loading,messagebox.Loading,"[data-test=""profile-loading""]",Resource/Modules/profile/__Locators.json::messagebox.Loading
+Resource/Modules/profile/__Locators.json,locator,messagebox,Error,messagebox.Error,"[data-test=""profile-error""]",Resource/Modules/profile/__Locators.json::messagebox.Error
+Resource/Modules/profile/__Locators.json,locator,messagebox,Logout Message,messagebox.Logout Message,"[data-test=""main-logout-modal-message""]",Resource/Modules/profile/__Locators.json::messagebox.Logout Message
+Resource/Modules/profile/__Locators.json,locator,messagebox,Empty,messagebox.Empty,"[data-test=""profile-empty""]",Resource/Modules/profile/__Locators.json::messagebox.Empty
+Resource/Modules/profile/__Locators.json,locator,list,Header Card,list.Header Card,"[data-test=""profile-header-card""]",Resource/Modules/profile/__Locators.json::list.Header Card
+Resource/Modules/profile/__Locators.json,locator,list,Stats,list.Stats,"[data-test=""profile-stats""]",Resource/Modules/profile/__Locators.json::list.Stats
+Resource/Modules/profile/__Locators.json,locator,list,Stat Xp,list.Stat Xp,"[data-test=""profile-stat-xp""]",Resource/Modules/profile/__Locators.json::list.Stat Xp
+Resource/Modules/profile/__Locators.json,locator,list,Stat Streak,list.Stat Streak,"[data-test=""profile-stat-streak""]",Resource/Modules/profile/__Locators.json::list.Stat Streak
+Resource/Modules/profile/__Locators.json,locator,list,Stat Level,list.Stat Level,"[data-test=""profile-stat-level""]",Resource/Modules/profile/__Locators.json::list.Stat Level
+Resource/Modules/profile/__Locators.json,locator,list,Activity,list.Activity,"[data-test=""profile-activity""]",Resource/Modules/profile/__Locators.json::list.Activity
+Resource/Modules/profile/__Locators.json,locator,list,Achievements,list.Achievements,"[data-test=""profile-achievements""]",Resource/Modules/profile/__Locators.json::list.Achievements
+Resource/Modules/profile/__Locators.json,locator,list,Saved Words,list.Saved Words,"[data-test=""profile-favorites""]",Resource/Modules/profile/__Locators.json::list.Saved Words
+Resource/Modules/profile/__Locators.json,locator,list,Quote Text,list.Quote Text,"[data-test=""topbar-quote-text""]",Resource/Modules/profile/__Locators.json::list.Quote Text
+Resource/Modules/profile/__Locators.json,locator,section,Saved Words,section.Saved Words,"[data-test=""profile-favorites""]",Resource/Modules/profile/__Locators.json::section.Saved Words
+Resource/Modules/profile/__Locators.json,locator,notification,Quote Text,notification.Quote Text,"[data-test=""topbar-quote-text""]",Resource/Modules/profile/__Locators.json::notification.Quote Text
+Resource/Modules/pronunciation/__Locators.json,page_alias,page,Pronunciation,page[0],Pronunciation,Resource/Modules/pronunciation/__Locators.json::page[0]
+Resource/Modules/pronunciation/__Locators.json,page_alias,page,Sounds,page[1],Sounds,Resource/Modules/pronunciation/__Locators.json::page[1]
+Resource/Modules/pronunciation/__Locators.json,root,root,root,root,"[data-test=""page-pronunciation""]",Resource/Modules/pronunciation/__Locators.json::root
+Resource/Modules/pronunciation/__Locators.json,locator,button,Home,button.Home,"[data-test=""main-nav-home""]",Resource/Modules/pronunciation/__Locators.json::button.Home
+Resource/Modules/pronunciation/__Locators.json,locator,button,Challenge,button.Challenge,"[data-test=""main-nav-challenge""]",Resource/Modules/pronunciation/__Locators.json::button.Challenge
+Resource/Modules/pronunciation/__Locators.json,locator,button,Ranking,button.Ranking,"[data-test=""main-nav-ranking""]",Resource/Modules/pronunciation/__Locators.json::button.Ranking
+Resource/Modules/pronunciation/__Locators.json,locator,button,Pronunciation,button.Pronunciation,"[data-test=""main-nav-pronunciation""]",Resource/Modules/pronunciation/__Locators.json::button.Pronunciation
+Resource/Modules/pronunciation/__Locators.json,locator,button,Speak,button.Speak,"[data-test=""main-nav-speak""]",Resource/Modules/pronunciation/__Locators.json::button.Speak
+Resource/Modules/pronunciation/__Locators.json,locator,button,Review,button.Review,"[data-test=""main-nav-review""]",Resource/Modules/pronunciation/__Locators.json::button.Review
+Resource/Modules/pronunciation/__Locators.json,locator,button,Inbox,button.Inbox,"[data-test=""main-nav-inbox""]",Resource/Modules/pronunciation/__Locators.json::button.Inbox
+Resource/Modules/pronunciation/__Locators.json,locator,button,Achievements,button.Achievements,"[data-test=""main-nav-achievements""]",Resource/Modules/pronunciation/__Locators.json::button.Achievements
+Resource/Modules/pronunciation/__Locators.json,locator,button,Logout Confirm,button.Logout Confirm,"[data-test=""main-logout-confirm""]",Resource/Modules/pronunciation/__Locators.json::button.Logout Confirm
+Resource/Modules/pronunciation/__Locators.json,locator,button,Menu Toggle,button.Menu Toggle,"[data-test=""main-menu-toggle""]",Resource/Modules/pronunciation/__Locators.json::button.Menu Toggle
+Resource/Modules/pronunciation/__Locators.json,locator,button,New Quote,button.New Quote,"[data-test=""topbar-quote-refresh""]",Resource/Modules/pronunciation/__Locators.json::button.New Quote
+Resource/Modules/pronunciation/__Locators.json,locator,button,Profile,button.Profile,"[data-test=""main-menu-profile""]",Resource/Modules/pronunciation/__Locators.json::button.Profile
+Resource/Modules/pronunciation/__Locators.json,locator,button,About,button.About,"[data-test=""main-menu-about""]",Resource/Modules/pronunciation/__Locators.json::button.About
+Resource/Modules/pronunciation/__Locators.json,locator,button,Logout,button.Logout,"[data-test=""main-menu-logout""]",Resource/Modules/pronunciation/__Locators.json::button.Logout
+Resource/Modules/pronunciation/__Locators.json,locator,button,Learn,button.Learn,"[data-test=""rightbar-lesson-start""]",Resource/Modules/pronunciation/__Locators.json::button.Learn
+Resource/Modules/pronunciation/__Locators.json,locator,button,Start Challenge,button.Start Challenge,"[data-test=""rightbar-challenge-start""]",Resource/Modules/pronunciation/__Locators.json::button.Start Challenge
+Resource/Modules/pronunciation/__Locators.json,locator,button,Refresh Quote,button.Refresh Quote,"[data-test=""topbar-quote-refresh""]",Resource/Modules/pronunciation/__Locators.json::button.Refresh Quote
+Resource/Modules/pronunciation/__Locators.json,locator,tab,Home,tab.Home,"[data-test=""main-nav-home""]",Resource/Modules/pronunciation/__Locators.json::tab.Home
+Resource/Modules/pronunciation/__Locators.json,locator,tab,Challenge,tab.Challenge,"[data-test=""main-nav-challenge""]",Resource/Modules/pronunciation/__Locators.json::tab.Challenge
+Resource/Modules/pronunciation/__Locators.json,locator,tab,Ranking,tab.Ranking,"[data-test=""main-nav-ranking""]",Resource/Modules/pronunciation/__Locators.json::tab.Ranking
+Resource/Modules/pronunciation/__Locators.json,locator,tab,Pronunciation,tab.Pronunciation,"[data-test=""main-nav-pronunciation""]",Resource/Modules/pronunciation/__Locators.json::tab.Pronunciation
+Resource/Modules/pronunciation/__Locators.json,locator,tab,Speak,tab.Speak,"[data-test=""main-nav-speak""]",Resource/Modules/pronunciation/__Locators.json::tab.Speak
+Resource/Modules/pronunciation/__Locators.json,locator,tab,Review,tab.Review,"[data-test=""main-nav-review""]",Resource/Modules/pronunciation/__Locators.json::tab.Review
+Resource/Modules/pronunciation/__Locators.json,locator,tab,Inbox,tab.Inbox,"[data-test=""main-nav-inbox""]",Resource/Modules/pronunciation/__Locators.json::tab.Inbox
+Resource/Modules/pronunciation/__Locators.json,locator,tab,Achievements,tab.Achievements,"[data-test=""main-nav-achievements""]",Resource/Modules/pronunciation/__Locators.json::tab.Achievements
+Resource/Modules/pronunciation/__Locators.json,locator,messagebox,Loading,messagebox.Loading,"[data-test=""pronunciation-loading""]",Resource/Modules/pronunciation/__Locators.json::messagebox.Loading
+Resource/Modules/pronunciation/__Locators.json,locator,messagebox,Logout Message,messagebox.Logout Message,"[data-test=""main-logout-modal-message""]",Resource/Modules/pronunciation/__Locators.json::messagebox.Logout Message
+Resource/Modules/pronunciation/__Locators.json,locator,messagebox,Error,messagebox.Error,"[data-test=""pronunciation-error""]",Resource/Modules/pronunciation/__Locators.json::messagebox.Error
+Resource/Modules/pronunciation/__Locators.json,locator,list,Group,list.Group,"[data-test^=""pronunciation-group""]",Resource/Modules/pronunciation/__Locators.json::list.Group
+Resource/Modules/pronunciation/__Locators.json,locator,list,Sound,list.Sound,"[data-test^=""pronunciation-sound""]",Resource/Modules/pronunciation/__Locators.json::list.Sound
+Resource/Modules/pronunciation/__Locators.json,locator,list,German Vowels,list.German Vowels,"[data-test=""pronunciation-sound-{index}""]",Resource/Modules/pronunciation/__Locators.json::list.German Vowels
+Resource/Modules/ranking/__Locators.json,page_alias,page,Ranking,page[0],Ranking,Resource/Modules/ranking/__Locators.json::page[0]
+Resource/Modules/ranking/__Locators.json,page_alias,page,Leaderboard,page[1],Leaderboard,Resource/Modules/ranking/__Locators.json::page[1]
+Resource/Modules/ranking/__Locators.json,root,root,root,root,"[data-test=""page-ranking""]",Resource/Modules/ranking/__Locators.json::root
+Resource/Modules/ranking/__Locators.json,locator,button,Home,button.Home,"[data-test=""main-nav-home""]",Resource/Modules/ranking/__Locators.json::button.Home
+Resource/Modules/ranking/__Locators.json,locator,button,Challenge,button.Challenge,"[data-test=""main-nav-challenge""]",Resource/Modules/ranking/__Locators.json::button.Challenge
+Resource/Modules/ranking/__Locators.json,locator,button,Ranking,button.Ranking,"[data-test=""main-nav-ranking""]",Resource/Modules/ranking/__Locators.json::button.Ranking
+Resource/Modules/ranking/__Locators.json,locator,button,Pronunciation,button.Pronunciation,"[data-test=""main-nav-pronunciation""]",Resource/Modules/ranking/__Locators.json::button.Pronunciation
+Resource/Modules/ranking/__Locators.json,locator,button,Speak,button.Speak,"[data-test=""main-nav-speak""]",Resource/Modules/ranking/__Locators.json::button.Speak
+Resource/Modules/ranking/__Locators.json,locator,button,Review,button.Review,"[data-test=""main-nav-review""]",Resource/Modules/ranking/__Locators.json::button.Review
+Resource/Modules/ranking/__Locators.json,locator,button,Inbox,button.Inbox,"[data-test=""main-nav-inbox""]",Resource/Modules/ranking/__Locators.json::button.Inbox
+Resource/Modules/ranking/__Locators.json,locator,button,Logout Confirm,button.Logout Confirm,"[data-test=""main-logout-confirm""]",Resource/Modules/ranking/__Locators.json::button.Logout Confirm
+Resource/Modules/ranking/__Locators.json,locator,button,New Quote,button.New Quote,"[data-test=""topbar-quote-refresh""]",Resource/Modules/ranking/__Locators.json::button.New Quote
+Resource/Modules/ranking/__Locators.json,locator,button,Achievements,button.Achievements,"[data-test=""main-nav-achievements""]",Resource/Modules/ranking/__Locators.json::button.Achievements
+Resource/Modules/ranking/__Locators.json,locator,button,Menu Toggle,button.Menu Toggle,"[data-test=""main-menu-toggle""]",Resource/Modules/ranking/__Locators.json::button.Menu Toggle
+Resource/Modules/ranking/__Locators.json,locator,button,Profile,button.Profile,"[data-test=""main-menu-profile""]",Resource/Modules/ranking/__Locators.json::button.Profile
+Resource/Modules/ranking/__Locators.json,locator,button,About,button.About,"[data-test=""main-menu-about""]",Resource/Modules/ranking/__Locators.json::button.About
+Resource/Modules/ranking/__Locators.json,locator,button,Logout,button.Logout,"[data-test=""main-menu-logout""]",Resource/Modules/ranking/__Locators.json::button.Logout
+Resource/Modules/ranking/__Locators.json,locator,button,Dark Mode Toggle,button.Dark Mode Toggle,"[data-test=""dark-mode-toggle-pulse""]",Resource/Modules/ranking/__Locators.json::button.Dark Mode Toggle
+Resource/Modules/ranking/__Locators.json,locator,button,Light Mode Toggle,button.Light Mode Toggle,"[data-test=""light-mode-toggle-pulse""]",Resource/Modules/ranking/__Locators.json::button.Light Mode Toggle
+Resource/Modules/ranking/__Locators.json,locator,button,This Week,button.This Week,"[data-test=""ranking-tab-week""]",Resource/Modules/ranking/__Locators.json::button.This Week
+Resource/Modules/ranking/__Locators.json,locator,button,This Month,button.This Month,"[data-test=""ranking-tab-month""]",Resource/Modules/ranking/__Locators.json::button.This Month
+Resource/Modules/ranking/__Locators.json,locator,button,All Time,button.All Time,"[data-test=""ranking-tab-all""]",Resource/Modules/ranking/__Locators.json::button.All Time
+Resource/Modules/ranking/__Locators.json,locator,button,Learn,button.Learn,"[data-test=""rightbar-lesson-start""]",Resource/Modules/ranking/__Locators.json::button.Learn
+Resource/Modules/ranking/__Locators.json,locator,button,Start Challenge,button.Start Challenge,"[data-test=""rightbar-challenge-start""]",Resource/Modules/ranking/__Locators.json::button.Start Challenge
+Resource/Modules/ranking/__Locators.json,locator,button,Refresh Quote,button.Refresh Quote,"[data-test=""topbar-quote-refresh""]",Resource/Modules/ranking/__Locators.json::button.Refresh Quote
+Resource/Modules/ranking/__Locators.json,locator,tab,Tabs,tab.Tabs,"[data-test=""ranking-tabs""]",Resource/Modules/ranking/__Locators.json::tab.Tabs
+Resource/Modules/ranking/__Locators.json,locator,tab,Home,tab.Home,"[data-test=""main-nav-home""]",Resource/Modules/ranking/__Locators.json::tab.Home
+Resource/Modules/ranking/__Locators.json,locator,tab,Challenge,tab.Challenge,"[data-test=""main-nav-challenge""]",Resource/Modules/ranking/__Locators.json::tab.Challenge
+Resource/Modules/ranking/__Locators.json,locator,tab,Ranking,tab.Ranking,"[data-test=""main-nav-ranking""]",Resource/Modules/ranking/__Locators.json::tab.Ranking
+Resource/Modules/ranking/__Locators.json,locator,tab,Pronunciation,tab.Pronunciation,"[data-test=""main-nav-pronunciation""]",Resource/Modules/ranking/__Locators.json::tab.Pronunciation
+Resource/Modules/ranking/__Locators.json,locator,tab,Speak,tab.Speak,"[data-test=""main-nav-speak""]",Resource/Modules/ranking/__Locators.json::tab.Speak
+Resource/Modules/ranking/__Locators.json,locator,tab,Review,tab.Review,"[data-test=""main-nav-review""]",Resource/Modules/ranking/__Locators.json::tab.Review
+Resource/Modules/ranking/__Locators.json,locator,tab,Inbox,tab.Inbox,"[data-test=""main-nav-inbox""]",Resource/Modules/ranking/__Locators.json::tab.Inbox
+Resource/Modules/ranking/__Locators.json,locator,tab,Achievements,tab.Achievements,"[data-test=""main-nav-achievements""]",Resource/Modules/ranking/__Locators.json::tab.Achievements
+Resource/Modules/ranking/__Locators.json,locator,messagebox,Logout Message,messagebox.Logout Message,"[data-test=""main-logout-modal-message""]",Resource/Modules/ranking/__Locators.json::messagebox.Logout Message
+Resource/Modules/ranking/__Locators.json,locator,list,Card,list.Card,"[data-test=""ranking-card""]",Resource/Modules/ranking/__Locators.json::list.Card
+Resource/Modules/ranking/__Locators.json,locator,list,List,list.List,"[data-test=""ranking-list""]",Resource/Modules/ranking/__Locators.json::list.List
+Resource/Modules/ranking/__Locators.json,locator,list,Item,list.Item,"[data-test^=""ranking-item-""]",Resource/Modules/ranking/__Locators.json::list.Item
+Resource/Modules/ranking/__Locators.json,locator,list,Loading,list.Loading,"[data-test=""ranking-loading""]",Resource/Modules/ranking/__Locators.json::list.Loading
+Resource/Modules/register/__Locators.json,page_alias,page,Signup,page[0],Signup,Resource/Modules/register/__Locators.json::page[0]
+Resource/Modules/register/__Locators.json,page_alias,page,Sign up,page[1],Sign up,Resource/Modules/register/__Locators.json::page[1]
+Resource/Modules/register/__Locators.json,page_alias,page,Sign Up,page[2],Sign Up,Resource/Modules/register/__Locators.json::page[2]
+Resource/Modules/register/__Locators.json,page_alias,page,SignUp,page[3],SignUp,Resource/Modules/register/__Locators.json::page[3]
+Resource/Modules/register/__Locators.json,page_alias,page,Register,page[4],Register,Resource/Modules/register/__Locators.json::page[4]
+Resource/Modules/register/__Locators.json,page_alias,page,register,page[5],register,Resource/Modules/register/__Locators.json::page[5]
+Resource/Modules/register/__Locators.json,page_alias,page,Sign up Page,page[6],Sign up Page,Resource/Modules/register/__Locators.json::page[6]
+Resource/Modules/register/__Locators.json,page_alias,page,Signup Page,page[7],Signup Page,Resource/Modules/register/__Locators.json::page[7]
+Resource/Modules/register/__Locators.json,page_alias,page,Register Page,page[8],Register Page,Resource/Modules/register/__Locators.json::page[8]
+Resource/Modules/register/__Locators.json,root,root,root,root,"[data-test=""page-register""]",Resource/Modules/register/__Locators.json::root
+Resource/Modules/register/__Locators.json,locator,button,Create Account,button.Create Account,"[data-test=""register-submit""]",Resource/Modules/register/__Locators.json::button.Create Account
+Resource/Modules/register/__Locators.json,locator,button,Google,button.Google,"[data-test=""register-google-button""]",Resource/Modules/register/__Locators.json::button.Google
+Resource/Modules/register/__Locators.json,locator,button,Facebook,button.Facebook,"[data-test=""register-facebook-button""]",Resource/Modules/register/__Locators.json::button.Facebook
+Resource/Modules/register/__Locators.json,locator,button,Sign Up,button.Sign Up,"[data-test=""register-submit""]",Resource/Modules/register/__Locators.json::button.Sign Up
+Resource/Modules/register/__Locators.json,locator,link,Sign In,link.Sign In,"[data-test=""register-login-link""]",Resource/Modules/register/__Locators.json::link.Sign In
+Resource/Modules/register/__Locators.json,locator,text,Sign In,text.Sign In,"[data-test=""register-login-link""]",Resource/Modules/register/__Locators.json::text.Sign In
+Resource/Modules/register/__Locators.json,locator,textbox,First Name,textbox.First Name,"[data-test=""register-first-name""]",Resource/Modules/register/__Locators.json::textbox.First Name
+Resource/Modules/register/__Locators.json,locator,textbox,Last Name,textbox.Last Name,"[data-test=""register-last-name""]",Resource/Modules/register/__Locators.json::textbox.Last Name
+Resource/Modules/register/__Locators.json,locator,textbox,Username,textbox.Username,"[data-test=""register-username""]",Resource/Modules/register/__Locators.json::textbox.Username
+Resource/Modules/register/__Locators.json,locator,textbox,Email Address,textbox.Email Address,"[data-test=""register-email""]",Resource/Modules/register/__Locators.json::textbox.Email Address
+Resource/Modules/register/__Locators.json,locator,textbox,Email,textbox.Email,"[data-test=""register-email""]",Resource/Modules/register/__Locators.json::textbox.Email
+Resource/Modules/register/__Locators.json,locator,textbox,Password,textbox.Password,"[data-test=""register-password""]",Resource/Modules/register/__Locators.json::textbox.Password
+Resource/Modules/register/__Locators.json,locator,textbox,Confirm Password,textbox.Confirm Password,"[data-test=""register-confirm-password""]",Resource/Modules/register/__Locators.json::textbox.Confirm Password
+Resource/Modules/register/__Locators.json,locator,checkbox,primary,checkbox.primary,,Resource/Modules/register/__Locators.json::checkbox.primary
+Resource/Modules/register/__Locators.json,locator,tab,primary,tab.primary,,Resource/Modules/register/__Locators.json::tab.primary
+Resource/Modules/register/__Locators.json,locator,messagebox,Registration Error,messagebox.Registration Error,"[data-test=""register-error""]",Resource/Modules/register/__Locators.json::messagebox.Registration Error
+Resource/Modules/register/__Locators.json,locator,notification,Container,notification.Container,"[data-test=""register-notification""]",Resource/Modules/register/__Locators.json::notification.Container
+Resource/Modules/register/__Locators.json,locator,notification,Title,notification.Title,"[data-test=""register-notification-title""]",Resource/Modules/register/__Locators.json::notification.Title
+Resource/Modules/register/__Locators.json,locator,notification,Message,notification.Message,"[data-test=""register-notification-message""]",Resource/Modules/register/__Locators.json::notification.Message
+Resource/Modules/register/__Locators.json,locator,notification,Invalid Credentials,notification.Invalid Credentials,"[data-test=""register-notification-message""]",Resource/Modules/register/__Locators.json::notification.Invalid Credentials
+Resource/Modules/register/__Locators.json,locator,list,primary,list.primary,,Resource/Modules/register/__Locators.json::list.primary
+Resource/Modules/register/__Locators.json,locator,modal,primary,modal.primary,,Resource/Modules/register/__Locators.json::modal.primary
+Resource/Modules/review/__Locators.json,page_alias,page,Review,page[0],Review,Resource/Modules/review/__Locators.json::page[0]
+Resource/Modules/review/__Locators.json,page_alias,page,Review Page,page[1],Review Page,Resource/Modules/review/__Locators.json::page[1]
+Resource/Modules/review/__Locators.json,root,root,root,root,"[data-test=""page-review""]",Resource/Modules/review/__Locators.json::root
+Resource/Modules/review/__Locators.json,locator,button,Home,button.Home,"[data-test=""main-nav-home""]",Resource/Modules/review/__Locators.json::button.Home
+Resource/Modules/review/__Locators.json,locator,button,Challenge,button.Challenge,"[data-test=""main-nav-challenge""]",Resource/Modules/review/__Locators.json::button.Challenge
+Resource/Modules/review/__Locators.json,locator,button,Ranking,button.Ranking,"[data-test=""main-nav-ranking""]",Resource/Modules/review/__Locators.json::button.Ranking
+Resource/Modules/review/__Locators.json,locator,button,Pronunciation,button.Pronunciation,"[data-test=""main-nav-pronunciation""]",Resource/Modules/review/__Locators.json::button.Pronunciation
+Resource/Modules/review/__Locators.json,locator,button,Speak,button.Speak,"[data-test=""main-nav-speak""]",Resource/Modules/review/__Locators.json::button.Speak
+Resource/Modules/review/__Locators.json,locator,button,Review,button.Review,"[data-test=""main-nav-review""]",Resource/Modules/review/__Locators.json::button.Review
+Resource/Modules/review/__Locators.json,locator,button,Inbox,button.Inbox,"[data-test=""main-nav-inbox""]",Resource/Modules/review/__Locators.json::button.Inbox
+Resource/Modules/review/__Locators.json,locator,button,Achievements,button.Achievements,"[data-test=""main-nav-achievements""]",Resource/Modules/review/__Locators.json::button.Achievements
+Resource/Modules/review/__Locators.json,locator,button,Menu Toggle,button.Menu Toggle,"[data-test=""main-menu-toggle""]",Resource/Modules/review/__Locators.json::button.Menu Toggle
+Resource/Modules/review/__Locators.json,locator,button,Profile,button.Profile,"[data-test=""main-menu-profile""]",Resource/Modules/review/__Locators.json::button.Profile
+Resource/Modules/review/__Locators.json,locator,button,New Quote,button.New Quote,"[data-test=""topbar-quote-refresh""]",Resource/Modules/review/__Locators.json::button.New Quote
+Resource/Modules/review/__Locators.json,locator,button,Logout Confirm,button.Logout Confirm,"[data-test=""main-logout-confirm""]",Resource/Modules/review/__Locators.json::button.Logout Confirm
+Resource/Modules/review/__Locators.json,locator,button,Dark Mode Toggle,button.Dark Mode Toggle,"[data-test=""dark-mode-toggle-pulse""]",Resource/Modules/review/__Locators.json::button.Dark Mode Toggle
+Resource/Modules/review/__Locators.json,locator,button,Light Mode Toggle,button.Light Mode Toggle,"[data-test=""light-mode-toggle-pulse""]",Resource/Modules/review/__Locators.json::button.Light Mode Toggle
+Resource/Modules/review/__Locators.json,locator,button,About,button.About,"[data-test=""main-menu-about""]",Resource/Modules/review/__Locators.json::button.About
+Resource/Modules/review/__Locators.json,locator,button,Logout,button.Logout,"[data-test=""main-menu-logout""]",Resource/Modules/review/__Locators.json::button.Logout
+Resource/Modules/review/__Locators.json,locator,button,Learn,button.Learn,"[data-test=""rightbar-lesson-start""]",Resource/Modules/review/__Locators.json::button.Learn
+Resource/Modules/review/__Locators.json,locator,button,Start Challenge,button.Start Challenge,"[data-test=""rightbar-challenge-start""]",Resource/Modules/review/__Locators.json::button.Start Challenge
+Resource/Modules/review/__Locators.json,locator,button,Refresh Quote,button.Refresh Quote,"[data-test=""topbar-quote-refresh""]",Resource/Modules/review/__Locators.json::button.Refresh Quote
+Resource/Modules/review/__Locators.json,locator,button,Hard,button.Hard,"[data-test=""hard-button""]",Resource/Modules/review/__Locators.json::button.Hard
+Resource/Modules/review/__Locators.json,locator,button,Good,button.Good,"[data-test=""good-button""]",Resource/Modules/review/__Locators.json::button.Good
+Resource/Modules/review/__Locators.json,locator,tab,Home,tab.Home,"[data-test=""main-nav-home""]",Resource/Modules/review/__Locators.json::tab.Home
+Resource/Modules/review/__Locators.json,locator,tab,Challenge,tab.Challenge,"[data-test=""main-nav-challenge""]",Resource/Modules/review/__Locators.json::tab.Challenge
+Resource/Modules/review/__Locators.json,locator,tab,Ranking,tab.Ranking,"[data-test=""main-nav-ranking""]",Resource/Modules/review/__Locators.json::tab.Ranking
+Resource/Modules/review/__Locators.json,locator,tab,Pronunciation,tab.Pronunciation,"[data-test=""main-nav-pronunciation""]",Resource/Modules/review/__Locators.json::tab.Pronunciation
+Resource/Modules/review/__Locators.json,locator,tab,Speak,tab.Speak,"[data-test=""main-nav-speak""]",Resource/Modules/review/__Locators.json::tab.Speak
+Resource/Modules/review/__Locators.json,locator,tab,Review,tab.Review,"[data-test=""main-nav-review""]",Resource/Modules/review/__Locators.json::tab.Review
+Resource/Modules/review/__Locators.json,locator,tab,Inbox,tab.Inbox,"[data-test=""main-nav-inbox""]",Resource/Modules/review/__Locators.json::tab.Inbox
+Resource/Modules/review/__Locators.json,locator,tab,Achievements,tab.Achievements,"[data-test=""main-nav-achievements""]",Resource/Modules/review/__Locators.json::tab.Achievements
+Resource/Modules/review/__Locators.json,locator,messagebox,Logout Message,messagebox.Logout Message,"[data-test=""main-logout-modal-message""]",Resource/Modules/review/__Locators.json::messagebox.Logout Message
+Resource/Modules/speak/__Locators.json,page_alias,page,Speak,page[0],Speak,Resource/Modules/speak/__Locators.json::page[0]
+Resource/Modules/speak/__Locators.json,page_alias,page,Speaking,page[1],Speaking,Resource/Modules/speak/__Locators.json::page[1]
+Resource/Modules/speak/__Locators.json,root,root,root,root,"[data-test=""page-speak""]",Resource/Modules/speak/__Locators.json::root
+Resource/Modules/speak/__Locators.json,locator,button,Home,button.Home,"[data-test=""main-nav-home""]",Resource/Modules/speak/__Locators.json::button.Home
+Resource/Modules/speak/__Locators.json,locator,button,Challenge,button.Challenge,"[data-test=""main-nav-challenge""]",Resource/Modules/speak/__Locators.json::button.Challenge
+Resource/Modules/speak/__Locators.json,locator,button,Ranking,button.Ranking,"[data-test=""main-nav-ranking""]",Resource/Modules/speak/__Locators.json::button.Ranking
+Resource/Modules/speak/__Locators.json,locator,button,Pronunciation,button.Pronunciation,"[data-test=""main-nav-pronunciation""]",Resource/Modules/speak/__Locators.json::button.Pronunciation
+Resource/Modules/speak/__Locators.json,locator,button,Speak,button.Speak,"[data-test=""main-nav-speak""]",Resource/Modules/speak/__Locators.json::button.Speak
+Resource/Modules/speak/__Locators.json,locator,button,Review,button.Review,"[data-test=""main-nav-review""]",Resource/Modules/speak/__Locators.json::button.Review
+Resource/Modules/speak/__Locators.json,locator,button,Inbox,button.Inbox,"[data-test=""main-nav-inbox""]",Resource/Modules/speak/__Locators.json::button.Inbox
+Resource/Modules/speak/__Locators.json,locator,button,Achievements,button.Achievements,"[data-test=""main-nav-achievements""]",Resource/Modules/speak/__Locators.json::button.Achievements
+Resource/Modules/speak/__Locators.json,locator,button,New Quote,button.New Quote,"[data-test=""topbar-quote-refresh""]",Resource/Modules/speak/__Locators.json::button.New Quote
+Resource/Modules/speak/__Locators.json,locator,button,Logout Confirm,button.Logout Confirm,"[data-test=""main-logout-confirm""]",Resource/Modules/speak/__Locators.json::button.Logout Confirm
+Resource/Modules/speak/__Locators.json,locator,button,Menu Toggle,button.Menu Toggle,"[data-test=""main-menu-toggle""]",Resource/Modules/speak/__Locators.json::button.Menu Toggle
+Resource/Modules/speak/__Locators.json,locator,button,Dark Mode Toggle,button.Dark Mode Toggle,"[data-test=""dark-mode-toggle-pulse""]",Resource/Modules/speak/__Locators.json::button.Dark Mode Toggle
+Resource/Modules/speak/__Locators.json,locator,button,Light Mode Toggle,button.Light Mode Toggle,"[data-test=""light-mode-toggle-pulse""]",Resource/Modules/speak/__Locators.json::button.Light Mode Toggle
+Resource/Modules/speak/__Locators.json,locator,button,Profile,button.Profile,"[data-test=""main-menu-profile""]",Resource/Modules/speak/__Locators.json::button.Profile
+Resource/Modules/speak/__Locators.json,locator,button,About,button.About,"[data-test=""main-menu-about""]",Resource/Modules/speak/__Locators.json::button.About
+Resource/Modules/speak/__Locators.json,locator,button,Logout,button.Logout,"[data-test=""main-menu-logout""]",Resource/Modules/speak/__Locators.json::button.Logout
+Resource/Modules/speak/__Locators.json,locator,button,Learn,button.Learn,"[data-test=""rightbar-lesson-start""]",Resource/Modules/speak/__Locators.json::button.Learn
+Resource/Modules/speak/__Locators.json,locator,button,Start Challenge,button.Start Challenge,"[data-test=""rightbar-challenge-start""]",Resource/Modules/speak/__Locators.json::button.Start Challenge
+Resource/Modules/speak/__Locators.json,locator,button,Play Phrase,button.Play Phrase,"[data-test=""play-phrase-button""]",Resource/Modules/speak/__Locators.json::button.Play Phrase
+Resource/Modules/speak/__Locators.json,locator,button,New Phrase,button.New Phrase,"[data-test=""new-phrase-button""]",Resource/Modules/speak/__Locators.json::button.New Phrase
+Resource/Modules/speak/__Locators.json,locator,button,Refresh Quote,button.Refresh Quote,"[data-test=""topbar-quote-refresh""]",Resource/Modules/speak/__Locators.json::button.Refresh Quote
+Resource/Modules/speak/__Locators.json,locator,tab,Home,tab.Home,"[data-test=""main-nav-home""]",Resource/Modules/speak/__Locators.json::tab.Home
+Resource/Modules/speak/__Locators.json,locator,tab,Challenge,tab.Challenge,"[data-test=""main-nav-challenge""]",Resource/Modules/speak/__Locators.json::tab.Challenge
+Resource/Modules/speak/__Locators.json,locator,tab,Ranking,tab.Ranking,"[data-test=""main-nav-ranking""]",Resource/Modules/speak/__Locators.json::tab.Ranking
+Resource/Modules/speak/__Locators.json,locator,tab,Pronunciation,tab.Pronunciation,"[data-test=""main-nav-pronunciation""]",Resource/Modules/speak/__Locators.json::tab.Pronunciation
+Resource/Modules/speak/__Locators.json,locator,tab,Speak,tab.Speak,"[data-test=""main-nav-speak""]",Resource/Modules/speak/__Locators.json::tab.Speak
+Resource/Modules/speak/__Locators.json,locator,tab,Review,tab.Review,"[data-test=""main-nav-review""]",Resource/Modules/speak/__Locators.json::tab.Review
+Resource/Modules/speak/__Locators.json,locator,tab,Inbox,tab.Inbox,"[data-test=""main-nav-inbox""]",Resource/Modules/speak/__Locators.json::tab.Inbox
+Resource/Modules/speak/__Locators.json,locator,tab,Achievements,tab.Achievements,"[data-test=""main-nav-achievements""]",Resource/Modules/speak/__Locators.json::tab.Achievements
+Resource/Modules/speak/__Locators.json,locator,messagebox,Logout Message,messagebox.Logout Message,"[data-test=""main-logout-modal-message""]",Resource/Modules/speak/__Locators.json::messagebox.Logout Message
+Resource/Modules/welcomepage/__Locators.json,page_alias,page,welcome,page[0],welcome,Resource/Modules/welcomepage/__Locators.json::page[0]
+Resource/Modules/welcomepage/__Locators.json,page_alias,page,Welcome,page[1],Welcome,Resource/Modules/welcomepage/__Locators.json::page[1]
+Resource/Modules/welcomepage/__Locators.json,page_alias,page,welcomepage,page[2],welcomepage,Resource/Modules/welcomepage/__Locators.json::page[2]
+Resource/Modules/welcomepage/__Locators.json,page_alias,page,welcome page,page[3],welcome page,Resource/Modules/welcomepage/__Locators.json::page[3]
+Resource/Modules/welcomepage/__Locators.json,page_alias,page,landing,page[4],landing,Resource/Modules/welcomepage/__Locators.json::page[4]
+Resource/Modules/welcomepage/__Locators.json,page_alias,page,landing page,page[5],landing page,Resource/Modules/welcomepage/__Locators.json::page[5]
+Resource/Modules/welcomepage/__Locators.json,page_alias,page,Welcome Page,page[6],Welcome Page,Resource/Modules/welcomepage/__Locators.json::page[6]
+Resource/Modules/welcomepage/__Locators.json,root,root,root,root,"[data-test=""page-landing""]",Resource/Modules/welcomepage/__Locators.json::root
+Resource/Modules/welcomepage/__Locators.json,locator,button,Logo,button.Logo,"[data-test=""landing-logo""]",Resource/Modules/welcomepage/__Locators.json::button.Logo
+Resource/Modules/welcomepage/__Locators.json,locator,button,Sign In,button.Sign In,"[data-test=""landing-cta-signin""]",Resource/Modules/welcomepage/__Locators.json::button.Sign In
+Resource/Modules/welcomepage/__Locators.json,locator,button,Sign Up,button.Sign Up,"[data-test=""landing-cta-signup""]",Resource/Modules/welcomepage/__Locators.json::button.Sign Up
+Resource/Modules/welcomepage/__Locators.json,locator,button,Features,button.Features,"[data-test=""landing-nav-features""]",Resource/Modules/welcomepage/__Locators.json::button.Features
+Resource/Modules/welcomepage/__Locators.json,locator,button,Reviews,button.Reviews,"[data-test=""landing-nav-reviews""]",Resource/Modules/welcomepage/__Locators.json::button.Reviews
+Resource/Modules/welcomepage/__Locators.json,locator,button,About,button.About,"[data-test=""landing-nav-about""]",Resource/Modules/welcomepage/__Locators.json::button.About
+Resource/Modules/welcomepage/__Locators.json,locator,button,Start Learning Now,button.Start Learning Now,"[data-test=""hero-start-learning""], [data-test=""hero-start-learning-free""]",Resource/Modules/welcomepage/__Locators.json::button.Start Learning Now
+Resource/Modules/welcomepage/__Locators.json,locator,link,Sign In,link.Sign In,"[data-test=""landing-cta-signin""]",Resource/Modules/welcomepage/__Locators.json::link.Sign In
+Resource/Modules/welcomepage/__Locators.json,locator,link,Sign Up,link.Sign Up,"[data-test=""landing-cta-signup""]",Resource/Modules/welcomepage/__Locators.json::link.Sign Up
+Resource/Modules/welcomepage/__Locators.json,locator,text,Sign In,text.Sign In,"[data-test=""landing-cta-signin""]",Resource/Modules/welcomepage/__Locators.json::text.Sign In
+Resource/Modules/welcomepage/__Locators.json,locator,section,Hero,section.Hero,"[data-test=""landing-hero""]",Resource/Modules/welcomepage/__Locators.json::section.Hero
+Resource/Modules/welcomepage/__Locators.json,locator,section,Features,section.Features,"[data-test=""landing-features""]",Resource/Modules/welcomepage/__Locators.json::section.Features
+Resource/Modules/welcomepage/__Locators.json,locator,section,Reviews,section.Reviews,"[data-test=""landing-testimonials""]",Resource/Modules/welcomepage/__Locators.json::section.Reviews
+Resource/Modules/welcomepage/__Locators.json,locator,section,About,section.About,"[data-test=""landing-about""]",Resource/Modules/welcomepage/__Locators.json::section.About
+Resource/Modules/welcomepage/__Locators.json,locator,section,Benefits,section.Benefits,"[data-test=""landing-benefits""]",Resource/Modules/welcomepage/__Locators.json::section.Benefits
+Resource/Modules/welcomepage/__Locators.json,locator,section,Course Features,section.Course Features,"[data-test=""landing-features""]",Resource/Modules/welcomepage/__Locators.json::section.Course Features
+Resource/Modules/welcomepage/__Locators.json,locator,section,About Us,section.About Us,"[data-test=""landing-about""]",Resource/Modules/welcomepage/__Locators.json::section.About Us
+Resource/Modules/welcomepage/__Locators.json,locator,section,What Our Students Say,section.What Our Students Say,"[data-test=""landing-testimonials""]",Resource/Modules/welcomepage/__Locators.json::section.What Our Students Say

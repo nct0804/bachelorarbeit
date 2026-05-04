@@ -1,0 +1,124 @@
+RESOURCE_FILE,KEYWORD_NAME,LINE_NUMBER,LOCATION
+Resource/Common/button.resource,Click Button,8,Resource/Common/button.resource:8
+Resource/Common/button.resource,Click Button At Index,13,Resource/Common/button.resource:13
+Resource/Common/button.resource,Button Should Be Visible,18,Resource/Common/button.resource:18
+Resource/Common/checkbox.resource,Set Checkbox To State,8,Resource/Common/checkbox.resource:8
+Resource/Common/checkbox.resource,Checkbox Should Be Visible,35,Resource/Common/checkbox.resource:35
+Resource/Common/checkbox.resource,Click Checkbox,40,Resource/Common/checkbox.resource:40
+Resource/Common/checkbox.resource,Verify If The Checkbox Status Is State,45,Resource/Common/checkbox.resource:45
+Resource/Common/checkbox.resource,Checkbox State Should Be,70,Resource/Common/checkbox.resource:70
+Resource/Common/common.resource,Resolve Page Route,32,Resource/Common/common.resource:32
+Resource/Common/common.resource,Open Browser Session,42,Resource/Common/common.resource:42
+Resource/Common/common.resource,Close Browser Session,55,Resource/Common/common.resource:55
+Resource/Common/common.resource,Go To Relative Path,60,Resource/Common/common.resource:60
+Resource/Common/common.resource,Navigate To Page,67,Resource/Common/common.resource:67
+Resource/Common/common.resource,Validate Current Page Root,75,Resource/Common/common.resource:75
+Resource/Common/common.resource,Validate Page Is Opened,81,Resource/Common/common.resource:81
+Resource/Common/common.resource,Wait For Category Element State,88,Resource/Common/common.resource:88
+Resource/Common/common.resource,Category Element Should Be Visible,100,Resource/Common/common.resource:100
+Resource/Common/common.resource,Category Element Should Not Be Visible,106,Resource/Common/common.resource:106
+Resource/Common/common.resource,Click Category Element,112,Resource/Common/common.resource:112
+Resource/Common/common.resource,Click Category Element At Index,120,Resource/Common/common.resource:120
+Resource/Common/common.resource,Fill Category Element,141,Resource/Common/common.resource:141
+Resource/Common/common.resource,Get Category Element Count,149,Resource/Common/common.resource:149
+Resource/Common/common.resource,Get Category Element Text,157,Resource/Common/common.resource:157
+Resource/Common/common.resource,Category Element Text Should Contain,166,Resource/Common/common.resource:166
+Resource/Common/common.resource,Validate Category Elements If Present,173,Resource/Common/common.resource:173
+Resource/Common/common.resource,Validate Current Page Categories,184,Resource/Common/common.resource:184
+Resource/Common/common.resource,Scroll Into Element,199,Resource/Common/common.resource:199
+Resource/Common/common.resource,Wait for Second,206,Resource/Common/common.resource:206
+Resource/Common/link.resource,Click Link,8,Resource/Common/link.resource:8
+Resource/Common/link.resource,Link Should Be Visible,13,Resource/Common/link.resource:13
+Resource/Common/link.resource,Link Should Contain Text,18,Resource/Common/link.resource:18
+Resource/Common/list.resource,Click List Item At Index,8,Resource/Common/list.resource:8
+Resource/Common/list.resource,List Should Be Visible,13,Resource/Common/list.resource:13
+Resource/Common/list.resource,List Item Count Should Be At Least Items,18,Resource/Common/list.resource:18
+Resource/Common/locators.resource,Normalize Page Name,16,Resource/Common/locators.resource:16
+Resource/Common/locators.resource,Clear Locators,25,Resource/Common/locators.resource:25
+Resource/Common/locators.resource,Ensure Locator Map Is Loaded,33,Resource/Common/locators.resource:33
+Resource/Common/locators.resource,Get Locator File For Page,39,Resource/Common/locators.resource:39
+Resource/Common/locators.resource,Load Locators,67,Resource/Common/locators.resource:67
+Resource/Common/locators.resource,Get Locator,79,Resource/Common/locators.resource:79
+Resource/Common/locators.resource,Locator Exists,92,Resource/Common/locators.resource:92
+Resource/Common/locators.resource,Get Locator In Category,103,Resource/Common/locators.resource:103
+Resource/Common/locators.resource,Get Locator Names In Category,112,Resource/Common/locators.resource:112
+Resource/Common/locators.resource,Get Locator Categories,137,Resource/Common/locators.resource:137
+Resource/Common/locators.resource,Get Current Page,150,Resource/Common/locators.resource:150
+Resource/Common/locators.resource,Get Locator File,155,Resource/Common/locators.resource:155
+Resource/Common/messagebox.resource,Messagebox Should Be Visible,8,Resource/Common/messagebox.resource:8
+Resource/Common/messagebox.resource,Messagebox Should Not Be Visible,13,Resource/Common/messagebox.resource:13
+Resource/Common/messagebox.resource,Messagebox Should Contain Text,19,Resource/Common/messagebox.resource:19
+Resource/Common/notification.resource,Notification Should Be Visible,8,Resource/Common/notification.resource:8
+Resource/Common/notification.resource,Notification Should Not Be Visible,13,Resource/Common/notification.resource:13
+Resource/Common/notification.resource,Notification Should Contain Text,19,Resource/Common/notification.resource:19
+Resource/Common/page.resource,Page Should Be Ready,8,Resource/Common/page.resource:8
+Resource/Common/page.resource,Go To Page,13,Resource/Common/page.resource:13
+Resource/Common/page.resource,Normalize Theme Mode,19,Resource/Common/page.resource:19
+Resource/Common/page.resource,Get Current Page Theme,29,Resource/Common/page.resource:29
+Resource/Common/page.resource,Try Click Theme Toggle,37,Resource/Common/page.resource:37
+Resource/Common/page.resource,Set Page Theme To Desired Choice,58,Resource/Common/page.resource:58
+Resource/Common/page.resource,Page Theme Should Be Desired Mode,86,Resource/Common/page.resource:86
+Resource/Common/section.resource,Section Should Be Visible,8,Resource/Common/section.resource:8
+Resource/Common/section.resource,Section Should Contain Text,13,Resource/Common/section.resource:13
+Resource/Common/section.resource,Scroll To Section,19,Resource/Common/section.resource:19
+Resource/Common/section.resource,The section should be updated with a new value,24,Resource/Common/section.resource:24
+Resource/Common/section.resource,Section Value Should Change After Clicking Button,32,Resource/Common/section.resource:32
+Resource/Common/section.resource,The section should be updated after clicking the button,39,Resource/Common/section.resource:39
+Resource/Common/section.resource,Section Item Count Should Be At Least Items,44,Resource/Common/section.resource:44
+Resource/Common/section.resource,Section Item Count,52,Resource/Common/section.resource:52
+Resource/Common/section.resource,Resolve Section Item Selector,61,Resource/Common/section.resource:61
+Resource/Common/section.resource,Section Should Be Empty,77,Resource/Common/section.resource:77
+Resource/Common/section.resource,Validate Section Is In View,82,Resource/Common/section.resource:82
+Resource/Common/tab.resource,Click Tab,8,Resource/Common/tab.resource:8
+Resource/Common/tab.resource,Tab Should Be Visible,13,Resource/Common/tab.resource:13
+Resource/Common/text.resource,Click Text,8,Resource/Common/text.resource:8
+Resource/Common/text.resource,Text Should Be Visible,13,Resource/Common/text.resource:13
+Resource/Common/textbox.resource,Fill Textbox With Value,8,Resource/Common/textbox.resource:8
+Resource/Common/textbox.resource,Fill Textbox,13,Resource/Common/textbox.resource:13
+Resource/Common/textbox.resource,Clear Textbox,18,Resource/Common/textbox.resource:18
+Resource/Common/textbox.resource,Textbox Should Be Visible,23,Resource/Common/textbox.resource:23
+Resource/Common/textbox.resource,Textbox Contain Value,28,Resource/Common/textbox.resource:28
+Resource/Common/textbox.resource,Textbox Should Be Empty,36,Resource/Common/textbox.resource:36
+Resource/Common/textbox.resource,Set Value In The Textbox,44,Resource/Common/textbox.resource:44
+Resource/Modules/challenge/Challenge.resource,Select Challenge Category,9,Resource/Modules/challenge/Challenge.resource:9
+Resource/Modules/challenge/Challenge.resource,Start Challenge Card At Index,15,Resource/Modules/challenge/Challenge.resource:15
+Resource/Modules/learn/Learn.resource,Select Learn Option At Index,9,Resource/Modules/learn/Learn.resource:9
+Resource/Modules/learn/Learn.resource,Fill Learn Blank Input Answer,15,Resource/Modules/learn/Learn.resource:15
+Resource/Modules/learn/Learn.resource,Submit Learn Check,20,Resource/Modules/learn/Learn.resource:20
+Resource/Modules/learn/Learn.resource,Try Learn Again,26,Resource/Modules/learn/Learn.resource:26
+Resource/Modules/learn/Learn.resource,Exit Learn Session,31,Resource/Modules/learn/Learn.resource:31
+Resource/Modules/login/Signin.resource,Navigate To Sign In Page,13,Resource/Modules/login/Signin.resource:13
+Resource/Modules/login/Signin.resource,Sign In Page Validation,20,Resource/Modules/login/Signin.resource:20
+Resource/Modules/login/Signin.resource,Fill Sign In Form,30,Resource/Modules/login/Signin.resource:30
+Resource/Modules/login/Signin.resource,Sign In With Credentials,37,Resource/Modules/login/Signin.resource:37
+Resource/Modules/login/Signin.resource,Sign In Error Should Contain Text,45,Resource/Modules/login/Signin.resource:45
+Resource/Modules/login/Signin.resource,Error Message Should Be Visible,50,Resource/Modules/login/Signin.resource:50
+Resource/Modules/mainpage/mainpage.resource,Main Page Validation,8,Resource/Modules/mainpage/mainpage.resource:8
+Resource/Modules/mainpage/mainpage.resource,Open Main Menu,15,Resource/Modules/mainpage/mainpage.resource:15
+Resource/Modules/mainpage/mainpage.resource,Close Main Menu,21,Resource/Modules/mainpage/mainpage.resource:21
+Resource/Modules/mainpage/mainpage.resource,Open Page From Main Menu,26,Resource/Modules/mainpage/mainpage.resource:26
+Resource/Modules/mainpage/mainpage.resource,Cancel Logout From Main Menu,33,Resource/Modules/mainpage/mainpage.resource:33
+Resource/Modules/mainpage/mainpage.resource,Confirm Logout From Main Menu,44,Resource/Modules/mainpage/mainpage.resource:44
+Resource/Modules/mainpage/mainpage.resource,Refresh Main Quote,54,Resource/Modules/mainpage/mainpage.resource:54
+Resource/Modules/mainpage/mainpage.resource,Start Lesson From Main Page,59,Resource/Modules/mainpage/mainpage.resource:59
+Resource/Modules/mainpage/mainpage.resource,Start Challenge From Main Page,65,Resource/Modules/mainpage/mainpage.resource:65
+Resource/Modules/mainpage/mainpage.resource,Set Daily Goal Target,71,Resource/Modules/mainpage/mainpage.resource:71
+Resource/Modules/mainpage/mainpage.resource,Advance Quick Practice,79,Resource/Modules/mainpage/mainpage.resource:79
+Resource/Modules/mainpage/mainpage.resource,Reset Quick Practice,84,Resource/Modules/mainpage/mainpage.resource:84
+Resource/Modules/mainpage/mainpage.resource,Select Quick Practice Option At Index,89,Resource/Modules/mainpage/mainpage.resource:89
+Resource/Modules/mainpage/mainpage.resource,Enable Dark Mode,95,Resource/Modules/mainpage/mainpage.resource:95
+Resource/Modules/profile/Profile.resource,Profile Page Validation,8,Resource/Modules/profile/Profile.resource:8
+Resource/Modules/profile/Profile.resource,Profile Stats Should Be Visible,20,Resource/Modules/profile/Profile.resource:20
+Resource/Modules/profile/Profile.resource,Profile Message Should Be Visible,26,Resource/Modules/profile/Profile.resource:26
+Resource/Modules/pronunciation/Pronunciation.resource,Pronunciation Page Should Be Ready,8,Resource/Modules/pronunciation/Pronunciation.resource:8
+Resource/Modules/pronunciation/Pronunciation.resource,Select Pronunciation Group At Index,14,Resource/Modules/pronunciation/Pronunciation.resource:14
+Resource/Modules/pronunciation/Pronunciation.resource,Select Pronunciation Sound At Index,19,Resource/Modules/pronunciation/Pronunciation.resource:19
+Resource/Modules/pronunciation/Pronunciation.resource,Pronunciation Message Should Be Visible,25,Resource/Modules/pronunciation/Pronunciation.resource:25
+Resource/Modules/ranking/Ranking.resource,Ranking Page Validation,8,Resource/Modules/ranking/Ranking.resource:8
+Resource/Modules/register/Signup.resource,Sign Up Page Validation,17,Resource/Modules/register/Signup.resource:17
+Resource/Modules/register/Signup.resource,Fill Registration Form,31,Resource/Modules/register/Signup.resource:31
+Resource/Modules/register/Signup.resource,Submit Registration,48,Resource/Modules/register/Signup.resource:48
+Resource/Modules/register/Signup.resource,Create New Account,61,Resource/Modules/register/Signup.resource:61
+Resource/Modules/register/Signup.resource,Registration Error Should Be Visible,72,Resource/Modules/register/Signup.resource:72
+Resource/Modules/register/Signup.resource,Verify Registration Status,77,Resource/Modules/register/Signup.resource:77
+Resource/Modules/welcomepage/Welcomepage.resource,Welcome Page Validation,9,Resource/Modules/welcomepage/Welcomepage.resource:9

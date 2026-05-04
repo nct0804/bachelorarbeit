@@ -17,6 +17,7 @@ ROBOT_TEST_OUTPUT_DIR = "robot-tests"
 GHERKIN_PIPELINE_ANALYSIS_DIR = "Results/gherkin_pipeline"
 GHERKIN_REQ = "requirements/gherkin"
 NATURAL_REQ = "requirements/userstories"
+DEMO_REQ = "requirements/demo"
 
 def _read_json(path: str) -> dict:
     if not os.path.isfile(path):
@@ -93,6 +94,7 @@ def main():
     delete_robot_tests()
     #_generate_robot_tests_from_req(GHERKIN_REQ)
     _generate_robot_tests_from_req(NATURAL_REQ)
+    #_generate_robot_tests_from_req(DEMO_REQ)
     delete_results()
     start_robot_tests()
 

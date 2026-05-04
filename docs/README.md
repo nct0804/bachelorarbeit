@@ -25,3 +25,9 @@ Starts with user at level 1 with 0 XP, this collection or this course structure 
 
 # Freely adjust as needed (seed.ts)
 - Feel free to modify the seed.ts file as needed. You can restructure its logic or implement custom designs based on your specific requirements and creativity.
+
+# Semantic Pipeline Docs
+
+- `docs/thesis-pipeline-demonstration.md` explains the current requirement-to-test pipeline end to end, including preprocessing, Top-K retrieval, report artifacts, and final Robot generation.
+- `docs/demo-testcsv-end-to-end.md` documents one full concrete example using `requirements/demo/test.csv`, from preprocessing and scores to the final generated test case.
+- `docs/demo-achievements-feature-end-to-end.md` documents one full concrete example using `requirements/demo/achievements_validation.feature`, including the weaker scenario-level retrieval and the final Gherkin-aware generated test case.

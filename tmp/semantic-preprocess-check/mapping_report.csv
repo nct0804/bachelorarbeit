@@ -1,0 +1,17 @@
+REQ_ID,FEATURE,REQUIREMENT_TEXT,REQUIREMENT_TYPE,PREPROCESS_BEFORE,PREPROCESS_AFTER,PREPROCESS_MAPPING_TEXT,NLP_ACTIONS,STATUS,MATCH_1_KEYWORD,MATCH_1_TAG,MATCH_1_MODULE,MATCH_1_SOURCE,MATCH_1_SEMANTIC,MATCH_1_LEXICAL,MATCH_1_SCORE
+REQ-001,Inbox Notifications Verification::User can open the inbox and verify unread notifications exist,"Given the user navigates to the ""Sign In"" page
+And the user logs in with default credentials
+When the user navigates to the ""inbox"" page
+And the user waits for ""2"" seconds
+Then the user eats a sandwich
+Then do the break dance",general_requirement,"Given the user navigates to the ""Sign In"" page
+And the user logs in with default credentials
+When the user navigates to the ""inbox"" page
+And the user waits for ""2"" seconds
+Then the user eats a sandwich
+Then do the break dance",given the user navigate to the page and the user log in with default credentials when the user navigate to the page and the user wait for seconds then the user eats a sandwich then do the break dance,"Given the user navigates to the ""Sign In"" page
+And the user logs in with default credentials
+When the user navigates to the ""inbox"" page
+And the user waits for ""2"" seconds
+Then the user eats a sandwich
+Then do the break dance",,NEEDS_REVIEW,Start Lesson From Main Page,Unknown,mainpage,Resource/Modules/mainpage/mainpage.resource,0.2408,0.1582,0.3284

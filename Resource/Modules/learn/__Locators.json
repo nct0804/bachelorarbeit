@@ -26,7 +26,7 @@
         "Exit": "[data-test=\"learn-exit\"]",
         "Continue": "[data-test=\"learn-exit-continue\"]",
         "New Quote": "[data-test=\"topbar-quote-refresh\"]",
-        "Back to Home": "[data-test=\"learn-exit-confirm\"]"
+        "Back to Home": "[data-test=\"lesson-summary-back\"]"
     },
     "link": {
         "Quote Text": "[data-test=\"topbar-quote-text\"]"

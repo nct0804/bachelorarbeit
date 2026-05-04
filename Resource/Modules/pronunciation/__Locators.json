@@ -25,11 +25,23 @@
         "Logout": "[data-test=\"main-menu-logout\"]",
         "Learn": "[data-test=\"rightbar-lesson-start\"]",
         "Start Challenge": "[data-test=\"rightbar-challenge-start\"]",
-        "Refresh Quote": "[data-test=\"topbar-quote-refresh\"]"
+        "Refresh Quote": "[data-test=\"topbar-quote-refresh\"]",
+        "ü": "[data-test=\"pronunciation-sound-3\"]",
+        "ö": "[data-test=\"pronunciation-sound-1\"]",
+        "ä": "[data-test=\"pronunciation-sound-2\"]",
+        "Ü": "[data-test=\"pronunciation-sound-3\"]",
+        "Ö": "[data-test=\"pronunciation-sound-1\"]",
+        "Ä": "[data-test=\"pronunciation-sound-2\"]"
     },
     "link": {
     },
-    "textbox": {
+    "text": {
+                "ü": "[data-test=\"pronunciation-sound-3\"]",
+        "ö": "[data-test=\"pronunciation-sound-1\"]",
+        "ä": "[data-test=\"pronunciation-sound-2\"]",
+        "Ü": "[data-test=\"pronunciation-sound-3\"]",
+        "Ö": "[data-test=\"pronunciation-sound-1\"]",
+        "Ä": "[data-test=\"pronunciation-sound-2\"]"
     },
     "checkbox": {
     },

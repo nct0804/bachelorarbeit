@@ -1,0 +1,94 @@
+% RQ2 executability evaluation snippet.
+% Required package: \usepackage{booktabs}
+
+\subsection{Executability of Generated Robot Framework Test Cases}
+
+RQ2 evaluates whether the generated Robot Framework test cases can be executed
+successfully against the running SUT. Two datasets were used: 17 Gherkin
+scenarios from \texttt{requirements/gherkin} and 30 natural-language
+requirements from \texttt{requirements/userstories}. The natural-language
+dataset contains repeated intents expressed with different wording, because the
+SUT does not implement enough distinct features to provide one unique feature
+for every requirement. Therefore, paraphrased requirements are kept in the
+dataset to test whether the approach remains robust under wording variation.
+
+Each generated test case was executed against the SUT at
+\texttt{http://localhost:4242}. Failures were classified into three main
+categories. Mapping errors indicate that the generated test selected a wrong or
+unsupported keyword, locator, route, or UI element. Logic errors indicate that
+the generated steps were syntactically valid but ordered incorrectly for the
+required SUT state, for example accessing a protected page without first
+logging in. Actual SUT defects indicate that the generated test was executable
+but failed because the SUT did not provide the expected behavior or element.
+
+\begin{table}[htbp]
+\centering
+\caption{RQ2 executability results for Gherkin requirements.}
+\label{tab:rq2_gherkin_executability}
+\begin{tabular}{llrrrrrr}
+\toprule
+Pipeline & Type & Total & Passed & Success (\%) & Mapping & Logic & SUT Defects \\
+\midrule
+Baseline & Gherkin Scenario & 17 & 0 & 0.00 & 17 & 0 & 0 \\
+Proposed & Gherkin Scenario & 17 & 17 & 100.00 & 0 & 0 & 0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{RQ2 executability results for natural-language requirements.}
+\label{tab:rq2_natural_executability}
+\begin{tabular}{llrrrrrr}
+\toprule
+Pipeline & Type & Total & Passed & Success (\%) & Mapping & Logic & SUT Defects \\
+\midrule
+Baseline & Bug Report & 2 & 0 & 0.00 & 0 & 2 & 0 \\
+Baseline & Functional Requirement & 11 & 6 & 54.55 & 0 & 5 & 0 \\
+Baseline & User Story & 17 & 3 & 17.65 & 0 & 14 & 0 \\
+Proposed & Bug Report & 2 & 1 & 50.00 & 0 & 0 & 1 \\
+Proposed & Functional Requirement & 11 & 7 & 63.64 & 0 & 0 & 3 \\
+Proposed & User Story & 17 & 16 & 94.12 & 0 & 0 & 1 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\caption{Numbered proposed-approach failures in the natural-language dataset.}
+\label{tab:rq2_proposed_natural_failures}
+\begin{tabular}{llll}
+\toprule
+Test Case & Requirement Type & Classification & Failure Cause \\
+\midrule
+N013 & Functional Requirement & Actual SUT Defect & Remember Me expected active, actual state inactive \\
+N018 & Functional Requirement & Actual SUT Defect & Expected lesson/course action button not available \\
+N019 & User Story & Actual SUT Defect & Expected lesson/course action button not available \\
+N023 & Functional Requirement & Actual SUT Defect & Expected exercise submit flow not available \\
+N026 & Bug Report & Actual SUT Defect & Expected wrong-answer heart behavior not executable as required \\
+N028 & Functional Requirement & Non-UI & Password hashing requires backend/database assertion \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The proposed approach executed all 17 generated Gherkin scenarios successfully,
+achieving a 100.00\% execution success rate. The zero-shot baseline failed all
+Gherkin scenarios because it generated generic or unsupported Robot/Selenium
+style keywords instead of project-valid Robot Framework keywords, resulting in
+17 mapping failures.
+
+For natural-language requirements, the proposed approach achieved an execution
+success rate of 80.00\% overall. It performed strongest on user stories, where
+16 of 17 generated tests passed (94.12\%). Functional requirements were more
+difficult because several requirements refer to behavior that is missing or only
+partially implemented in the SUT, such as lesson exercise actions and checkbox
+state expectations. The zero-shot baseline achieved only 30.00\% overall
+success on the same natural-language dataset. Most baseline failures were logic
+errors caused by generic selectors, ambiguous text matching, or attempts to
+access protected pages without applying the required authenticated workflow.
+
+These results show that the proposed approach substantially improves
+executability compared with the baseline. The main remaining failures are not
+caused by Robot Framework syntax errors or keyword hallucination; instead, they
+are concentrated in SUT limitations, missing UI behavior, or requirements that
+cannot be validated through the browser UI alone.

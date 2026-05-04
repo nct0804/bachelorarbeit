@@ -1,0 +1,15 @@
+LOCATOR_FILE,TOTAL_ENTRIES,ROOT_COUNT,PAGE_ALIAS_COUNT,LOCATOR_COUNT,VALUE_COUNT
+Resource/Modules/aboutus/__Locators.json,33,1,3,29,0
+Resource/Modules/achievements/__Locators.json,36,1,2,33,0
+Resource/Modules/challenge/__Locators.json,41,1,2,38,0
+Resource/Modules/inbox/__Locators.json,35,1,2,32,0
+Resource/Modules/learn/__Locators.json,34,1,2,31,0
+Resource/Modules/login/__Locators.json,39,1,11,27,0
+Resource/Modules/mainpage/__Locators.json,104,1,5,98,0
+Resource/Modules/profile/__Locators.json,45,1,2,42,0
+Resource/Modules/pronunciation/__Locators.json,34,1,2,31,0
+Resource/Modules/ranking/__Locators.json,39,1,2,36,0
+Resource/Modules/register/__Locators.json,32,1,9,22,0
+Resource/Modules/review/__Locators.json,33,1,2,30,0
+Resource/Modules/speak/__Locators.json,33,1,2,30,0
+Resource/Modules/welcomepage/__Locators.json,26,1,7,18,0

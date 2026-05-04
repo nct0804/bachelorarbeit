@@ -78,3 +78,28 @@ def _generate_robot_tests_from_req(YOUR_INPUT_FILE: str) -> None:
     result = subprocess.run(cmd, check=False)
     if result.returncode != 0:
         raise SystemExit(result.returncode)
+
+def _generate_baseline_robot_tests_from_req(YOUR_INPUT_FILE: str) -> None:
+    """
+    Generate zero-shot baseline Robot tests without RAG, preprocessing, or keyword grounding.
+    """
+    if YOUR_INPUT_FILE == "requirements/gherkin":
+        print("Generating zero-shot baseline tests from Gherkin requirements...")
+        Output_file = "robot-tests/baseline_gherkin.robot"
+    elif YOUR_INPUT_FILE == "requirements/userstories":
+        print("Generating zero-shot baseline tests from natural language requirements...")
+        Output_file = "robot-tests/baseline_natural.robot"
+    else:
+        print("Generating zero-shot baseline tests from requirements...")
+        Output_file = "robot-tests/baseline_generated.robot"
+    cmd = [
+        sys.executable,
+        "src/components/baseline/baseline_generator.py",
+        "--input-file",
+        YOUR_INPUT_FILE,
+        "--output",
+        Output_file,
+    ]
+    result = subprocess.run(cmd, check=False)
+    if result.returncode != 0:
+        raise SystemExit(result.returncode)

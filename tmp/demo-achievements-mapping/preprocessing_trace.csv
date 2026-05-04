@@ -1,0 +1,86 @@
+REQ_ID,FEATURE,REQUIREMENT_TYPE,STEP_ORDER,STEP_NAME,STEP_DESCRIPTION,STEP_TEXT,FINAL_NORMALIZED_TEXT,MAPPING_TEXT,NLP_ACTIONS
+REQ-001,achievements_validation::User accesses their achievements and sees their unlocked badges,functional_requirement,1,original,Original requirement text before NLP preprocessing.,"Given the user navigates to the ""Sign In"" page
+When the user signs in with email ""chithien.nguyen@germangains.com"" and password ""password123""
+Then the ""Main Page"" page should be opened
+When the user is on the ""main"" page
+And the user clicks the ""Achievements"" button right sidebar
+Then the ""Achievements"" page should be opened
+And the ""Your Badges"" section should be visible",given the user navigate to the page when the user signs in with email and password then the page should be opened when the user is on the page and the user click the button right sidebar then the page should be opened and the section should be visible,"Given the user navigates to the ""Sign In"" page
+When the user signs in with email ""chithien.nguyen@germangains.com"" and password ""password123""
+Then the ""Main Page"" page should be opened
+When the user is on the ""main"" page
+And the user clicks the ""Achievements"" button right sidebar
+Then the ""Achievements"" page should be opened
+And the ""Your Badges"" section should be visible ; extracted actions: fill textbox '${NAME}' with value '${VALUE}' for email and password ; click button '${NAME}' ; validate page 'Sign In' is opened ; 'Sign In' page should be ready ; click button 'Sign In' ; section 'Sign In' should be visible",fill textbox '${NAME}' with value '${VALUE}' for email and password ; click button '${NAME}' | validate page 'Sign In' is opened ; 'Sign In' page should be ready | click button 'Sign In' | section 'Sign In' should be visible
+REQ-001,achievements_validation::User accesses their achievements and sees their unlocked badges,functional_requirement,2,list_prefix_removed,Requirement text after removing list markers and leading numbering.,"Given the user navigates to the ""Sign In"" page
+When the user signs in with email ""chithien.nguyen@germangains.com"" and password ""password123""
+Then the ""Main Page"" page should be opened
+When the user is on the ""main"" page
+And the user clicks the ""Achievements"" button right sidebar
+Then the ""Achievements"" page should be opened
+And the ""Your Badges"" section should be visible",given the user navigate to the page when the user signs in with email and password then the page should be opened when the user is on the page and the user click the button right sidebar then the page should be opened and the section should be visible,"Given the user navigates to the ""Sign In"" page
+When the user signs in with email ""chithien.nguyen@germangains.com"" and password ""password123""
+Then the ""Main Page"" page should be opened
+When the user is on the ""main"" page
+And the user clicks the ""Achievements"" button right sidebar
+Then the ""Achievements"" page should be opened
+And the ""Your Badges"" section should be visible ; extracted actions: fill textbox '${NAME}' with value '${VALUE}' for email and password ; click button '${NAME}' ; validate page 'Sign In' is opened ; 'Sign In' page should be ready ; click button 'Sign In' ; section 'Sign In' should be visible",fill textbox '${NAME}' with value '${VALUE}' for email and password ; click button '${NAME}' | validate page 'Sign In' is opened ; 'Sign In' page should be ready | click button 'Sign In' | section 'Sign In' should be visible
+REQ-001,achievements_validation::User accesses their achievements and sees their unlocked badges,functional_requirement,3,quoted_text_removed,Requirement text after removing quoted values from similarity preprocessing.,"Given the user navigates to the   page
+When the user signs in with email   and password  
+Then the   page should be opened
+When the user is on the   page
+And the user clicks the   button right sidebar
+Then the   page should be opened
+And the   section should be visible",given the user navigate to the page when the user signs in with email and password then the page should be opened when the user is on the page and the user click the button right sidebar then the page should be opened and the section should be visible,"Given the user navigates to the ""Sign In"" page
+When the user signs in with email ""chithien.nguyen@germangains.com"" and password ""password123""
+Then the ""Main Page"" page should be opened
+When the user is on the ""main"" page
+And the user clicks the ""Achievements"" button right sidebar
+Then the ""Achievements"" page should be opened
+And the ""Your Badges"" section should be visible ; extracted actions: fill textbox '${NAME}' with value '${VALUE}' for email and password ; click button '${NAME}' ; validate page 'Sign In' is opened ; 'Sign In' page should be ready ; click button 'Sign In' ; section 'Sign In' should be visible",fill textbox '${NAME}' with value '${VALUE}' for email and password ; click button '${NAME}' | validate page 'Sign In' is opened ; 'Sign In' page should be ready | click button 'Sign In' | section 'Sign In' should be visible
+REQ-001,achievements_validation::User accesses their achievements and sees their unlocked badges,functional_requirement,4,lowercased,Requirement text converted to lowercase for consistent matching.,"given the user navigates to the   page
+when the user signs in with email   and password  
+then the   page should be opened
+when the user is on the   page
+and the user clicks the   button right sidebar
+then the   page should be opened
+and the   section should be visible",given the user navigate to the page when the user signs in with email and password then the page should be opened when the user is on the page and the user click the button right sidebar then the page should be opened and the section should be visible,"Given the user navigates to the ""Sign In"" page
+When the user signs in with email ""chithien.nguyen@germangains.com"" and password ""password123""
+Then the ""Main Page"" page should be opened
+When the user is on the ""main"" page
+And the user clicks the ""Achievements"" button right sidebar
+Then the ""Achievements"" page should be opened
+And the ""Your Badges"" section should be visible ; extracted actions: fill textbox '${NAME}' with value '${VALUE}' for email and password ; click button '${NAME}' ; validate page 'Sign In' is opened ; 'Sign In' page should be ready ; click button 'Sign In' ; section 'Sign In' should be visible",fill textbox '${NAME}' with value '${VALUE}' for email and password ; click button '${NAME}' | validate page 'Sign In' is opened ; 'Sign In' page should be ready | click button 'Sign In' | section 'Sign In' should be visible
+REQ-001,achievements_validation::User accesses their achievements and sees their unlocked badges,functional_requirement,5,phrase_map_applied,Requirement text after canonical phrase replacements.,"given the user navigates to the   page
+when the user signs in with email   and password  
+then the   page should be opened
+when the user is on the   page
+and the user clicks the   button right sidebar
+then the   page should be opened
+and the   section should be visible",given the user navigate to the page when the user signs in with email and password then the page should be opened when the user is on the page and the user click the button right sidebar then the page should be opened and the section should be visible,"Given the user navigates to the ""Sign In"" page
+When the user signs in with email ""chithien.nguyen@germangains.com"" and password ""password123""
+Then the ""Main Page"" page should be opened
+When the user is on the ""main"" page
+And the user clicks the ""Achievements"" button right sidebar
+Then the ""Achievements"" page should be opened
+And the ""Your Badges"" section should be visible ; extracted actions: fill textbox '${NAME}' with value '${VALUE}' for email and password ; click button '${NAME}' ; validate page 'Sign In' is opened ; 'Sign In' page should be ready ; click button 'Sign In' ; section 'Sign In' should be visible",fill textbox '${NAME}' with value '${VALUE}' for email and password ; click button '${NAME}' | validate page 'Sign In' is opened ; 'Sign In' page should be ready | click button 'Sign In' | section 'Sign In' should be visible
+REQ-001,achievements_validation::User accesses their achievements and sees their unlocked badges,functional_requirement,6,synonym_map_applied,Requirement text after synonym normalization.,"given the user navigate to the   page
+when the user signs in with email   and password  
+then the   page should be opened
+when the user is on the   page
+and the user click the   button right sidebar
+then the   page should be opened
+and the   section should be visible",given the user navigate to the page when the user signs in with email and password then the page should be opened when the user is on the page and the user click the button right sidebar then the page should be opened and the section should be visible,"Given the user navigates to the ""Sign In"" page
+When the user signs in with email ""chithien.nguyen@germangains.com"" and password ""password123""
+Then the ""Main Page"" page should be opened
+When the user is on the ""main"" page
+And the user clicks the ""Achievements"" button right sidebar
+Then the ""Achievements"" page should be opened
+And the ""Your Badges"" section should be visible ; extracted actions: fill textbox '${NAME}' with value '${VALUE}' for email and password ; click button '${NAME}' ; validate page 'Sign In' is opened ; 'Sign In' page should be ready ; click button 'Sign In' ; section 'Sign In' should be visible",fill textbox '${NAME}' with value '${VALUE}' for email and password ; click button '${NAME}' | validate page 'Sign In' is opened ; 'Sign In' page should be ready | click button 'Sign In' | section 'Sign In' should be visible
+REQ-001,achievements_validation::User accesses their achievements and sees their unlocked badges,functional_requirement,7,normalized,Final normalized text used for requirement classification and action extraction.,given the user navigate to the page when the user signs in with email and password then the page should be opened when the user is on the page and the user click the button right sidebar then the page should be opened and the section should be visible,given the user navigate to the page when the user signs in with email and password then the page should be opened when the user is on the page and the user click the button right sidebar then the page should be opened and the section should be visible,"Given the user navigates to the ""Sign In"" page
+When the user signs in with email ""chithien.nguyen@germangains.com"" and password ""password123""
+Then the ""Main Page"" page should be opened
+When the user is on the ""main"" page
+And the user clicks the ""Achievements"" button right sidebar
+Then the ""Achievements"" page should be opened
+And the ""Your Badges"" section should be visible ; extracted actions: fill textbox '${NAME}' with value '${VALUE}' for email and password ; click button '${NAME}' ; validate page 'Sign In' is opened ; 'Sign In' page should be ready ; click button 'Sign In' ; section 'Sign In' should be visible",fill textbox '${NAME}' with value '${VALUE}' for email and password ; click button '${NAME}' | validate page 'Sign In' is opened ; 'Sign In' page should be ready | click button 'Sign In' | section 'Sign In' should be visible

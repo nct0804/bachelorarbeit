@@ -1,0 +1,73 @@
+REQ_ID,FEATURE,REQUIREMENT_TYPE,STEP_ORDER,STEP_NAME,STEP_DESCRIPTION,STEP_TEXT,FINAL_NORMALIZED_TEXT,MAPPING_TEXT,NLP_ACTIONS
+REQ-001,Inbox Notifications Verification::User can open the inbox and verify unread notifications exist,general_requirement,1,original,Original requirement text before NLP preprocessing.,"Given the user navigates to the ""Sign In"" page
+And the user logs in with default credentials
+When the user navigates to the ""inbox"" page
+And the user waits for ""2"" seconds
+Then the user eats a sandwich
+Then do the break dance",given the user navigate to the page and the user log in with default credentials when the user navigate to the page and the user wait for seconds then the user eats a sandwich then do the break dance,"Given the user navigates to the ""Sign In"" page
+And the user logs in with default credentials
+When the user navigates to the ""inbox"" page
+And the user waits for ""2"" seconds
+Then the user eats a sandwich
+Then do the break dance",
+REQ-001,Inbox Notifications Verification::User can open the inbox and verify unread notifications exist,general_requirement,2,list_prefix_removed,Requirement text after removing list markers and leading numbering.,"Given the user navigates to the ""Sign In"" page
+And the user logs in with default credentials
+When the user navigates to the ""inbox"" page
+And the user waits for ""2"" seconds
+Then the user eats a sandwich
+Then do the break dance",given the user navigate to the page and the user log in with default credentials when the user navigate to the page and the user wait for seconds then the user eats a sandwich then do the break dance,"Given the user navigates to the ""Sign In"" page
+And the user logs in with default credentials
+When the user navigates to the ""inbox"" page
+And the user waits for ""2"" seconds
+Then the user eats a sandwich
+Then do the break dance",
+REQ-001,Inbox Notifications Verification::User can open the inbox and verify unread notifications exist,general_requirement,3,quoted_text_removed,Requirement text after removing quoted values from similarity preprocessing.,"Given the user navigates to the   page
+And the user logs in with default credentials
+When the user navigates to the   page
+And the user waits for   seconds
+Then the user eats a sandwich
+Then do the break dance",given the user navigate to the page and the user log in with default credentials when the user navigate to the page and the user wait for seconds then the user eats a sandwich then do the break dance,"Given the user navigates to the ""Sign In"" page
+And the user logs in with default credentials
+When the user navigates to the ""inbox"" page
+And the user waits for ""2"" seconds
+Then the user eats a sandwich
+Then do the break dance",
+REQ-001,Inbox Notifications Verification::User can open the inbox and verify unread notifications exist,general_requirement,4,lowercased,Requirement text converted to lowercase for consistent matching.,"given the user navigates to the   page
+and the user logs in with default credentials
+when the user navigates to the   page
+and the user waits for   seconds
+then the user eats a sandwich
+then do the break dance",given the user navigate to the page and the user log in with default credentials when the user navigate to the page and the user wait for seconds then the user eats a sandwich then do the break dance,"Given the user navigates to the ""Sign In"" page
+And the user logs in with default credentials
+When the user navigates to the ""inbox"" page
+And the user waits for ""2"" seconds
+Then the user eats a sandwich
+Then do the break dance",
+REQ-001,Inbox Notifications Verification::User can open the inbox and verify unread notifications exist,general_requirement,5,phrase_map_applied,Requirement text after canonical phrase replacements.,"given the user navigates to the   page
+and the user logs in with default credentials
+when the user navigates to the   page
+and the user waits for   seconds
+then the user eats a sandwich
+then do the break dance",given the user navigate to the page and the user log in with default credentials when the user navigate to the page and the user wait for seconds then the user eats a sandwich then do the break dance,"Given the user navigates to the ""Sign In"" page
+And the user logs in with default credentials
+When the user navigates to the ""inbox"" page
+And the user waits for ""2"" seconds
+Then the user eats a sandwich
+Then do the break dance",
+REQ-001,Inbox Notifications Verification::User can open the inbox and verify unread notifications exist,general_requirement,6,synonym_map_applied,Requirement text after synonym normalization.,"given the user navigate to the   page
+and the user log in with default credentials
+when the user navigate to the   page
+and the user wait for   seconds
+then the user eats a sandwich
+then do the break dance",given the user navigate to the page and the user log in with default credentials when the user navigate to the page and the user wait for seconds then the user eats a sandwich then do the break dance,"Given the user navigates to the ""Sign In"" page
+And the user logs in with default credentials
+When the user navigates to the ""inbox"" page
+And the user waits for ""2"" seconds
+Then the user eats a sandwich
+Then do the break dance",
+REQ-001,Inbox Notifications Verification::User can open the inbox and verify unread notifications exist,general_requirement,7,normalized,Final normalized text used for requirement classification and action extraction.,given the user navigate to the page and the user log in with default credentials when the user navigate to the page and the user wait for seconds then the user eats a sandwich then do the break dance,given the user navigate to the page and the user log in with default credentials when the user navigate to the page and the user wait for seconds then the user eats a sandwich then do the break dance,"Given the user navigates to the ""Sign In"" page
+And the user logs in with default credentials
+When the user navigates to the ""inbox"" page
+And the user waits for ""2"" seconds
+Then the user eats a sandwich
+Then do the break dance",

@@ -49,15 +49,20 @@
     },
     "messagebox": {
         "Logout Message": "[data-test=\"main-logout-modal-message\"]",
-        "Quote Text": "[data-test=\"topbar-quote-text\"]"
+        "Quote Text": "[data-test=\"topbar-quote-text\"]",
+        "Messages": "[data-test=\"page-inbox\"]"
     },
     "list": {
         "Quote Text": "[data-test=\"topbar-quote-text\"]"
     },
-    "modal": {
+    "text": {
+                "Messages": "[data-test=\"page-inbox\"]"
     },
      "notification": { 
-        "Quote Text": "[data-test=\"topbar-quote-text\"]"
+        "Quote Text": "[data-test=\"topbar-quote-text\"]",
+        "Messages": "[data-test=\"page-inbox\"]"
   
-  }
+  },  "Messages": {
+    "Messages": "[data-test=\"page-inbox\"]"
+    }
 }

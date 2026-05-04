@@ -5,7 +5,9 @@
     },
     "page": [
         "Ranking",
-        "Leaderboard"
+        "Leaderboard",
+        "Leaderboard Page",
+        "Ranking Page"
     ],
     "root": "[data-test=\"page-ranking\"]",
     "button": {
@@ -56,8 +58,10 @@
         "Card": "[data-test=\"ranking-card\"]",
         "List": "[data-test=\"ranking-list\"]",
         "Item": "[data-test^=\"ranking-item-\"]",
-        "Loading": "[data-test=\"ranking-loading\"]"
+        "Loading": "[data-test=\"ranking-loading\"]",
+        "Leaderboard": "[data-test=\"ranking-list\"]"
     },
-    "modal": {
+    "section": {
+          "Leaderboard": "[data-test=\"ranking-list\"]"
     }
 }
